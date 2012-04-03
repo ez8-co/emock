@@ -1,0 +1,17 @@
+del       include\mockcpp\MethodIndiceCheckerDef.h.rule
+del       include\mockcpp\DestructorAddrGetterDef.h.rule
+del       include\mockcpp\MethodTypeTraitsDef.h.rule
+del       include\mockcpp\DelegatedMethodGetDef.h
+del       include\mockcpp\DelegatedMethodDef.h.rule
+del       include\mockcpp\MethodIndiceCheckerDef.h
+del       include\mockcpp\DelegatedMethodGetByVptrDef.h.rule
+del       include\mockcpp\MethodTypeTraitsDef.h
+del       include\mockcpp\DelegatedMethodGetByVptrDef.h
+del       include\mockcpp\DestructorAddrGetterDef.h
+del       include\mockcpp\ArgumentsListDef.h.rule
+del       include\mockcpp\DelegatedMethodDef.h
+del       include\mockcpp\DelegatedMethodGetDef.h.rule
+del       include\mockcpp\DefaultMethodAddrGetterDef.h
+del       include\mockcpp\ArgumentsListDef.h
+del       include\mockcpp\DefaultMethodAddrGetterDef.h.rule
+del       tests\ut\*.cpp

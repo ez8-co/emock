@@ -1,0 +1,50 @@
+
+as a user
+=========
+	Linux(cygwin included)
+	------
+	One way:
+	run build_install.sh . (maybe you need to modify some variable in the script first)
+	
+	The other way:
+	sudo make install 
+	and then use /usr/local/include/mockcpp and /usr/local/lib/libmockcpp.a.
+	if the test framework you use is not testngpp, such as cpputest, gtest etc. , you should run these commands: (there is a $xunit_home/include/gtest/gtest.h file)
+	cmake -DMOCKCPP_XUNIT=gtest -DMOCKCPP_XUNIT_HOME=$xunit_home ../mockcpp/mockcpp
+	make
+	make install
+	see also build_install4gtest.sh
+	
+	if you want to specify the install dir, you should run cmake as this:
+	cmake -DCMAKE_INSTALL_PREFIX=/usr/local/somedir ../mockcpp/mockcpp 
+	
+	Windows
+	-------
+	One way:
+	run build_install.ps1 . (maybe you need to modify some variable in the script first)
+	
+	The other way:
+	Run cmake-gui.exe, choose the mockcpp root dir as source dir, and any other (nonexist) dir as binaries dir.
+	Then hit configure button, it will show you some variables that should be set, you can modify them or let it be default, hit configure again.
+	And then hit the generate button.
+	Note: 
+	if you want to use mockcpp with other test framework, such as gtest, cpputest, etc., 
+	you must modify MOCKCPP_XUNIT's value, hit configure, and then specify the test framework home path, hit configure again, at last hit the generate button.
+
+	
+as a mockcpp developer
+=======================
+	Linux(cygwin included)
+	------
+	One way:
+	run build.sh .
+	
+	The other way:
+	make all
+	it will make mockcpp and it's tests, and then run the tests.(build.sh do the same thing, and much faster.) 
+	
+	Windows
+	-------
+	run the PowerShell script build.ps1 .
+	maybe you should modify some variables defined in the script first, such as the path of vcbuild/cmake, etc.
+	

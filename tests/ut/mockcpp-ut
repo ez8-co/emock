@@ -1,0 +1,13 @@
+#!/bin/bash
+
+TESTNGPP_ROOT=`pwd`/../3rdparty/testngpp
+
+MOCKCPP_UT_SUITES=`ls libmockcpp-ut-*`
+${TESTNGPP_ROOT}/src/runner/testngpp-runner \
+   -L${TESTNGPP_ROOT}/src/listeners \
+   -l"testngppxmllistener result.xml" \
+   -l"testngppstdoutlistener -c " \
+   -t"* > ft" -c100 $@ \
+   libmockcpp-ut-TestMockObject \
+   ${MOCKCPP_UT_SUITES}
+
