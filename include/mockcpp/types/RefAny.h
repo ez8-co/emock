@@ -33,10 +33,6 @@ struct RefAny : public AnyBase
       : AnyBase(new RefHolder<ValueType>(value))
    {}
 
-#if 0
-   RefAny(const char* value);
-   RefAny(char* value);
-#endif
 
    RefAny(const RefAny & other);
 

@@ -56,6 +56,15 @@ with( const Any& c01
     return *this;
 }
 
+template <typename Builder>
+Builder&
+ArgumentsMatchBuilder<Builder>::
+which(unsigned int which1, const Any& c)
+{
+    getMocker()->addMatcher(new ConstraintSet(which1, c.getConstraint()));
+    return *this;
+}
+
 #if 0
 template <typename Builder>
 Builder&

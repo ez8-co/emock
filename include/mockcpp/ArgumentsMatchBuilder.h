@@ -45,21 +45,8 @@ struct ArgumentsMatchBuilder : public Builder
                  , const Any& c11 = any()
                  , const Any& c12 = any()
     );
-#if 0
-    Builder& with( Constraint* c01 = any()
-                 , Constraint* c02 = any()
-                 , Constraint* c03 = any()
-                 , Constraint* c04 = any()
-                 , Constraint* c05 = any()
-                 , Constraint* c06 = any()
-                 , Constraint* c07 = any()
-                 , Constraint* c08 = any()
-                 , Constraint* c09 = any()
-                 , Constraint* c10 = any()
-                 , Constraint* c11 = any()
-                 , Constraint* c12 = any()
-    );
-#endif
+
+    Builder& which(unsigned int which1, const Any& c);
 
     virtual ~ArgumentsMatchBuilder() {}
 
