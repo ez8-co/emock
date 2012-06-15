@@ -42,5 +42,11 @@ MOCKCPP_NS_END
             MOCKCPP_NS::MockObjectTraits<BOOST_TYPEOF(obj)>::TYPE \
        >::value() + "::"#m).c_str()) 
 
+#define MOCK_OVERLOAD_METHOD(obj, type, m) \
+   obj.method((type) &MOCKCPP_NS::MockObjectTraits<BOOST_TYPEOF(obj)>::TYPE::m, \
+       ("("#type")" + MOCKCPP_NS::TypeString< \
+            MOCKCPP_NS::MockObjectTraits<BOOST_TYPEOF(obj)>::TYPE \
+       >::value() + "::"#m).c_str())
+
 #endif
 

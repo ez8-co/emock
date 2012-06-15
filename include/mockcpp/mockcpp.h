@@ -55,12 +55,5 @@
 
 #endif
 
-template <bool condition>
-struct static_assert
-{
-    typedef int static_assert_failure[condition ? 1 : -1];
-};
-
-
 #endif // __MOCKCPP_H
 

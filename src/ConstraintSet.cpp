@@ -101,7 +101,7 @@ ConstraintSetImpl::matches(const Invocation& inv) const
 ConstraintSet::ConstraintSet(unsigned int which, Constraint* p)
    : This(new ConstraintSetImpl())
 {
-    if(which >= 12 or p == 0) return;
+    if(which >= 12 || p == 0) return;
 
     for(unsigned int i=0; i<which; i++)
     {
