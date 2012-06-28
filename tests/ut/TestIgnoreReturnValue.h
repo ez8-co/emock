@@ -92,7 +92,7 @@ FIXTURE(TestIgnoreReturnValue)
         ASSERT_EQ(1, func_char());
     }
 
-    static struct Obj
+    struct Obj
     {
         Obj(int value) : field(value)
         {

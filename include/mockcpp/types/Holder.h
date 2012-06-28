@@ -26,6 +26,7 @@
 #include <mockcpp/EqualityUtil.h>
 #include <mockcpp/Formatter.h>
 #include <mockcpp/Void.h>
+#include <mockcpp/Ignore.h>
 
 MOCKCPP_NS_START
 
@@ -55,6 +56,39 @@ struct Holder : public PlaceHolder
     }
 
     virtual const ValueType& getValue() const = 0;
+};
+
+template<>
+struct Holder<Ignore> : public PlaceHolder
+{
+    const std::type_info & type() const
+    {
+      return typeid(Ignore);
+    }
+
+    std::string toString() const
+    {
+       return MOCKCPP_NS::toString(getValue());
+    }
+
+    std::string toTypeString() const
+    {
+       return TypeString<Ignore>::value();
+    }
+
+    std::string toTypeAndValueString() const
+    {
+       return MOCKCPP_NS::toTypeAndValueString(getValue());
+    }
+
+    virtual const Ignore& getValue() const = 0;
+
+    template<typename RT>
+    const RT &getValue() const
+    {
+        static char buf[sizeof(RT)] = {0};
+        return *reinterpret_cast<RT *>(buf);
+    }
 };
 
 MOCKCPP_NS_END

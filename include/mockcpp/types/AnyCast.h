@@ -24,7 +24,7 @@
 #include <mockcpp/mockcpp.h>
 
 #include <mockcpp/types/AnyBase.h>
-#include <mockcpp/types/ValueHolder.h>
+#include <mockcpp/types/Holder.h>
 #include <mockcpp/TypeTraits.h>
 
 #include <assert.h>
@@ -37,7 +37,7 @@ MOCKCPP_NS_START
 template<typename ValueType>
 ValueType *__ignore_type_any_cast(AnyBase *operand)
 {
-   ValueHolder<Ignore> *p = dynamic_cast<ValueHolder<Ignore> *>(operand->getContent());
+   Holder<Ignore> *p = dynamic_cast<Holder<Ignore> *>(operand->getContent());
    return p ? &const_cast<ValueType&>(p->getValue<ValueType>()) : 0;
 }
 
