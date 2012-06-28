@@ -114,6 +114,7 @@ SET(MOCKCPP_SRCS
     IgnoreResultHandler.cpp
     IgnoreResultHandlerFactory.cpp
     IgnoreReturnStub.cpp
+    Ignore.cpp
     InterfaceInfo.cpp
     Invocation.cpp
     InvocationId.cpp

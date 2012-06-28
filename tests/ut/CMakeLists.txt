@@ -47,6 +47,7 @@ SET(UT_CASES
   TestMockcppSample.h
   TestApiHookBase.h
   TestOverloadMethodMocker.h
+  TestIgnoreReturnValue.h
 )
 
 IF(UNIX)

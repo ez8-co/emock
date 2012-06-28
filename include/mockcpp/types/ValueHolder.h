@@ -30,6 +30,7 @@
 #include <mockcpp/IsEqual.h>
 #include <mockcpp/Void.h>
 #include <mockcpp/IsAnythingHelper.h>
+#include <mockcpp/Ignore.h>
 
 MOCKCPP_NS_START
 
@@ -286,6 +287,30 @@ struct ValueHolder<char>
 
     PlaceHolder * clone() const
     { return new ValueHolder(held.sc); }
+};
+
+template<>
+struct ValueHolder<Ignore> : public ValueHolderBase<Ignore>
+{
+    ValueHolder(const Ignore& value) {}
+
+    PlaceHolder * clone() const
+    { return new ValueHolder<Ignore>(held); }
+
+    const Ignore& getValue() const
+    {
+      return held;
+    }
+
+    template<typename RT>
+    const RT &getValue() const
+    {
+        static char buf[sizeof(RT)] = {0};
+        return *reinterpret_cast<RT *>(buf);
+    }
+
+private:
+    Ignore held;
 };
 
 ///////////////////////////////////////////////

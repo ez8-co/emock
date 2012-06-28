@@ -24,6 +24,7 @@
 #include <mockcpp/mockcpp.h>
 
 #include <mockcpp/types/AnyBase.h>
+#include <mockcpp/types/ValueHolder.h>
 #include <mockcpp/TypeTraits.h>
 
 #include <assert.h>
@@ -32,23 +33,43 @@
 MOCKCPP_NS_START
 
 /////////////////////////////////////////////////////////////////
-template <typename ValueType>
-ValueType* __any_cast(AnyBase* operand)
+
+template<typename ValueType>
+ValueType *__ignore_type_any_cast(AnyBase *operand)
+{
+   ValueHolder<Ignore> *p = dynamic_cast<ValueHolder<Ignore> *>(operand->getContent());
+   return p ? &const_cast<ValueType&>(p->getValue<ValueType>()) : 0;
+}
+
+template<typename ValueType>
+ValueType* __type_any_cast(AnyBase *operand)
 {
    typedef typename TypeTraits<ValueType>::Type nonref;
    typedef Holder<nonref> holder;
 
-   if (operand == 0 || operand->type() != typeid(ValueType))
+   if (operand->type() != typeid(ValueType))
+   {
+	   return 0;
+   }
+
+   holder* p = dynamic_cast<holder*>(operand->getContent());
+   return p ? &const_cast<ValueType&>(p->getValue()) : 0;
+}
+
+template <typename ValueType>
+ValueType* __any_cast(AnyBase* operand)
+{
+   if (operand == 0)
    {
       return 0;
    }
 
-   holder* p = dynamic_cast<holder*>(operand->getContent());
+   ValueType *p = __ignore_type_any_cast<ValueType>(operand);
 
-   return p ? &const_cast<ValueType&>(p->getValue()) : 0;
+   return p ? p : __type_any_cast<ValueType>(operand);
 }
 
-/////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////// /////////////////
 template <typename ValueType, bool IsEnum>
 struct AnyCast
 {

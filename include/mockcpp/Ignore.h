@@ -20,7 +20,6 @@
 #define __MOCKCPP_IGNORE_H
 
 #include <mockcpp/mockcpp.h>
-#include <mockcpp/types/Any.h>
 
 MOCKCPP_NS_START
 
@@ -32,13 +31,9 @@ struct Ignore
    }
 };
 
-const Any ignore = Any(Ignore());
+struct Any;
 
-inline static
-Any& getIgnore()
-{
-    return const_cast<Any&>(ignore);
-}
+Any& getIgnore();
 
 MOCKCPP_NS_END
 
