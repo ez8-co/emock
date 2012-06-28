@@ -64,9 +64,9 @@ ValueType* __any_cast(AnyBase* operand)
       return 0;
    }
 
-   ValueType *p = __ignore_type_any_cast<ValueType>(operand);
+   ValueType *p = __type_any_cast<ValueType>(operand);
 
-   return p ? p : __type_any_cast<ValueType>(operand);
+   return p ? p : __ignore_type_any_cast<ValueType>(operand);
 }
 
 //////////////////////////////////////////////// /////////////////
