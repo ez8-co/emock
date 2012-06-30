@@ -60,8 +60,6 @@ private:
 private:
 
     template<typename ValueType>
-    friend ValueType * __ignore_type_any_cast(AnyBase *);
-    template<typename ValueType>
     friend ValueType * __type_any_cast(AnyBase *);
 };
 

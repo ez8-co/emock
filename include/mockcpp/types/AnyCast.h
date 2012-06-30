@@ -24,8 +24,8 @@
 #include <mockcpp/mockcpp.h>
 
 #include <mockcpp/types/AnyBase.h>
-#include <mockcpp/types/Holder.h>
 #include <mockcpp/TypeTraits.h>
+#include <mockcpp/Ignore.h>
 
 #include <assert.h>
 #define MOCKCPP_ASSERT(expr) assert(expr)
@@ -37,8 +37,8 @@ MOCKCPP_NS_START
 template<typename ValueType>
 ValueType *__ignore_type_any_cast(AnyBase *operand)
 {
-   Holder<Ignore> *p = dynamic_cast<Holder<Ignore> *>(operand->getContent());
-   return p ? &const_cast<ValueType&>(p->getValue<ValueType>()) : 0;
+   static char buf[sizeof(ValueType)] = {0};
+   return operand->type() == typeid(Ignore) ? reinterpret_cast<ValueType *>(buf) : 0;
 }
 
 template<typename ValueType>
