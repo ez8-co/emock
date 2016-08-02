@@ -1,4 +1,3 @@
-
 #ifndef __MOCKCPP_JMP_CODE_X64_H__
 #define __MOCKCPP_JMP_CODE_X64_H__
 
