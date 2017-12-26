@@ -25,99 +25,209 @@
 #include <mockcpp/GlobalMockObject.h>
 #include <mockcpp/ArgumentsMacroHelpers.h>
 
+#ifdef MOCKCPP_USE_MOCKABLE
+
 MOCKCPP_NS_START
 
-/////////////////////////////////////////////
-struct BaseFunctor
+template<typename T>
+PlaceHolder* MockableHelper(T func);
+
+template<typename T>
+struct RetValueImpl;
+
+#define MOCKABLE_HELPER_DEF(n) \
+  template<typename R DECL_TEMPLATE_ARGS(n)> \
+  PlaceHolder* MockableHelper(R (*)(DECL_ARGS(n))) {\
+    return new RetValueImpl<R>();\
+  }
+
+MOCKABLE_HELPER_DEF(1)
+MOCKABLE_HELPER_DEF(2)
+MOCKABLE_HELPER_DEF(3)
+MOCKABLE_HELPER_DEF(4)
+MOCKABLE_HELPER_DEF(5)
+MOCKABLE_HELPER_DEF(6)
+MOCKABLE_HELPER_DEF(7)
+MOCKABLE_HELPER_DEF(8)
+MOCKABLE_HELPER_DEF(9)
+MOCKABLE_HELPER_DEF(10)
+MOCKABLE_HELPER_DEF(11)
+MOCKABLE_HELPER_DEF(12)
+
+struct RetValueHolder
 {
-   BaseFunctor(const std::string& fName, const char* cName)
-      : name(fName), nameOfCaller(cName) {}
+   virtual void setValue(const Any& any) = 0;
+};
 
-   std::string getName() const
-   {
-      return name;
-   }
+template<typename ValueType>
+struct RetValueImpl : public ValueHolderBase<ValueType>, public RetValueHolder
+{
+    RetValueImpl() : held(0) {}
+    ~RetValueImpl()
+    {
+      if(held) delete held;
+    }
 
-   std::string getNameOfCaller() const
-   {
-      return nameOfCaller;
-   }
+    PlaceHolder * clone() const
+    {
+      RetValueImpl* impl = new RetValueImpl();
+      impl->setValue(getValue());
+      return impl;
+    }
+
+    const ValueType& getValue() const
+    {
+      MOCKCPP_ASSERT(held != 0);
+      return *held;
+    }
+
+    void setValue(const ValueType& v)
+    {
+      if(held) delete held;
+      held = new ValueType(v);
+    }
+
+    void setValue(const Any& any)
+    {
+      setValue(any_cast<ValueType>(any));
+    }
 
 private:
+    ValueType* held;
+
+private:
+    RetValueImpl(const RetValueImpl&);
+    RetValueImpl& operator=(const RetValueImpl&);
+};
+
+struct RetValue {
+  RetValue(PlaceHolder* holder) : value(holder), wrap(value) {}
+
+  template<typename RT>
+  operator RT() const {
+    return any_cast<RT>(wrap);
+  }
+
+  void setValue(const Any& any)
+  {
+    RetValueHolder* holder = dynamic_cast<RetValueHolder*>(value);
+    MOCKCPP_ASSERT(holder != 0);
+    holder->setValue(any);
+  }
+
+  PlaceHolder* value;
+  AnyBase wrap;
+
+private:
+  RetValue(const RetValue&);
+  RetValue& operator=(const RetValue&);
+};
+
+#define OVERLAPPED_OPERATORS(ret, op) \
+template<typename T>\
+ret operator op(T x, RetValue y) { return x op T(y); }\
+template<typename T>\
+ret operator op(RetValue x, T y) { return T(x) op y; }
+
+OVERLAPPED_OPERATORS(T, +)
+OVERLAPPED_OPERATORS(T, -)
+OVERLAPPED_OPERATORS(T, *)
+OVERLAPPED_OPERATORS(T, /)
+OVERLAPPED_OPERATORS(T, %)
+
+OVERLAPPED_OPERATORS(T, ^)
+OVERLAPPED_OPERATORS(T, &)
+OVERLAPPED_OPERATORS(T, |)
+
+OVERLAPPED_OPERATORS(T, <<)
+OVERLAPPED_OPERATORS(T, >>)
+
+OVERLAPPED_OPERATORS(T, +=)
+OVERLAPPED_OPERATORS(T, -=)
+OVERLAPPED_OPERATORS(T, *=)
+OVERLAPPED_OPERATORS(T, /=)
+OVERLAPPED_OPERATORS(T, %=)
+
+OVERLAPPED_OPERATORS(T, ^=)
+OVERLAPPED_OPERATORS(T, &=)
+OVERLAPPED_OPERATORS(T, |=)
+
+OVERLAPPED_OPERATORS(T, <<=)
+OVERLAPPED_OPERATORS(T, >>=)
+
+OVERLAPPED_OPERATORS(bool, ==)
+OVERLAPPED_OPERATORS(bool, !=)
+OVERLAPPED_OPERATORS(bool, <)
+OVERLAPPED_OPERATORS(bool, <=)
+OVERLAPPED_OPERATORS(bool, >)
+OVERLAPPED_OPERATORS(bool, >=)
+
+////////////////////////////////////////////
+#define FUNCTOR_DEF(n) \
+    template <DECL_VOID_TEMPLATE_ARGS(n)> \
+    const RetValue& operator()(DECL_PARAMS_LIST(n)) \
+    { \
+      return invoke(DECL_PARAMS(n));\
+    }
+
+struct Functor
+{
+   Functor(PlaceHolder* holder, const std::string& fName, const char* cName)
+      : ret(holder), name(fName), nameOfCaller(cName) {}
+
+   const RetValue& invoke(const RefAny& p1 = RefAny()
+                 , const RefAny& p2 = RefAny()
+                 , const RefAny& p3 = RefAny()
+                 , const RefAny& p4 = RefAny()
+                 , const RefAny& p5 = RefAny()
+                 , const RefAny& p6 = RefAny()
+                 , const RefAny& p7 = RefAny()
+                 , const RefAny& p8 = RefAny()
+                 , const RefAny& p9 = RefAny()
+                 , const RefAny& p10 = RefAny()
+                 , const RefAny& p11 = RefAny()
+                 , const RefAny& p12 = RefAny())
+   {
+      Invokable* invokable = GlobalMockObject::instance.getInvokable(name);
+      try {
+        SelfDescribe* resultProvider = 0;
+        ret.setValue(invokable->invoke(nameOfCaller DECL_REST_PARAMS(12), resultProvider));
+      }
+      catch(std::exception& ex) {
+         MOCKCPP_REPORT_FAILURE(ex.what());
+         ret.setValue(Any());
+      }
+      return ret;
+   }
+
+   const RetValue& operator()(void)
+   {
+     return invoke();
+   }
+   FUNCTOR_DEF(1)
+   FUNCTOR_DEF(2)
+   FUNCTOR_DEF(3)
+   FUNCTOR_DEF(4)
+   FUNCTOR_DEF(5)
+   FUNCTOR_DEF(6)
+   FUNCTOR_DEF(7)
+   FUNCTOR_DEF(8)
+   FUNCTOR_DEF(9)
+   FUNCTOR_DEF(10)
+   FUNCTOR_DEF(11)
+   FUNCTOR_DEF(12)
+
+private:
+   RetValue ret;
    std::string name;
    std::string nameOfCaller;
 };
 
-////////////////////////////////////////////
-template <typename F>
-struct Functor;
-
-#define FUNCTOR_CONS()  \
-    Functor(const std::string& name, const char* cName) \
-      : BaseFunctor(name, cName) \
-    {}
-
-////////////////////////////////////////////
-#define FUNCTOR_DEF(n) \
-template <typename R DECL_TEMPLATE_ARGS(n)> \
-struct Functor<R(DECL_ARGS(n))> : public BaseFunctor \
-{ \
-    FUNCTOR_CONS() \
- \
-    R operator()(DECL_PARAMS_LIST(n)) \
-    { \
-        return GlobalMockObject::instance.invoke<R>(getName()) \
-                                    (getNameOfCaller() DECL_REST_PARAMS(n)); \
-    } \
-}
-
-
-FUNCTOR_DEF(0);
-FUNCTOR_DEF(1);
-FUNCTOR_DEF(2);
-FUNCTOR_DEF(3);
-FUNCTOR_DEF(4);
-FUNCTOR_DEF(5);
-FUNCTOR_DEF(6);
-FUNCTOR_DEF(7);
-FUNCTOR_DEF(8);
-FUNCTOR_DEF(9);
-FUNCTOR_DEF(10);
-FUNCTOR_DEF(11);
-FUNCTOR_DEF(12);
-
-///////////////////////////////////////////////////////
-#define VARDIC_FUNCTOR_DEF(n) \
-template <typename R DECL_TEMPLATE_ARGS(n)> \
-struct Functor<R(DECL_VARDIC_ARGS(n) ...)> : public BaseFunctor \
-{ \
-    FUNCTOR_CONS() \
- \
-    R operator()(const RefAny& p1 = RefAny(), const RefAny& p2 = RefAny(), \
-         const RefAny& p3 = RefAny(), const RefAny& p4 = RefAny(), \
-         const RefAny& p5 = RefAny(), const RefAny& p6 = RefAny(), \
-         const RefAny& p7 = RefAny(), const RefAny& p8 = RefAny(), \
-         const RefAny& p9 = RefAny(), const RefAny& p10 = RefAny(), \
-         const RefAny& p11 = RefAny(), const RefAny& p12 = RefAny()) \
-    { \
-        return GlobalMockObject::instance.invoke<R>(getName()) \
-                                    (getNameOfCaller() DECL_REST_PARAMS(12)); \
-    } \
-}
-
-VARDIC_FUNCTOR_DEF(0);
-VARDIC_FUNCTOR_DEF(1);
-VARDIC_FUNCTOR_DEF(2);
-VARDIC_FUNCTOR_DEF(3);
-VARDIC_FUNCTOR_DEF(4);
-VARDIC_FUNCTOR_DEF(5);
-VARDIC_FUNCTOR_DEF(6);
-VARDIC_FUNCTOR_DEF(7);
-VARDIC_FUNCTOR_DEF(8);
-
 /////////////////////////////////////////////////////////////////////////////
 
 MOCKCPP_NS_END
+
+#endif // MOCKCPP_USE_MOCKABLE
 
 #endif
 

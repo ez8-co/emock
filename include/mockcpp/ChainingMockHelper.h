@@ -18,7 +18,6 @@
 #ifndef __MOCKCPP_CHAINING_MOCK_HELPER_H
 #define __MOCKCPP_CHAINING_MOCK_HELPER_H
 
-#include <boost/typeof/typeof.hpp>
 #include <mockcpp/mockcpp.h>
 #include <mockcpp/IsEqual.h>
 #include <mockcpp/IsNotEqual.h>
@@ -85,22 +84,16 @@ Constraint* spy(T& val)
    return new Spy<T>(val);
 }
 
-template <typename Predict>
-struct PredictTypeTraits
-{
-};
-
 template <typename Predict, typename T>
-struct PredictTypeTraits<bool (Predict::*)(T)>
+Constraint* checkWithHelper(bool (Predict::*)(T), Predict pred)
 {
-    typedef T ParaType;
-};
+    return new CheckWith<T, Predict>(pred);
+}
 
 template <typename Predict>
 Constraint* checkWith(Predict pred)
 {
-    typedef typename PredictTypeTraits<BOOST_TYPEOF(&Predict::operator())>::ParaType T; 
-    return new CheckWith<T, Predict>(pred);
+    return checkWithHelper(&Predict::operator(), pred);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -111,11 +104,17 @@ Constraint* checkWith(bool (*pred)(T))
 }
 
 ////////////////////////////////////////////////////////////////
+
+template <typename Predict, typename T>
+Constraint* processWithHelper(bool (Predict::*)(T), Predict pred)
+{
+    return new ProcessWith<T, Predict>(pred);
+}
+
 template <typename Proc>
 Constraint* processWith(Proc proc)
 {
-    typedef typename PredictTypeTraits<BOOST_TYPEOF(&Proc::operator())>::ParaType T; 
-    return new ProcessWith<T, Proc>(proc);
+    return processWithHelper(&Proc::operator(), proc);
 }
 
 ////////////////////////////////////////////////////////////////

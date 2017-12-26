@@ -29,7 +29,7 @@ struct CheckWith : public Constraint
 {
     CheckWith(Predict pred)
       : predict(pred)
-    {}    
+    {}
 
     bool eval(const RefAny& val) const
     {

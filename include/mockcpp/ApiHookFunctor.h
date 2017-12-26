@@ -55,7 +55,7 @@ public: \
  \
    static void* getApiHook(F* api) \
    { \
-      if(! appliedBy(api)) return 0; \
+      if(!appliedBy(api)) return 0; \
       ++refCount; \
       return getHook(); \
    } \
