@@ -15,8 +15,6 @@
    limitations under the License.
 ***/
 
-#include <inttypes.h>
-
 #include "JmpOnlyApiHook.h"
 #include <mockcpp/ApiHook.h>
 #include <mockcpp/JmpCode.h>

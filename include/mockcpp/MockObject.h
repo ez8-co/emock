@@ -33,12 +33,6 @@
 
 MOCKCPP_NS_START
 
-template <typename MockObjectClass>
-struct MockObjectTraits
-{
-   typedef typename MockObjectClass::MockedInterface TYPE;
-};
-
 ////////////////////////////////////////////////////////////////
 template <typename Interface>
 struct MockObject : public MockObjectBase
@@ -130,11 +124,14 @@ struct MockObject : public MockObjectBase
       identifyDestructor<Interface, Interface>();
    }
    /////////////////////////////////////////////////////////////
-  template <typename Cls, typename Method>
-   InvocationMockBuilderGetter method_helper(Cls& obj, Method m, const char* method_name)
+   template <typename Method>
+   InvocationMockBuilderGetter method_helper(Method m, const char* method_prefix, const char* method_suffix)
    {
-     return method(&MockObjectTraits<Cls>::TYPE::m, 
-       (TypeString<typename MockObjectTraits<Cls>::TYPE>::value() + method_name).c_str());
+     std::string method_name(method_prefix);
+     method_name += TypeString<MockedInterface>::value();
+     method_name += "::";
+     method_name += method_suffix;
+     return method(m, method_name.c_str());
   }
 
 	template <typename Method>

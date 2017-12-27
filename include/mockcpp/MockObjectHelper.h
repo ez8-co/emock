@@ -24,7 +24,9 @@
 #define METHOD(m) method(&m, #m)
 
 #define MOCK_METHOD(obj, m) \
-   obj.method_helper(obj, m, "::"#m)
+   obj.method_helper(&m, "", #m)
+
+#define MOCK_OVERLOAD_METHOD(obj, type, m) \
+   obj.method_helper((type)&m, "("#type")", #m)
 
 #endif
-

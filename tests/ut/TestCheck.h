@@ -74,7 +74,7 @@ FIXTURE(Check)
 
 	TEST(Can use function to check the specified member in structure)
 	{
-		MOCK_METHOD(mocker, method)
+		MOCK_METHOD(mocker, Interface::method)
 			.expects(once())
 			.with(checkWith(is_the_second_member_2));
 		
@@ -88,7 +88,7 @@ FIXTURE(Check)
 	{
 		STRUCT_T input = {1, 3};
 
-		//MOCK_METHOD(mocker, method)
+		//MOCK_METHOD(mocker, Interface::method)
 		//	.expects(once())
 		//	.with(checkWith(is_the_second_member_2));
 
@@ -121,7 +121,7 @@ FIXTURE(Check)
 
 	TEST(Can use functor to check the specified member in structure)
 	{
-		MOCK_METHOD(mocker, method)
+		MOCK_METHOD(mocker, Interface::method)
 			.expects(once())
 			.with(checkWith(the_second_member_checker(2)));
 
@@ -131,7 +131,7 @@ FIXTURE(Check)
 
 	TEST(Can modify the input s specified member)
 	{
-		MOCK_METHOD(mocker, method)
+		MOCK_METHOD(mocker, Interface::method)
 			.expects(once())
 			.with(checkWith(modify_the_first_member_to_10));
 

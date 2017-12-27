@@ -19,7 +19,7 @@ FIXTURE(mockcpp_sample, mockcpp samples)
     TEST(test_method_mocker)
     {
         MockObject<Interface> mocker;
-        MOCK_METHOD(mocker, method)
+        MOCK_METHOD(mocker, Interface::method)
             .expects(once())
             .will(returnValue(10));
         ASSERT_EQ(10, mocker->method());

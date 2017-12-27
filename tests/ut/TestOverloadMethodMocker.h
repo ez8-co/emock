@@ -75,7 +75,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
     TEST(overload virtual method mocker test)
     {
         MockObject<CUT> mocker;
-        MOCK_OVERLOAD_METHOD(mocker, int (CUT::*) (int), bar)
+        MOCK_OVERLOAD_METHOD(mocker, int (CUT::*) (int), CUT::bar)
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, static_cast<CUT*>(mocker)->bar(0));

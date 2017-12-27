@@ -15,7 +15,6 @@
    limitations under the License.
 ***/
 
-#include <inttypes.h>
 #include <string.h>
 
 #include <mockcpp/JmpCode.h>

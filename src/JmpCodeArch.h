@@ -19,6 +19,16 @@
 
 #include <mockcpp/mockcpp.h>
 
+#ifdef _MSC_VER // [
+   #ifdef _WIN64 // [
+      typedef unsigned __int64  uintptr_t;
+   #else // _WIN64 ][
+      typedef _W64 unsigned int uintptr_t;
+   #endif // _WIN64 ]
+#else
+   #include <inttypes.h>
+#endif // _MSC_VER ]
+
 #if BUILD_FOR_X64
 # include "JmpCodeX64.h"
 #elif BUILD_FOR_X86

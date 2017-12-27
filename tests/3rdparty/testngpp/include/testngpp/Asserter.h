@@ -25,14 +25,6 @@
 #include <testngpp/testngpp.h>
 #include <testngpp/utils/Formatter.h>
 
-
-#if defined(__GNUC__)
-#define TESTNGPP_TYPEOF(expr) typeof(expr)
-#else
-#include <boost/typeof/typeof.hpp>
-#define TESTNGPP_TYPEOF(expr) BOOST_TYPEOF(expr)
-#endif
-
 TESTNGPP_NS_START
 
 //////////////////////////////////////////////////////////////////
@@ -54,29 +46,41 @@ TESTNGPP_NS_START
 }while(0)
 
 //////////////////////////////////////////////////////////////////
-#define __TESTNGPP_MAKE_STR(expr) " " #expr " "
+template<typename T1, typename T2>
+void __testngpp_assert_eq_helper(TestFixture *tf, T1 expected_value, const char* expected_value_name, T2 value, const char* value_name, bool failfast)
+{
+   if(!(expected_value == value)) {
+      std::stringstream ss;
+      ss << "expected (" << expected_value_name << "==" << value_name << "), found ("
+         << TESTNGPP_NS::toTypeAndValueString(expected_value)
+         << "!="
+         << TESTNGPP_NS::toTypeAndValueString(value)
+         << ")";
+      tf->__TESTNGPP_REPORT_FAILURE(ss.str(), failfast);
+   }
+}
 
-//////////////////////////////////////////////////////////////////
-#define __TESTNGPP_ASSERT_EQUALITY(expected_value, expected_equality, wrong_equality, value, failfast) do {\
-   TESTNGPP_TYPEOF(value) __testngpp_value = (value); \
-   if(expected_value wrong_equality __testngpp_value) { \
-      std::stringstream ss; \
-      ss << "expected (" #expected_value __TESTNGPP_MAKE_STR(expected_equality) #value "), found (" \
-         << TESTNGPP_NS::toTypeAndValueString(expected_value) \
-         << __TESTNGPP_MAKE_STR(wrong_equality) \
-         << TESTNGPP_NS::toTypeAndValueString(__testngpp_value) \
-         << ")"; \
-      __TESTNGPP_REPORT_FAILURE(ss.str(), failfast); \
-   } \
-}while(0)
+template<typename T1, typename T2>
+void __testngpp_assert_ne_helper(TestFixture *tf, T1 expected_value, const char* expected_value_name, T2 value, const char* value_name, bool failfast)
+{
+   if(!(expected_value != value)) {
+      std::stringstream ss;
+      ss << "expected (" << expected_value_name << "!=" << value_name << "), found ("
+         << TESTNGPP_NS::toTypeAndValueString(expected_value)
+         << "=="
+         << TESTNGPP_NS::toTypeAndValueString(value)
+         << ")";
+      tf->__TESTNGPP_REPORT_FAILURE(ss.str(), failfast);
+   }
+}
 
 //////////////////////////////////////////////////////////////////
 #define __ASSERT_EQ(expected, value, failfast) \
-   __TESTNGPP_ASSERT_EQUALITY(expected, ==, !=, value, failfast)
+	testngpp::__testngpp_assert_eq_helper(this, expected, #expected, value, #value, failfast)
 
 //////////////////////////////////////////////////////////////////
 #define __ASSERT_NE(expected, value, failfast) \
-   __TESTNGPP_ASSERT_EQUALITY(expected, !=, ==, value, failfast)
+	testngpp::__testngpp_assert_ne_helper(this, expected, #expected, value, #value, failfast)
 
 //////////////////////////////////////////////////////////////////
 #define __ASSERT_THROWS(expr, except, failfast) do { \
@@ -151,22 +155,24 @@ TESTNGPP_NS_START
 //////////////////////////////////////////////////////////////////
 #define __TESTNGPP_ABS(value) ((value) > 0?(value):-(value))
 //////////////////////////////////////////////////////////////////
-#define __ASSERT_DELTA(x, y, d, failfast) do { \
-   TESTNGPP_TYPEOF(x) value1 = x; \
-   TESTNGPP_TYPEOF(y) value2 = y; \
-   TESTNGPP_TYPEOF(d) delta  = __TESTNGPP_ABS(d); \
-   TESTNGPP_TYPEOF(d) actual_delta = __TESTNGPP_ABS(value1 - value2); \
-   if(actual_delta > delta) \
-   { \
-      std::stringstream ss; \
-      ss << "expected the delta of (" #x ", " #y ") <= (" \
-         << TESTNGPP_NS::toTypeAndValueString(delta) \
-         << "), actual delta: (" \
-         << TESTNGPP_NS::toTypeAndValueString(actual_delta) \
-         << ")"; \
-      __TESTNGPP_REPORT_FAILURE(ss.str(), failfast); \
-   } \
-}while(0)
+template<typename T, typename T1, typename T2>
+void __testngpp_assert_delta_helper(TestFixture *tf, T1 x, const char* x_name, T2 y, const char* y_name, T d, bool failfast)
+{
+   T actual_delta = __TESTNGPP_ABS(x - y);
+   if(actual_delta > d)
+   {
+      std::stringstream ss;
+      ss << "expected the delta of (" << x_name << ", " << y_name << ") <= ("
+         << TESTNGPP_NS::toTypeAndValueString(d)
+         << "), actual delta: ("
+         << TESTNGPP_NS::toTypeAndValueString(actual_delta)
+         << ")";
+      tf->__TESTNGPP_REPORT_FAILURE(ss.str(), failfast);
+   }
+}
+
+#define __ASSERT_DELTA(x, y, d, failfast) \
+	testngpp::__testngpp_assert_delta_helper(this, x, #x, y, #y, __TESTNGPP_ABS(d), failfast)
 
 //////////////////////////////////////////////////////////////////
 #define ASSERT_TRUE(expr) __ASSERT_TRUE(expr, true)

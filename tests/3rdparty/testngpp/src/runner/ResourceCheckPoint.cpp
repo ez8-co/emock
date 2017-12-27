@@ -22,24 +22,28 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <inttypes.h>
-
 // for error string
 #include <sstream>
 
 #if !defined(_MSC_VER)
-// for opened fd checking
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#endif
+  // for opened fd checking
+  #include <unistd.h>
+  #include <fcntl.h>
+  #include <errno.h>
+  #endif
 
-#include <testngpp/runner/ResourceCheckPoint.h>
-#include <testngpp/internal/AssertionFailure.h>
-#include <testngpp/internal/Error.h>
+  #include <testngpp/runner/ResourceCheckPoint.h>
+  #include <testngpp/internal/AssertionFailure.h>
+  #include <testngpp/internal/Error.h>
 
-#if defined(_MSC_VER)
-#define snprintf _snprintf
+#else
+  #define PRIxPTR     "Ix"
+  #define snprintf _snprintf
+   #ifdef _WIN64 // [
+      typedef unsigned __int64  uintptr_t;
+   #else // _WIN64 ][
+      typedef _W64 unsigned int uintptr_t;
+   #endif // _WIN64 ]
 #endif
 
 TESTNGPP_NS_START

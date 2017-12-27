@@ -40,3 +40,8 @@ Makefile
 
 # Tesing files
 Testing
+
+# script generated files
+*Def.h
+tests/ut/*.cpp
+*.pyc

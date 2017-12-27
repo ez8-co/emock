@@ -120,7 +120,7 @@ public:
    //void testShouldBeAbleReturnValueIncrementallyWithinAScope()
 
    // repeat()
-   TEST(repeat(num, times)在重复返回num达到指定次数times之后，如果有指定的后续行为，则执行后续行为)
+   TEST(following action after repeat(num, times) if specified by then)
 
    {
        MockObject<Interface> mock;
@@ -133,7 +133,7 @@ public:
    }
 
    // repeat()
-   TEST(repeat(num, times)在重复返回num达到指定的次数times之后，如果无指定后续行为，再次调用将抛出异常)
+   TEST(throw exception after repeat(num, times) if no action specified)
    {
        MockObject<Interface> mock;
 
@@ -146,7 +146,7 @@ public:
    }
 
    // increase()
-   TEST(increase(num, times)在重复返回num+invoke times-1达到指定次数times之后，如果有指定的后续行为，则执行后续行为)
+   TEST(following action after increase(num, times) if specified by then)
    {
        MockObject<Interface> mock;
 
