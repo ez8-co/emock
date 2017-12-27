@@ -31,7 +31,7 @@ struct JmpCodeImpl
    JmpCodeImpl(const void* from, const void* to)
    {
       ::memcpy(m_code, jmpCodeTemplate, JMP_CODE_SIZE);
-      SET_JMP_CODE(m_code, from, to);
+      set_jmp_code(m_code, from, to);
    }
 
    ////////////////////////////////////////////////

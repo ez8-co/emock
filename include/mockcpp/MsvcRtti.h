@@ -25,18 +25,10 @@
 
 MOCKCPP_NS_START
 
-struct PMD
-{
-    int mdisp;  //member displacement
-    int pdisp;  //vbtable displacement
-    int vdisp;  //displacement inside vbtable
-};
-
 struct RTTIBaseClassDescriptor
 {
     std::type_info* typeInfo; //type descriptor of the class
     unsigned int numContainedBases; //number of nested classes following in the Base Class Array
-    PMD where;        //pointer-to-member displacement info
     unsigned int attributes;        //flags, usually 0
 };
 

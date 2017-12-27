@@ -86,7 +86,7 @@ ResultImpl::ResultImpl(
 ResultImpl::~ResultImpl()
 {
    std::list<ResultHandler*>::iterator i = handlers.begin();
-   for(; i != handlers.end(); i++)
+   for(; i != handlers.end(); ++i)
    {
       delete (*i);
    }
@@ -116,7 +116,7 @@ Result::~Result()
 const Any& ResultImpl::getResult(const Any& result) const
 {
     std::list<ResultHandler*>::const_iterator i = handlers.begin();
-    for(; i != handlers.end(); i++)
+    for(; i != handlers.end(); ++i)
     {
       if((*i)->matches(result))
       {

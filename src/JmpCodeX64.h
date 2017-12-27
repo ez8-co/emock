@@ -23,9 +23,10 @@
 const unsigned char jmpCodeTemplate[]  =
    { 0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
-#define SET_JMP_CODE(base, from, to) do { \
-       *(uintptr_t *)(base + 6) = (uintptr_t)to; \
-   } while(0)
+inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
+{
+ *(uintptr_t *)&base[6] = (uintptr_t)to;
+}
 
 #endif
 

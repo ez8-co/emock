@@ -35,8 +35,6 @@ namespace
    const unsigned int EXTRA_VTBL_SLOT = 1;
 #endif
    const unsigned int SLOTS_PER_VTBL = MOCKCPP_MAX_VTBL_SIZE + EXTRA_VTBL_SLOT;
-
-   unsigned int times = 0;
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -57,7 +57,7 @@ static std::string tryToCastParameterToString(const RefAny& val)
 
    if(any_castable<std::string>(val))
    {
-      return any_cast<std::string>(val).c_str();
+      return any_cast<std::string>(val);
    }
 
    return std::string("");

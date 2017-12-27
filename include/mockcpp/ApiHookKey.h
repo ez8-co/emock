@@ -38,9 +38,9 @@ struct ApiHookKey
    bool equals(const ChainableMockMethodKey * const rhs) const;
 
 private:
+   const void* apiAddress;
    ApiHook* hook;
    ApiHookHolder* hookHolder;
-   const void* apiAddress;
 };
 
 MOCKCPP_NS_END

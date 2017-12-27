@@ -48,7 +48,7 @@ struct HookMockObject : public ChainableMockObjectBase
 
     void reset();
 
-private:
+public:
 
     // It's only for template-method invoke. we have to make it visible.
     Invokable* getInvokable(const void* api);

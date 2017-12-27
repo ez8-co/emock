@@ -86,7 +86,7 @@ void
 ChainableMockMethodContainerImpl::reset()
 {
     //for_each(methods.begin(), methods.end(), resetMethod);
-	for(Iterator i = methods.begin(); i != methods.end(); i++)
+	for(Iterator i = methods.begin(); i != methods.end(); ++i)
 	{
 		resetMethod(*i);
 	}

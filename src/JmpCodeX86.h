@@ -18,10 +18,11 @@
 #define __MOCKCPP_JMP_CODE_X32_H__
 
 const unsigned char jmpCodeTemplate[]  = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
-#define SET_JMP_CODE(base, from, to) do { \
-        *(unsigned long*)(base + 1) = \
-            (unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate); \
-   } while(0)
+
+inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
+{
+  *(unsigned long*)&base[1] = (unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate);
+}
 
 #endif
 

@@ -72,7 +72,7 @@ unsigned int ReturnObjectListImpl::numberOfValidObjects() const
 {
     for (size_t i = objects.size()-1; i >= 0; i--)
     {
-      if(!objects[i].empty()) return (unsigned int)(i+1);
+      if(!objects[i].empty()) return (i+1);
     }
 
     return 0;

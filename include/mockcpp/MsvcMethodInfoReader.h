@@ -26,10 +26,12 @@ MOCKCPP_NS_START
 
 struct MsvcVmgMFP
 {
-   void* m_func_address; 
+   void* m_func_address;
+#if 0
    int m_delta;
    int m_vtordisp;
    int m_vtable_index; 
+#endif
 };
 
 template <typename Method>

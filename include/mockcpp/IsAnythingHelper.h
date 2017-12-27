@@ -26,7 +26,7 @@ struct Constraint;
 
 Constraint* any();
 
-static const Constraint* _ = 0;
+__attribute__ ((unused)) static const Constraint* _ = 0;
 
 bool isAnyConstraint(Constraint* c);
 

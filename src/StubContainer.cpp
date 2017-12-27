@@ -62,7 +62,7 @@ std::string StubContainerImpl::toString() const
     oss_t oss;
 
     ConstIterator iter = stubs.begin();
-    for(; iter != stubs.end(); iter++)
+    for(; iter != stubs.end(); ++iter)
     {
        oss << "\n" << space << (*iter)->toString();
     }
@@ -73,7 +73,7 @@ std::string StubContainerImpl::toString() const
 void StubContainerImpl::reset()
 {
    for(Iterator i = stubs.begin(); \
-                i != stubs.end(); i++)
+                i != stubs.end(); ++i)
    {
       delete (*i);
    }
@@ -106,8 +106,8 @@ StubContainerImpl::ConstIterator StubContainerImpl::getCurrentStub() const
     unsigned int i = 0;
     while(i < index && iter != stubs.end())
     {
-       i++;
-       iter++;
+       ++i;
+       ++iter;
     }
 
     return iter;
@@ -123,8 +123,8 @@ Stub* StubContainerImpl::getStub() const
 
     if((*iter)->isCompleted() && !isLast())
     {
-       iter++;
-       index++;
+       ++iter;
+       ++index;
     }
 
     return (*iter);

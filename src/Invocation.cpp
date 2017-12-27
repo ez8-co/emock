@@ -69,7 +69,7 @@ std::string InvocationImpl::toString() const
 #define INIT_PARAMETER(i) This->parameters.push_back(p##i)
 
 Invocation::Invocation(
-                     const std::string name
+                     const std::string& name
                    , const RefAny& p1
                    , const RefAny& p2
                    , const RefAny& p3
