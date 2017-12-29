@@ -38,6 +38,7 @@ const Any getDataProvider##name(unsigned int index, unsigned int item) \
 
 struct TestAny: public TESTCPP_NS::TestFixture 
 {
+   /*
 #if 0
    DATA_PROVIDER
             ( myData, 3
@@ -59,6 +60,7 @@ struct TestAny: public TESTCPP_NS::TestFixture
       ASSERT_EQ((const char*)"cde", any_cast<const char*>(getDataProvidermyData(1, 2)));
    }
 #endif
+*/
 
    // @test
 	void ShouldBeEmptyIfANewInstanceIsNotInitialized()

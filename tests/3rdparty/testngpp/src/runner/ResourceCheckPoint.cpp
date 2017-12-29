@@ -25,17 +25,11 @@
 // for error string
 #include <sstream>
 
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
   // for opened fd checking
   #include <unistd.h>
   #include <fcntl.h>
   #include <errno.h>
-  #endif
-
-  #include <testngpp/runner/ResourceCheckPoint.h>
-  #include <testngpp/internal/AssertionFailure.h>
-  #include <testngpp/internal/Error.h>
-
 #else
   #define PRIxPTR     "Ix"
   #define snprintf _snprintf
@@ -45,6 +39,10 @@
       typedef _W64 unsigned int uintptr_t;
    #endif // _WIN64 ]
 #endif
+
+#include <testngpp/runner/ResourceCheckPoint.h>
+#include <testngpp/internal/AssertionFailure.h>
+#include <testngpp/internal/Error.h>
 
 TESTNGPP_NS_START
 
@@ -165,7 +163,7 @@ static void freeMemory(void* p)
    if(header->magic != magicNumber)
    {
       char buf[100];
-      snprintf(buf, sizeof(buf), "memory corruption occurred at %#"PRIxPTR, (uintptr_t) p);
+      snprintf(buf, sizeof(buf), "memory corruption occurred at %#" PRIxPTR, (uintptr_t) p);
       throw Error(buf);
    }
 

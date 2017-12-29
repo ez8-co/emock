@@ -26,7 +26,10 @@ struct Constraint;
 
 Constraint* any();
 
-__attribute__ ((unused)) static const Constraint* _ = 0;
+#ifdef __GNUC__
+__attribute__ ((unused))
+#endif
+static const Constraint* _ = 0;
 
 bool isAnyConstraint(Constraint* c);
 

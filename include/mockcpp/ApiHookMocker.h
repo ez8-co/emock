@@ -36,25 +36,28 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 #ifdef _MSC_VER
 
   // MSVC use ecx register to transfer `this` pointer
+  // In Windows: `__thiscall` is left-to-right 
+  //             and almost equal to `__stdcall` by `ret 8` when return
 
   #define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
   InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
   {\
       union {\
-        R (*pf)(DECL_ARGS(n));\
+        R (__stdcall *pf)(DECL_ARGS(n));\
         R (CLS::*pmf)(DECL_ARGS(n));\
       } u;\
       u.pmf = api;\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
                    , reinterpret_cast<const void*>(u.pf)\
-                   , ApiHookHolderFactory::create<R(DECL_ARGS(n))>(u.pf));\
+                   , ApiHookHolderFactory::create<R __stdcall (DECL_ARGS(n))>(u.pf));\
   }
 
 #else
 
-  // GCC use first arg that is pushed last to transfer `this` pointer
+  // GCC push `this` at last to transfer `this` pointer
+  // so we add first arg and use right-to-left `__cdecl` as mocker
 
   #define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\

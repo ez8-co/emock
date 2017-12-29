@@ -67,11 +67,11 @@ std::string getParameterMismatchString(int n
 
 
 ///////////////////////////////////////////////////////////
-#define PROC_STUB_DEF(n) \
+#define __PROC_STUB_DEF(n, CallingConvention) \
 template <typename R DECL_TEMPLATE_ARGS(n)> \
-struct ProcStub<R(DECL_ARGS(n))> : public ProcStubBase \
+struct ProcStub<R CallingConvention (DECL_ARGS(n))> : public ProcStubBase \
 { \
-    typedef R (*Func)(DECL_ARGS(n)); \
+    typedef R (CallingConvention *Func)(DECL_ARGS(n)); \
  \
     PROC_STUB_CONS() \
  \
@@ -88,14 +88,14 @@ private: \
     Any result; \
 }; \
 template <typename R DECL_TEMPLATE_ARGS(n)> \
-Stub* invoke(R(*f)(DECL_ARGS(n)), const char* name = 0) \
+Stub* invoke(R(CallingConvention *f)(DECL_ARGS(n)), const char* name = 0) \
 { \
-    return new ProcStub<R(DECL_ARGS(n))>(f, name?name:""); \
+    return new ProcStub<R CallingConvention (DECL_ARGS(n))>(f, name?name:""); \
 } \
 template <DECL_VOID_TEMPLATE_ARGS(n)> \
-struct ProcStub<void(DECL_ARGS(n))> : public ProcStubBase \
+struct ProcStub<void CallingConvention (DECL_ARGS(n))> : public ProcStubBase \
 { \
-    typedef void (*Func)(DECL_ARGS(n)); \
+    typedef void (CallingConvention *Func)(DECL_ARGS(n)); \
  \
     PROC_STUB_CONS() \
  \
@@ -111,6 +111,14 @@ private: \
     Func func; \
 }
 
+#if defined(_MSC_VER)
+#define PROC_STUB_DEF(n) \
+__PROC_STUB_DEF(n, ); \
+__PROC_STUB_DEF(n, __stdcall)
+#else
+#define PROC_STUB_DEF(n) \
+__PROC_STUB_DEF(n, )
+#endif
 /////////////////////////////////////////////////////
 
 PROC_STUB_DEF(0);
@@ -127,11 +135,11 @@ PROC_STUB_DEF(10);
 PROC_STUB_DEF(11);
 PROC_STUB_DEF(12);
 
-#define VARDIC_PROC_STUB_DEF(n) \
+#define __VARDIC_PROC_STUB_DEF(n, CallingConvention) \
 template <typename R DECL_TEMPLATE_ARGS(n)>  \
-struct ProcStub<R(DECL_VARDIC_ARGS(n) ...)> : public ProcStubBase \
+struct ProcStub<R CallingConvention (DECL_VARDIC_ARGS(n) ...)> : public ProcStubBase \
 { \
-    typedef R (*Func)(DECL_VARDIC_ARGS(n) ...); \
+    typedef R (CallingConvention *Func)(DECL_VARDIC_ARGS(n) ...); \
  \
     PROC_STUB_CONS() \
  \
@@ -148,14 +156,14 @@ private: \
     Any result; \
 }; \
 template <typename R DECL_TEMPLATE_ARGS(n)> \
-Stub* invoke(R(*f)(DECL_VARDIC_ARGS(n) ...), const char* name = 0) \
+Stub* invoke(R(CallingConvention *f)(DECL_VARDIC_ARGS(n) ...), const char* name = 0) \
 { \
-    return new ProcStub<R(DECL_VARDIC_ARGS(n) ...)>(f, name?name:""); \
+    return new ProcStub<R CallingConvention (DECL_VARDIC_ARGS(n) ...)>(f, name?name:""); \
 } \
 template <DECL_VOID_TEMPLATE_ARGS(n)> \
-struct ProcStub<void(DECL_VARDIC_ARGS(n) ...)> : public ProcStubBase \
+struct ProcStub<void CallingConvention (DECL_VARDIC_ARGS(n) ...)> : public ProcStubBase \
 { \
-    typedef void (*Func)(DECL_VARDIC_ARGS(n) ...); \
+    typedef void (CallingConvention *Func)(DECL_VARDIC_ARGS(n) ...); \
  \
     PROC_STUB_CONS() \
  \
@@ -170,6 +178,15 @@ struct ProcStub<void(DECL_VARDIC_ARGS(n) ...)> : public ProcStubBase \
 private: \
     Func func; \
 }
+
+#if defined(_MSC_VER)
+#define VARDIC_PROC_STUB_DEF(n) \
+__VARDIC_PROC_STUB_DEF(n, )
+#else
+#define VARDIC_PROC_STUB_DEF(n) \
+__VARDIC_PROC_STUB_DEF(n, )
+#endif
+
 /////////////////////////////////////////////////////
 VARDIC_PROC_STUB_DEF(0);
 VARDIC_PROC_STUB_DEF(1);
