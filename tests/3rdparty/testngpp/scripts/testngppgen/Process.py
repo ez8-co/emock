@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
 import sys
-import re
 import os
 import codecs
 
-from Phase0 import phase0
-from Phase1 import phase1
-from Phase2 import phase2
-from Phase3 import phase3
-from Phase4 import phase4
+from testngppgen.Phase0 import phase0
+from testngppgen.Phase1 import phase1
+from testngppgen.Phase2 import phase2
+from testngppgen.Phase3 import phase3
+from testngppgen.Phase4 import phase4
 
 ##########################################################
 def trimCrlf(line):
@@ -40,7 +39,7 @@ def processTestFixtureFile(file, encoding):
 def checkFixtureExistence(fixtureFiles):
    for fixtureFile in fixtureFiles:
       if not os.path.exists(fixtureFile):
-         print >> sys.stderr, fixtureFile, "does not exist"
+         print(fixtureFile, "does not exist", sys.stderr)
          sys.exit(1)
 
 

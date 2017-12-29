@@ -2,8 +2,8 @@
 
 import sys
 
-from LogicalLine import *
-from Message import raw_fatal
+from testngppgen.LogicalLine import *
+from testngppgen.Message import raw_fatal
 
 #######################################################
 class Phase0Parser:

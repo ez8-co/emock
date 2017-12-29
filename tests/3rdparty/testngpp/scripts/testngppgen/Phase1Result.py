@@ -27,7 +27,7 @@ class Tag(Line):
       return self.value
 
    def show(self):
-      print >> sys.stdout, self.line_number, "tag", self.tag, self.value
+      print(self.line_number, "tag", self.tag, self.value)
 
 ##########################################################
 class Unknown(Line):
@@ -39,5 +39,5 @@ class Unknown(Line):
       return self.content
 
    def show(self):
-      print >> sys.stdout, self.line_number, self.content
+      print(self.line_number, self.content)
 

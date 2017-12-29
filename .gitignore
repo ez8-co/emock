@@ -6,6 +6,7 @@
 *.lo
 *.o
 *.obj
+*.pdb
 CMakeFiles
 CMakeCache.txt
 *.cmake
@@ -19,6 +20,8 @@ Makefile
 *.so
 *.dylib
 *.dll
+*.ilk
+*.exp
 
 # Fortran module files
 *.mod
@@ -45,3 +48,11 @@ Testing
 *Def.h
 tests/ut/*.cpp
 *.pyc
+
+# MSVC files
+*.tlog
+*.filters
+*.log
+*.vcxproj
+*.suo
+*.db*

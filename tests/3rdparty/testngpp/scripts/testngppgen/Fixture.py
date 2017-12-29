@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
-import sys
-import re
-
-from TestScope import TestScope
-from AnnotationParser import AnnotationParser
-from TagsParser import TagsParser
-from Name import *
+from testngppgen.TestScope import TestScope
+from testngppgen.AnnotationParser import AnnotationParser
+from testngppgen.TagsParser import TagsParser
+from testngppgen.Name import *
 
 ###########################################
 class Fixture:
@@ -38,7 +35,7 @@ class Fixture:
    ########################################
    def show(self):
       content = "FIXTURE("+self.get_name()+")"
-      print content.encode('utf-8')
+      print(content.encode('utf-8'))
       self.scope.show()
 
    ########################################

@@ -1,15 +1,12 @@
 #!/usr/bin/python
 
-import sys
 import re
-import os
-import codecs
 
-from Phase1Result import *
+from testngppgen.Phase1Result import *
 
-from PreprocessScope import *
+from testngppgen.PreprocessScope import *
 
-from Message import *
+from testngppgen.Message import *
 
 cpp_re  = re.compile( r'^\s*#\s*(?P<instruction>\w+)(\s+(?P<rest>.*))?$', re.UNICODE)
 macro_re = re.compile( r'^\s*[A-Za-z_][A-Za-z0-9_]*\s*$', re.UNICODE)
@@ -99,7 +96,7 @@ class BaseScope(PreprocessScope):
 
       expr = rest
       if rest != None:
-         expr = "".join(re.split("\s*",rest))
+         expr = "".join(re.split("\s+",rest))
 
       return self.parse_scope_inst(lines, inst, expr)
 
@@ -228,8 +225,9 @@ class IfScope(ConditionScope):
       self.one = None
 
       value = is_number(file, line, rest)
-      if value == 0:   self.zero = True
-      elif value > 0:  self.one = True
+      if value:
+         if value == 0:   self.zero = True
+         elif value > 0:  self.one = True
 
       ConditionScope.__init__(self, file, line, parent, root, getIfName(isElif), rest)
 

@@ -2,7 +2,7 @@
 import sys
 import os
 
-from Phase1Result import *
+from testngppgen.Phase1Result import *
 
 ####################################################################
 def message(file, line_number, type, msg):
@@ -10,7 +10,7 @@ def message(file, line_number, type, msg):
 
 ####################################################################
 def raw_fatal(file, line_number, error):
-   print >> sys.stderr, message(file, line_number, "error", error)
+   print(message(file, line_number, "error", error), sys.stderr)
    sys.exit(1)
 
 ####################################################################
@@ -19,11 +19,11 @@ def fatal(file, line, error):
 
 ####################################################################
 def warning(file, line, msg):
-   print >> sys.stderr, message(file, line.get_line_number(), "warning", msg)
+   print(message(file, line.get_line_number(), "warning", msg), sys.stderr)
 
 ####################################################################
 def info(file, line, msg):
-   print >> sys.stdout, message(file, line.get_line_number(), "info", msg)
+   print(message(file, line.get_line_number(), "info", msg))
 
 ####################################################################
 def report_expect_char(file, line, expected_char, unexpected_char):

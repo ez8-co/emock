@@ -1,8 +1,8 @@
 
 import sys
 
-from TestCase import TestCase
-from DataProvider import DataProvider
+from testngppgen.TestCase import TestCase
+from testngppgen.DataProvider import DataProvider
 
 ############################################
 class TestScope:
@@ -36,7 +36,7 @@ class TestScope:
 
    #########################################
    def show(self):
-      print "#" + self.inst, self.expr
+      print("#" + self.inst, self.expr)
 
       for elem in self.elements:
          elem.show()

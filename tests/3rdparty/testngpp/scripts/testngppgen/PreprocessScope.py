@@ -26,7 +26,7 @@ class PreprocessScope:
 
    ##################################
    def show(self):
-      print "#" + self.inst, self.expr
+      print("#" + self.inst, self.expr)
 
       for line in self.lines:
          line.show()

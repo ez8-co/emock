@@ -33,7 +33,7 @@ public:
 
 def checkFileExistance(filename):
    if os.path.exists(filename):
-      print >> sys.stderr, "file", filename, "exists, please make sure you wanna overwrite it"
+      print("file", filename, "exists, please make sure you wanna overwrite it", sys.stderr)
       sys.exit(1)
 
 def generate(name, filename):
@@ -48,7 +48,7 @@ def generateTestFixture(name):
    generate(name, filename)
 
 def usage(prog):
-   print "Usage:", prog, "class_name_under_test"
+   print("Usage:", prog, "class_name_under_test")
 
 if __name__ == "__main__":
    if len(sys.argv) < 2:

@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
-from Phase1Result import *
+from testngppgen.Phase1Result import *
 
-from TestScope import TestScope
+from testngppgen.TestScope import TestScope
 
 ##########################################################
 class PreprocessScopeParser:

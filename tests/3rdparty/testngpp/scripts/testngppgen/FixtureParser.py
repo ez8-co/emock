@@ -1,21 +1,18 @@
 #!/usr/bin/python
 
-import sys
 import re
-import os
-import codecs
 
-from Phase1Result import *
+from testngppgen.Phase1Result import *
 
-from PreprocessScope import *
-from Fixture import Fixture
+from testngppgen.PreprocessScope import *
+from testngppgen.Fixture import Fixture
 
-from TestCaseParser import TestCaseParser
-from PreprocessScopeParser import *
-from ClassDeclParser import ClassDeclParser
-from DataProviderParser import DataProviderParser
+from testngppgen.TestCaseParser import TestCaseParser
+from testngppgen.PreprocessScopeParser import *
+from testngppgen.ClassDeclParser import ClassDeclParser
+from testngppgen.DataProviderParser import DataProviderParser
 
-from Message import *
+from testngppgen.Message import *
 
 ##########################################################
 

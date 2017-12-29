@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
-from Phase1Result import *
-from TestCase import *
-from PreprocessScope import *
+from testngppgen.Phase1Result import *
+from testngppgen.TestCase import *
+from testngppgen.PreprocessScope import *
 
-from Message import *
+from testngppgen.Message import *
 
 ##########################################################
 class TestCaseParser:

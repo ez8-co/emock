@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-from PreprocessScope import PreprocessScope
-from PreprocessScopeParser import PreprocessScopeParser
-from Useless import Useless
+from testngppgen.PreprocessScope import PreprocessScope
+from testngppgen.PreprocessScopeParser import PreprocessScopeParser
+from testngppgen.Useless import Useless
 
-from Phase1Result import *
+from testngppgen.Phase1Result import *
 
-from Message import *
+from testngppgen.Message import *
 
 class ElemParser:
    #######################################################

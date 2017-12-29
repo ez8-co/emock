@@ -1,8 +1,8 @@
 
 import re
 
-from Message import *
-from AnnotationParser import AnnotationParser
+from testngppgen.Message import *
+from testngppgen.AnnotationParser import AnnotationParser
 
 tags_re1 = re.compile( r'^\"(?P<tags>[A-Za-z0-9_\s]*)\"$', re.UNICODE)
 tags_re2 = re.compile( r'^(?P<tags>[A-Za-z0-9_\s]*)$', re.UNICODE)

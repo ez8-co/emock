@@ -1,15 +1,14 @@
 #!/usr/bin/python
 
 import re
-import codecs
 
-from Phase1Result import *
-from PreprocessScopeParser import *
-from ElemParser import ElemParser
+from testngppgen.Phase1Result import *
+from testngppgen.PreprocessScopeParser import *
+from testngppgen.ElemParser import ElemParser
 
-from FixtureParser import FixtureParser
+from testngppgen.FixtureParser import FixtureParser
 
-from Message import *
+from testngppgen.Message import *
 
 fixture_re1  = re.compile( \
    r'''^\s*FIXTURE\s*\(\s*(?P<fixtureId>[A-Za-z_][A-Za-z0-9_]*)\s*(,\s*(?P<fixtureName>.+))?\s*\)\s*''', \
