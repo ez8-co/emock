@@ -30,46 +30,74 @@
 //USING_TESTNGPP_NS
 USING_MOCKCPP_NS
 
-// for linux define __cdecl to null
-#if !defined(_MSC_VER) && !defined(__cdecl)
-#define __cdecl
+struct CUT;
+
+#ifdef _MSC_VER
+int normal_method()
+#else
+int normal_method(CUT*)
 #endif
+{
+    return 100;
+}
+
+#ifdef _MSC_VER
+int normal_method_1(int)
+#else
+int normal_method_1(CUT* , int)
+#endif 
+{
+    return 101;
+}
+    
+static int static_method()
+{
+    return 102;
+}
+
+static int static_method_1(int a)
+{
+    return 103;
+}
+
+struct CUT
+{
+    int normal_method()
+    {
+        return 11;
+    }
+    
+    int normal_method_1(int a)
+    {
+        return 11;
+    }
+    
+    static int static_method()
+    {
+        return 12;
+    }
+
+    static int static_method_1(int a)
+    {
+        return 12;
+    }
+};
 
 FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
 {
-    struct CUT
-    {
-        int normal_method() //__cdecl is optional, because it has no param
-        {
-            return 11;
-        }
-        
-        int __cdecl  normal_method_1(int a) //__cdecl is must
-        {
-            return 11;
-        }
-        
-        static int static_method()
-        {
-            return 12;
-        }
-
-        static int static_method_2(void *This, int a)
-        {
-            return 12;
-        }
-    };
 
     TEST(normal member method with no param mocked as global function)
     {
-        GlobalMockObject::instance.method
-            ( "CUT::normal_method"
-            , getAddrOfMethod(&CUT::normal_method)
-            , (const void *)CApiHookFunctor<BOOST_TYPEOF(CUT::static_method)>::hook
-    		, ThunkCodeProvider<BOOST_TYPEOF(CUT::static_method)>()())
+        MOCKER(&CUT::normal_method)
             .stubs()
             .will(returnValue(100));
         CUT cut;
+        ASSERT_EQ(100, cut.normal_method());
+        GlobalMockObject::verify();
+
+        MOCKER(&CUT::normal_method)
+            .stubs()
+            .will(invoke(normal_method));
         ASSERT_EQ(100, cut.normal_method());
         GlobalMockObject::verify();
     }
@@ -78,15 +106,18 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
     {
         // the param number of hook function is one more than the method mocked, 
         // because when call CUT.normal_method_1(2) occur, the this pointer is the first argument
-        GlobalMockObject::instance.method
-            ( "CUT::normal_method_1"
-            , getAddrOfMethod(&CUT::normal_method_1)
-            , (const void *)CApiHookFunctor<BOOST_TYPEOF(CUT::static_method_2)>::hook
-    		, ThunkCodeProvider<BOOST_TYPEOF(CUT::static_method_2)>()())
+        MOCKER(&CUT::normal_method_1)
             .stubs()
             .with(any(), eq(2))
             .will(returnValue(101));
         CUT cut;
+        ASSERT_EQ(101, cut.normal_method_1(2));
+        GlobalMockObject::verify();
+
+        MOCKER(&CUT::normal_method_1)
+            .stubs()
+            .with(any(), eq(2))
+            .will(invoke(normal_method_1));
         ASSERT_EQ(101, cut.normal_method_1(2));
         GlobalMockObject::verify();
     }
@@ -95,8 +126,29 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
     {
         MOCKER(CUT::static_method)
             .stubs()
-            .will(returnValue(100));
-        ASSERT_EQ(100, CUT::static_method());
+            .will(returnValue(102));
+        ASSERT_EQ(102, CUT::static_method());
+        GlobalMockObject::verify();
+
+        MOCKER(CUT::static_method)
+            .stubs()
+            .will(invoke(static_method));
+        ASSERT_EQ(102, CUT::static_method());
+        GlobalMockObject::verify();
+    }
+
+    TEST(static member method with one param mocked as global function)
+    {
+        MOCKER(CUT::static_method_1)
+            .stubs()
+            .will(returnValue(103));
+        ASSERT_EQ(103, CUT::static_method_1(1));
+        GlobalMockObject::verify();
+
+        MOCKER(CUT::static_method_1)
+            .stubs()
+            .will(invoke(static_method_1));
+        ASSERT_EQ(103, CUT::static_method_1(1));
         GlobalMockObject::verify();
     }
 };

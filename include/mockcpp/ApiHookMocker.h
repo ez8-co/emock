@@ -33,6 +33,59 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
                  , ApiHookHolderFactory::create(api));
 }
 
+#ifdef _MSC_VER
+
+  // MSVC use ecx register to transfer `this` pointer
+
+  #define MOCKAPI_MEM_FUN_DEF(n)\
+  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
+  {\
+      union {\
+        R (*pf)(DECL_ARGS(n));\
+        R (CLS::*pmf)(DECL_ARGS(n));\
+      } u;\
+      u.pmf = api;\
+      return MOCKCPP_NS::GlobalMockObject::instance.method\
+                   ( name\
+                   , reinterpret_cast<const void*>(u.pf)\
+                   , ApiHookHolderFactory::create<R(DECL_ARGS(n))>(u.pf));\
+  }
+
+#else
+
+  // GCC use first arg that is pushed last to transfer `this` pointer
+
+  #define MOCKAPI_MEM_FUN_DEF(n)\
+  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
+  {\
+      union {\
+        R (*pf)(CLS* DECL_REST_ARGS(n));\
+        R (CLS::*pmf)(DECL_ARGS(n));\
+      } u;\
+      u.pmf = api;\
+      return MOCKCPP_NS::GlobalMockObject::instance.method\
+                   ( name\
+                   , reinterpret_cast<const void*>(u.pf)\
+                   , ApiHookHolderFactory::create<R(CLS* DECL_REST_ARGS(n))>(u.pf));\
+  }
+
+#endif
+
+MOCKAPI_MEM_FUN_DEF(0)
+MOCKAPI_MEM_FUN_DEF(1)
+MOCKAPI_MEM_FUN_DEF(2)
+MOCKAPI_MEM_FUN_DEF(3)
+MOCKAPI_MEM_FUN_DEF(4)
+MOCKAPI_MEM_FUN_DEF(5)
+MOCKAPI_MEM_FUN_DEF(6)
+MOCKAPI_MEM_FUN_DEF(7)
+MOCKAPI_MEM_FUN_DEF(8)
+MOCKAPI_MEM_FUN_DEF(9)
+MOCKAPI_MEM_FUN_DEF(10)
+MOCKAPI_MEM_FUN_DEF(11)
+MOCKAPI_MEM_FUN_DEF(12)
 
 MOCKCPP_NS_END
 

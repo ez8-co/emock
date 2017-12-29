@@ -43,7 +43,7 @@ SET(UT_CASES
   TestCheck.h
   TestApiHook.h
   TestStaticMethodMocker.h
-  #TestNonvirtualMethodMocker.h
+  TestNonvirtualMethodMocker.h
   TestMockcppSample.h
   TestApiHookBase.h
   TestOverloadMethodMocker.h

@@ -41,6 +41,7 @@ struct RetValueImpl;
     return new RetValueImpl<R>();\
   }
 
+MOCKABLE_HELPER_DEF(0)
 MOCKABLE_HELPER_DEF(1)
 MOCKABLE_HELPER_DEF(2)
 MOCKABLE_HELPER_DEF(3)
