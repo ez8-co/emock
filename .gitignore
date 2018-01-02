@@ -11,6 +11,7 @@ CMakeFiles
 CMakeCache.txt
 *.cmake
 Makefile
+install_manifest.txt
 
 # Precompiled Headers
 *.gch
@@ -43,6 +44,7 @@ Makefile
 
 # Tesing files
 Testing
+*.xml
 
 # script generated files
 *Def.h
@@ -56,3 +58,6 @@ tests/ut/*.cpp
 *.vcxproj
 *.suo
 *.db*
+*.sln
+*.ipch
+*.user

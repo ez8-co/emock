@@ -16,7 +16,7 @@
 - No extra dependencies:
   - Unless STL and std c libraries.
 - Cross platform:
-  - Support popular OSs, linux & windows tested.
+  - Support popular OSs, and Linux & Windows tested.
 
 ## Manual of mockcpp
 
@@ -190,7 +190,7 @@ Input Argument Matcher
 
 Output Argument Matcher
 * Output through reference: `outBound(reference, constraint)`
-* Output through pointer: `outBound(point, constraint)`
+* Output through pointer: `outBoundP(point, constraint)`
 
 ##### Usage
 
@@ -239,7 +239,7 @@ The call is expected at most n times:
 - `atMostOnce()`
 
 The method will never be called:
-- `never`
+- `never()`
 
 ##### Usage
 
@@ -320,7 +320,7 @@ It shouldn't be the case very often. But there are times when you want to specif
 
 ##### Related
 
-`id(id)`
+`id(identifier)`
 
 ##### Usage
 
