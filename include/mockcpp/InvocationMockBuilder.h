@@ -23,7 +23,6 @@
 
 MOCKCPP_NS_START
 
-struct Matcher;
 struct InvocationMocker;
 
 template <typename Builder = DummyBuilder>
