@@ -78,7 +78,6 @@ LINK_DIRECTORIES(
 INCLUDE_DIRECTORIES(BEFORE 
   .
   ${PROJECT_HOME}/include
-  ${PROJECT_HOME}/3rdparty
   ${CMAKE_SOURCE_DIR}/3rdparty/testngpp/include
   )
 
