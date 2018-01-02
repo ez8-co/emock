@@ -29,6 +29,53 @@
 
 MOCKCPP_NS_START
 
+template<typename F, typename T>
+T MockableConv(F func);
+
+#ifdef _MSC_VER
+
+  #define MOCKABLE_CONV_DEF(n)\
+  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+  R ( *MockableConv(R (CLS::*api)(DECL_ARGS(n))) )(DECL_ARGS(n))\
+  {\
+      union {\
+        R (__stdcall *pf)(DECL_ARGS(n));\
+        R (CLS::*pmf)(DECL_ARGS(n));\
+      } u;\
+      u.pmf = api;\
+      return u.pf;\
+  }
+
+#else
+
+  #define MOCKABLE_CONV_DEF(n)\
+  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+  R ( *MockableConv(R (CLS::*api)(DECL_ARGS(n))) )(CLS* DECL_REST_ARGS(n))\
+  {\
+      union {\
+        R (*pf)(CLS* DECL_REST_ARGS(n));\
+        R (CLS::*pmf)(DECL_ARGS(n));\
+      } u;\
+      u.pmf = api;\
+      return u.pf;\
+  }
+
+#endif
+
+MOCKABLE_CONV_DEF(0)
+MOCKABLE_CONV_DEF(1)
+MOCKABLE_CONV_DEF(2)
+MOCKABLE_CONV_DEF(3)
+MOCKABLE_CONV_DEF(4)
+MOCKABLE_CONV_DEF(5)
+MOCKABLE_CONV_DEF(6)
+MOCKABLE_CONV_DEF(7)
+MOCKABLE_CONV_DEF(8)
+MOCKABLE_CONV_DEF(9)
+MOCKABLE_CONV_DEF(10)
+MOCKABLE_CONV_DEF(11)
+MOCKABLE_CONV_DEF(12)
+
 template<typename T>
 PlaceHolder* MockableHelper(T func);
 
@@ -54,6 +101,26 @@ MOCKABLE_HELPER_DEF(9)
 MOCKABLE_HELPER_DEF(10)
 MOCKABLE_HELPER_DEF(11)
 MOCKABLE_HELPER_DEF(12)
+
+#define MOCKABLE_HELPER_MF_DEF(n) \
+  template<typename R, typename CLS DECL_TEMPLATE_ARGS(n)> \
+  PlaceHolder* MockableHelper(R (CLS::*pmf)(DECL_ARGS(n))) {\
+    return new RetValueImpl<R>();\
+  }
+
+MOCKABLE_HELPER_MF_DEF(0)
+MOCKABLE_HELPER_MF_DEF(1)
+MOCKABLE_HELPER_MF_DEF(2)
+MOCKABLE_HELPER_MF_DEF(3)
+MOCKABLE_HELPER_MF_DEF(4)
+MOCKABLE_HELPER_MF_DEF(5)
+MOCKABLE_HELPER_MF_DEF(6)
+MOCKABLE_HELPER_MF_DEF(7)
+MOCKABLE_HELPER_MF_DEF(8)
+MOCKABLE_HELPER_MF_DEF(9)
+MOCKABLE_HELPER_MF_DEF(10)
+MOCKABLE_HELPER_MF_DEF(11)
+MOCKABLE_HELPER_MF_DEF(12)
 
 struct RetValueHolder
 {
@@ -126,9 +193,9 @@ private:
 
 #define OVERLAPPED_OPERATORS(ret, op) \
 template<typename T>\
-ret operator op(T x, RetValue y) { return x op T(y); }\
+ret operator op(T x, RetValue y) { return x op any_cast<T>(y); }\
 template<typename T>\
-ret operator op(RetValue x, T y) { return T(x) op y; }
+ret operator op(RetValue x, T y) { return any_cast<T>(x) op y; }
 
 OVERLAPPED_OPERATORS(T, +)
 OVERLAPPED_OPERATORS(T, -)
@@ -222,6 +289,52 @@ private:
    RetValue ret;
    std::string name;
    std::string nameOfCaller;
+};
+
+#ifdef _MSC_VER
+
+  #define MEM_FUNCTOR_DEF(n) \
+      template <DECL_VOID_TEMPLATE_ARGS(n)> \
+      const RetValue& operator()(DECL_PARAMS_LIST(n)) \
+      { \
+        return invoke(DECL_PARAMS(n));\
+      }
+
+#else
+
+  #define MEM_FUNCTOR_DEF(n) \
+      template <DECL_VOID_TEMPLATE_ARGS(n)> \
+      const RetValue& operator()(DECL_PARAMS_LIST(n)) \
+      { \
+        return invoke(obj DECL_REST_PARAMS(n));\
+      }
+
+#endif
+
+template<typename CLS>
+struct MemFunctor : public Functor
+{
+   MemFunctor(PlaceHolder* holder, const std::string& fName, const char* cName, CLS* p)
+      : Functor(holder, fName, cName), obj(p) {}
+
+   const RetValue& operator()(void)
+   {
+     return invoke(obj);
+   }
+   MEM_FUNCTOR_DEF(1)
+   MEM_FUNCTOR_DEF(2)
+   MEM_FUNCTOR_DEF(3)
+   MEM_FUNCTOR_DEF(4)
+   MEM_FUNCTOR_DEF(5)
+   MEM_FUNCTOR_DEF(6)
+   MEM_FUNCTOR_DEF(7)
+   MEM_FUNCTOR_DEF(8)
+   MEM_FUNCTOR_DEF(9)
+   MEM_FUNCTOR_DEF(10)
+   MEM_FUNCTOR_DEF(11)
+
+ private:
+   CLS* obj;
 };
 
 /////////////////////////////////////////////////////////////////////////////

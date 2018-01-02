@@ -23,10 +23,21 @@
 #  define MOCKABLE(function) MOCKER(function).defaults().will(invoke(function)); \
                              PlaceHolder* function##_holder = MockableHelper(function); \
                              MOCKCPP_NS::Functor function(function##_holder, #function, __FUNCTION__)
-#  define MCALL(function) MOCKCPP_NS::Functor(#function, __FUNCTION__)
+#  define MCALL(function) MOCKCPP_NS::Functor(MockableHelper(function), #function, __FUNCTION__)
 #else
 #  define MOCKABLE(function)
 #  define MCALL(function) function
+#endif
+
+#if defined(__cplusplus) && defined(MOCKCPP_USE_MOCKABLE)
+#  include <mockcpp/Functor.h>
+#  define MOCKABLE_METHOD(cls, method) MOCKER(&cls::method).defaults().will(invoke(MockableConv(&cls::method))); \
+                             PlaceHolder* cls##_method##_holder = MockableHelper(&cls::method); \
+                             MOCKCPP_NS::MemFunctor<cls> method(cls##_method##_holder, "&" #cls "::" #method, __FUNCTION__, this)
+#  define MCALL_METHOD(obj_ptr, cls, method) MOCKCPP_NS::MemFunctor<cls>(MockableHelper(&cls::method), "&" #cls "::" #method, __FUNCTION__, obj_ptr)
+#else
+#  define MOCKABLE_METHOD(cls, method)
+#  define MCALL_METHOD(obj_ptr, cls, method) obj_ptr->method
 #endif
 
 #endif
