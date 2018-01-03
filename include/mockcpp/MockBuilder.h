@@ -26,7 +26,6 @@
 #include <mockcpp/ArgumentsMatchBuilder.h>
 #include <mockcpp/AfterMatchBuilder.h>
 #include <mockcpp/StubBuilder.h>
-#include <mockcpp/MoreStubBuilder.h>
 #include <mockcpp/IdentityBuilder.h>
 
 MOCKCPP_NS_START
@@ -38,9 +37,7 @@ typedef InvocationMockBuilder<
             ArgumentsMatchBuilder<
              AfterMatchBuilder<
               StubBuilder< 
-               MoreStubBuilder<
                 IdentityBuilder
-               >
               >
              >
             >

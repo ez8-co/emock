@@ -1,11 +1,21 @@
 
 #include <mockcpp/InvocationMocker.h>
 #include <mockcpp/WillStub.h>
+#include <mockcpp/ThenStub.h>
 
 MOCKCPP_NS_START
 
 template<class Builder>
-Builder& StubBuilder<Builder>::will(Stub* stub)
+MoreStubBuilder<Builder>&
+MoreStubBuilder<Builder>::then(Stub* stub)
+{
+    getMocker()->addStub(new ThenStub(stub));
+    return *this;
+}
+
+template<class Builder>
+MoreStubBuilder<Builder>&
+StubBuilder<Builder>::will(Stub* stub)
 {
     getMocker()->addStub(new WillStub(stub));
     return *this;

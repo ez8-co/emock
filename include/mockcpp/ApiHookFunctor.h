@@ -29,7 +29,6 @@ struct ApiHookFunctor
 {
 };
 
-const std::string empty_caller("");
 #define __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, CallingConvention) \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
 struct ApiHookFunctor<R CallingConvention (DECL_ARGS(n)), Seq> \
@@ -40,7 +39,7 @@ private: \
    static R CallingConvention hook(DECL_PARAMS_LIST(n)) \
    { \
       return GlobalMockObject::instance.invoke<R>(apiAddress) \
-                                (empty_caller DECL_REST_PARAMS(n)); \
+                                ("" DECL_REST_PARAMS(n)); \
    } \
  \
    static bool appliedBy(F* api) \

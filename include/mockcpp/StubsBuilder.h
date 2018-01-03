@@ -23,16 +23,13 @@
 #include <mockcpp/InvocationMockBuilder.h>
 #include <mockcpp/ArgumentsMatchBuilder.h>
 #include <mockcpp/StubBuilder.h>
-#include <mockcpp/MoreStubBuilder.h>
 
 MOCKCPP_NS_START
 
 ///////////////////////////////////////////////
 typedef InvocationMockBuilder<
           ArgumentsMatchBuilder<
-            StubBuilder< 
-              MoreStubBuilder<>
-            >
+            StubBuilder<>
           >
         > StubsBuilder;
 

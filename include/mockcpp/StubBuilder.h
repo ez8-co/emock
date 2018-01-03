@@ -27,14 +27,24 @@ struct InvocationMocker;
 struct Stub;
 
 template <typename Builder = DummyBuilder >
-struct StubBuilder : public Builder
+struct MoreStubBuilder : public Builder
 {
-    Builder& will(Stub* stub);
+    MoreStubBuilder<Builder>& then(Stub* stub);
+
+    virtual ~MoreStubBuilder() {}
+
+private:
+    virtual InvocationMocker* getMocker() const = 0;
+};
+
+template <typename Builder = DummyBuilder >
+struct StubBuilder : public MoreStubBuilder<Builder>
+{
+    MoreStubBuilder<Builder>& will(Stub* stub);
 
     virtual ~StubBuilder() {}
 
 private:
-
     virtual InvocationMocker* getMocker() const = 0;
 };
 
