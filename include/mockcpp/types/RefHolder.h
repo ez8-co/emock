@@ -19,6 +19,7 @@
 #define __MOCKPP_REFHOLDER_H
 
 #include <mockcpp/types/Holder.h>
+#include <stdarg.h>
 
 MOCKCPP_NS_START
 
@@ -47,6 +48,57 @@ struct RefHolder : public Holder<ValueType>
 private:
 
     const ValueType& ref;
+};
+
+struct RefVaList : public PlaceHolder
+{
+    RefVaList() {}
+
+    PlaceHolder * clone() const
+    {
+      RefVaList* p = new RefVaList();
+      p->changeValue(const_cast<RefVaList*>(this)->v);
+      return p;
+    }
+
+    void changeValue(va_list val)
+    {
+      va_copy(v, val);
+    }
+
+    void* toVoidPtr()
+    {
+      union {
+        void *ptr;
+        va_list al;
+      } u;
+      va_copy(u.al, v);
+      return u.ptr;
+    }
+
+    virtual const std::type_info & type() const
+    {
+      return typeid(va_list);
+    }
+    std::string toString() const
+    {
+       return MOCKCPP_NS::toString(const_cast<RefVaList*>(this)->toVoidPtr());
+    }
+    std::string toTypeString() const
+    {
+       return TypeString<va_list>::value();
+    }
+    std::string toTypeAndValueString() const
+    {
+       return MOCKCPP_NS::toTypeAndValueString(const_cast<RefVaList*>(this)->toVoidPtr());
+    }
+    virtual Constraint* getConstraint() const
+    {
+      return any();
+    }
+
+private:
+    va_list v;
 };
 
 MOCKCPP_NS_END

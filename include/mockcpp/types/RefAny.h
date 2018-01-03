@@ -20,12 +20,19 @@
 
 #include <mockcpp/types/AnyBase.h>
 #include <mockcpp/types/RefHolder.h>
+#include <stdarg.h>
 
 MOCKCPP_NS_START
 
 struct RefAny : public AnyBase
 {
    RefAny();
+
+   RefAny(va_list value)
+      : AnyBase(new RefVaList())
+   {
+      reinterpret_cast<RefVaList*>(getContent())->changeValue(value);
+   }
 
    template <typename ValueType>
    RefAny(const ValueType& value)
