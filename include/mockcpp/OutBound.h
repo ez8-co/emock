@@ -30,7 +30,7 @@ template <typename T>
 struct OutBound : public DecoratedConstraint
 {
     OutBound(const T& val, Constraint* constraint = 0)
-      : ref(val), DecoratedConstraint(constraint)
+      : DecoratedConstraint(constraint), ref(val)
     {}
 
     bool evalSelf(const RefAny& val) const
