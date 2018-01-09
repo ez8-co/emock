@@ -11,12 +11,9 @@
 
 ## Why use mockcpp?
 
-- Easy to use: 
-  - It's designed to be used without extra studies.
-- No extra dependencies:
-  - Unless STL and std c libraries.
-- Cross platform:
-  - Support popular OSs, and Linux & Windows tested.
+- Easy to use: it's designed to be used without extra studies.
+- No extra dependencies: unless STL and std c libraries.
+- Cross platform: support popular OSs, and Linux & Windows tested.
 
 ## Manual of mockcpp
 
