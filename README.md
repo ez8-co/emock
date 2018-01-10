@@ -20,7 +20,7 @@
 ### work with `valgrind`
 
 - add `--smc-check=all` to avoid invalidation of dynamically-generated code (API hook).
-- unable to mock `syscall` and related functions (e.g. gettimeofday) yet.
+- unable to mock `syscall` related functions (e.g. `gettimeofday`) yet.
 
 ### others
 
