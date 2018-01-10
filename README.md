@@ -15,6 +15,17 @@
 - No extra dependencies: unless STL and std c libraries.
 - Cross platform: support popular OSs, and Linux & Windows tested.
 
+## Acknowledged issues
+
+### work with `valgrind`
+
+- add `--smc-check=all` to avoid invalidation of dynamically-generated code (API hook).
+- unable to mock `syscall` and related functions (e.g. gettimeofday) yet.
+
+### others
+
+- unable to mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`.
+
 ## Manual of mockcpp
 
 ### 1. Background
