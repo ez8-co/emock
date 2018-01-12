@@ -15,6 +15,10 @@
 - No extra dependencies: unless STL and std c libraries.
 - Cross platform: support popular OSs, and Linux & Windows tested.
 
+## Work-In-Process
+
+- all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
+
 ## Acknowledged issues
 
 ### work with `valgrind`
