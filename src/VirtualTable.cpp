@@ -388,59 +388,56 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
 
 #else
 
-static void* findVtblAddr(const char* fname, const char* clsName) {
-  struct stat sb;
-  int fd = open(fname, O_RDONLY);
-  if(fd < 0)
-    return NULL;
-  if(fstat(fd, &sb))
-    return NULL;
-  Elf64_Ehdr* elf_header = (Elf64_Ehdr*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-  if(elf_header == MAP_FAILED)
-      return NULL;
+  #include <sys/mman.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <link.h>
+  #include <string.h>
+  #include <unistd.h>
 
-  Elf64_Shdr* elf_section = (Elf64_Shdr*)((char*)elf_header + elf_header->e_shoff);
-  char* symTable = (char*)elf_header + elf_section[elf_header->e_shnum-1].sh_offset;
-  for(int i = 1; i < elf_header->e_shnum; ++i) {
-    if(strstr((char*)elf_header + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
-      int symEntries = elf_section[i].sh_size / sizeof(Elf64_Sym);
-      Elf64_Sym* symAddr = (Elf64_Sym*)((char*)elf_header + elf_section[i].sh_offset);
-      for(int j = 0; j < symEntries; ++j) {
-        if (ELF32_ST_TYPE(symAddr[j].st_info) != 1 || strncmp(symTable + symAddr[j].st_name, "_ZTV", 4))
-          continue;
-        if(!strcmp(symTable + symAddr[j].st_name + 4, clsName))
-          return (void*)(symAddr[j].st_value + 16);
+  template<typename Elf_Ehdr, typename Elf_Shdr, typename Elf_Sym>
+  void* findVtblAddr(const char* base, const char* clsName)
+  {
+    const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
+    const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
+    const char* symTable = base + elf_section[elf_header->e_shnum-1].sh_offset;
+    for(int i = 1; i < elf_header->e_shnum; ++i) {
+      if(strstr(base + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
+        int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
+        const Elf_Sym* symAddr = (const Elf_Sym*)(base + elf_section[i].sh_offset);
+        for(int j = 0; j < symEntries; ++j) {
+          if (ELF32_ST_TYPE(symAddr[j].st_info) != 1 || strncmp(symTable + symAddr[j].st_name, "_ZTV", 4))
+            continue;
+          if(!strcmp(symTable + symAddr[j].st_name + 4, clsName)) {
+            return (void*)(long)(symAddr[j].st_value + 16);
+          }
+        }
       }
     }
+    return NULL;
   }
-  return NULL;
-}
 
 #endif
 
 void*
-getVtblAddrByClassName(const string& clsName)
+getVtblAddrByClassName(const std::string& clsName)
 {
 #ifdef _MSC_VER_
-  
-  HANDLE hProcess = GetCurrentProcess();
 
+  HANDLE hProcess = GetCurrentProcess();
   SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
   if(!SymInitialize(hProcess, NULL, TRUE)) {
     printf("SymInitialize returned error : %d\n", GetLastError());
     return NULL;
   }
 
-  char szSymbolName[MAX_SYM_NAME];
-  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", clsName.c_str());
-
-  uint64_t buffer[(sizeof(SYMBOL_INFO) +
-    MAX_SYM_NAME + sizeof(uint64_t) - 1) /
-    sizeof(uint64_t)];
+  uint64_t buffer[(sizeof(SYMBOL_INFO) + MAX_SYM_NAME + sizeof(uint64_t) - 1) / sizeof(uint64_t)];
   PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)buffer;
   pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
   pSymbol->MaxNameLen = MAX_SYM_NAME;
 
+  char szSymbolName[MAX_SYM_NAME];
+  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", clsName.c_str());
   if(SymFromName(hProcess, szSymbolName, pSymbol))
     return pSymbol->Address;
 
@@ -449,8 +446,30 @@ getVtblAddrByClassName(const string& clsName)
 
 #else
 
-  // TODO
-  return NULL;
+  struct stat sb;
+  Dl_info dlinfo;
+  int fd = -1;
+  if(dladdr((void*)getVtblAddrByClassName, &dlinfo))
+    fd = open(dlinfo.dli_fname, O_RDONLY);
+  if(fd < 0)
+    return NULL;
+  if(fstat(fd, &sb))
+    return NULL;
+  char* base = (char*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  if(base == MAP_FAILED)
+      return NULL;
+  void* ret = NULL;
+  switch(base[EI_CLASS]) {
+    case 1:
+      ret = findVtblAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, clsName.c_str());
+      break;
+    case 2:
+      ret = findVtblAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, clsName.c_str());
+      break;
+  }
+  munmap(base, sb.st_size);
+  close(fd);
+  return ret;
 
 #endif
 }

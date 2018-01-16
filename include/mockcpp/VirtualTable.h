@@ -19,6 +19,7 @@
 #define __MOCKCPP_VIRTUAL_TABLE_H
 
 #include <typeinfo>
+#include <string>
 
 #include <mockcpp/mockcpp.h>
 
@@ -50,7 +51,7 @@ struct VirtualTable
 
    static IndexInvokableGetter* getInvokableGetter(void* Caller, unsigned int indexOfVptr);
 
-   static void* getVtblAddrByClassName(const string& clsName);
+   static void* getVtblAddrByClassName(const std::string& clsName);
 
 private:
 	VirtualTableImpl* This;
