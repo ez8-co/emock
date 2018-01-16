@@ -380,4 +380,79 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
    return pThis->indexInvokableGetter;
 }
 
+#ifdef _MSC_VER_
+
+  #include<windows.h>
+  #include<dbghelp.h>
+  #pragma comment(lib, "Dbghelp.lib")
+
+#else
+
+static void* findVtblAddr(const char* fname, const char* clsName) {
+  struct stat sb;
+  int fd = open(fname, O_RDONLY);
+  if(fd < 0)
+    return NULL;
+  if(fstat(fd, &sb))
+    return NULL;
+  Elf64_Ehdr* elf_header = (Elf64_Ehdr*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+  if(elf_header == MAP_FAILED)
+      return NULL;
+
+  Elf64_Shdr* elf_section = (Elf64_Shdr*)((char*)elf_header + elf_header->e_shoff);
+  char* symTable = (char*)elf_header + elf_section[elf_header->e_shnum-1].sh_offset;
+  for(int i = 1; i < elf_header->e_shnum; ++i) {
+    if(strstr((char*)elf_header + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
+      int symEntries = elf_section[i].sh_size / sizeof(Elf64_Sym);
+      Elf64_Sym* symAddr = (Elf64_Sym*)((char*)elf_header + elf_section[i].sh_offset);
+      for(int j = 0; j < symEntries; ++j) {
+        if (ELF32_ST_TYPE(symAddr[j].st_info) != 1 || strncmp(symTable + symAddr[j].st_name, "_ZTV", 4))
+          continue;
+        if(!strcmp(symTable + symAddr[j].st_name + 4, clsName))
+          return (void*)(symAddr[j].st_value + 16);
+      }
+    }
+  }
+  return NULL;
+}
+
+#endif
+
+void*
+getVtblAddrByClassName(const string& clsName)
+{
+#ifdef _MSC_VER_
+  
+  HANDLE hProcess = GetCurrentProcess();
+
+  SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
+  if(!SymInitialize(hProcess, NULL, TRUE)) {
+    printf("SymInitialize returned error : %d\n", GetLastError());
+    return NULL;
+  }
+
+  char szSymbolName[MAX_SYM_NAME];
+  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", clsName.c_str());
+
+  uint64_t buffer[(sizeof(SYMBOL_INFO) +
+    MAX_SYM_NAME + sizeof(uint64_t) - 1) /
+    sizeof(uint64_t)];
+  PSYMBOL_INFO pSymbol = (PSYMBOL_INFO)buffer;
+  pSymbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+  pSymbol->MaxNameLen = MAX_SYM_NAME;
+
+  if(SymFromName(hProcess, szSymbolName, pSymbol))
+    return pSymbol->Address;
+
+  printf("SymFromName returned error : %d\n", GetLastError());
+  return NULL;
+
+#else
+
+  // TODO
+  return NULL;
+
+#endif
+}
+
 MOCKCPP_NS_END
