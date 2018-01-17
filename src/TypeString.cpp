@@ -33,14 +33,11 @@ MOCKCPP_EXPORT
 std::string getDemangledName(const std::type_info& typeInfo)
 {
 #if defined(__GNUC__)
+
    int status;
-
    char* name = abi::__cxa_demangle( typeInfo.name(), 0, 0, & status);
-
-   std::string result(name);
-
-   ::free(name);
-   
+   std::string result(name ? name : typeInfo.name());
+   free(name);
    return result;
 
 #else

@@ -23,6 +23,7 @@
 #include <mockcpp/MethodInfoReader.h>
 #include <mockcpp/ObjNameGetter.h>
 #include <mockcpp/VirtualTableUtils.h>
+#include <mockcpp/TypeString.h>
 
 
 MOCKCPP_NS_START
@@ -386,6 +387,21 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
   #include<dbghelp.h>
   #pragma comment(lib, "Dbghelp.lib")
 
+  namespace {
+    std::string PmfInfo2ClsName(const char* pmf_info) {
+      const char* from = NULL;
+      while(*pmf_info) {
+        if(*pmf_info == '(')
+          from = pmf_info + 1;
+        else if(*pmf_info == ')') {
+          return std::string(from, pmf_info - from - 3);
+        }
+        ++pmf_info;
+      }
+      return NULL; // impossible return
+    }
+  }
+
 #else
 
   #include <sys/mman.h>
@@ -394,40 +410,46 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
   #include <link.h>
   #include <string.h>
   #include <unistd.h>
+  #include <cassert>
+  #include <cxxabi.h>
 
-  template<typename Elf_Ehdr, typename Elf_Shdr, typename Elf_Sym>
-  void* findVtblAddr(const char* base, const char* clsName)
-  {
-    const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
-    const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
-    const char* symTable = base + elf_section[elf_header->e_shnum-1].sh_offset;
-    for(int i = 1; i < elf_header->e_shnum; ++i) {
-      if(strstr(base + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
-        int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
-        const Elf_Sym* symAddr = (const Elf_Sym*)(base + elf_section[i].sh_offset);
-        for(int j = 0; j < symEntries; ++j) {
-          if (ELF32_ST_TYPE(symAddr[j].st_info) != 1 || strncmp(symTable + symAddr[j].st_name, "_ZTV", 4))
-            continue;
-          if(!strcmp(symTable + symAddr[j].st_name + 4, clsName)) {
-            return (void*)(long)(symAddr[j].st_value + 16);
+  namespace {
+    template<typename Elf_Ehdr, typename Elf_Shdr, typename Elf_Sym>
+    void* findVtblAddr(const char* base, const char* pmfName)
+    {
+      const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
+      const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
+      const char* symTable = base + elf_section[elf_header->e_shnum - 1].sh_offset;
+      for(int i = 1; i < elf_header->e_shnum; ++i) {
+        if(strstr(base + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
+          int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
+          const Elf_Sym* symAddr = (const Elf_Sym*)(base + elf_section[i].sh_offset);
+          for(int j = 0; j < symEntries; ++j) {
+            if(ELF32_ST_TYPE(symAddr[j].st_info) != 1 || strncmp(symTable + symAddr[j].st_name, "_ZTV", 4) || !symAddr[j].st_value)
+              continue;
+            const char* symClsName = symTable + symAddr[j].st_name + 4;
+            const char* outterLib = strchr(symClsName, '@');
+            if(!strncmp(symClsName, pmfName + 1, outterLib ? outterLib - symClsName : strlen(symClsName))) {
+              return (void*)(long)(symAddr[j].st_value + 16);
+            }
           }
         }
       }
+      return NULL;
     }
-    return NULL;
   }
 
 #endif
 
 void*
-getVtblAddrByClassName(const std::string& clsName)
+getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
 {
 #ifdef _MSC_VER_
 
   HANDLE hProcess = GetCurrentProcess();
   SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
   if(!SymInitialize(hProcess, NULL, TRUE)) {
-    printf("SymInitialize returned error : %d\n", GetLastError());
+    MOCKCPP_REPORT_FAILURE("Failed to call SymInitialize.");
     return NULL;
   }
 
@@ -437,38 +459,44 @@ getVtblAddrByClassName(const std::string& clsName)
   pSymbol->MaxNameLen = MAX_SYM_NAME;
 
   char szSymbolName[MAX_SYM_NAME];
-  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", clsName.c_str());
-  if(SymFromName(hProcess, szSymbolName, pSymbol))
-    return pSymbol->Address;
+  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", PmfInfo2ClsName(mf_info.name()).c_str());
+  if(!SymFromName(hProcess, szSymbolName, pSymbol)) {
+    SymCleanup(hProcess);
+    MOCKCPP_ASSERT_TRUE("Failed to get vftable", GetLastError() == 126);
+    return NULL;
+  }
 
-  printf("SymFromName returned error : %d\n", GetLastError());
-  return NULL;
+  SymCleanup(hProcess);
+  return pSymbol->Address;
 
 #else
 
   struct stat sb;
   Dl_info dlinfo;
   int fd = -1;
-  if(dladdr((void*)getVtblAddrByClassName, &dlinfo))
+  void* ret = NULL;
+  if(dladdr(pmf, &dlinfo))
     fd = open(dlinfo.dli_fname, O_RDONLY);
   if(fd < 0)
-    return NULL;
+    goto CLOSE_FD;
   if(fstat(fd, &sb))
-    return NULL;
-  char* base = (char*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-  if(base == MAP_FAILED)
-      return NULL;
-  void* ret = NULL;
-  switch(base[EI_CLASS]) {
-    case 1:
-      ret = findVtblAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, clsName.c_str());
-      break;
-    case 2:
-      ret = findVtblAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, clsName.c_str());
-      break;
+    goto CLOSE_FD;
+  {
+    char* base = (char*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if(base == MAP_FAILED)
+      goto CLOSE_FD;
+    switch(base[EI_CLASS]) {
+      case 1:
+        ret = findVtblAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, mf_info.name());
+        break;
+      case 2:
+        ret = findVtblAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, mf_info.name());
+        break;
+    }
+    munmap(base, sb.st_size);
   }
-  munmap(base, sb.st_size);
-  close(fd);
+CLOSE_FD:
+  if(fd != -1) close(fd);
   return ret;
 
 #endif
