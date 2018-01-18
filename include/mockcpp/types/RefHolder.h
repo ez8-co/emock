@@ -50,6 +50,7 @@ private:
     const ValueType& ref;
 };
 
+#ifdef __GNUC__
 struct RefVaList : public PlaceHolder
 {
     RefVaList() {}
@@ -100,6 +101,7 @@ struct RefVaList : public PlaceHolder
 private:
     va_list v;
 };
+#endif
 
 MOCKCPP_NS_END
 

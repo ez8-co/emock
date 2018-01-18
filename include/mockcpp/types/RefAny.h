@@ -28,11 +28,13 @@ struct RefAny : public AnyBase
 {
    RefAny();
 
+#ifdef __GNUC__
    RefAny(va_list value)
       : AnyBase(new RefVaList())
    {
       reinterpret_cast<RefVaList*>(getContent())->changeValue(value);
    }
+#endif
 
    template <typename ValueType>
    RefAny(const ValueType& value)

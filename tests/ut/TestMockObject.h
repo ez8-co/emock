@@ -21,6 +21,7 @@
 #include <iostream>
 #include <mockcpp/MockObject.h>
 #include <mockcpp/ChainingMockHelper.h>
+#include <mockcpp/mokc.h>
 
 USING_MOCKCPP_NS
 
@@ -46,8 +47,17 @@ class TestMockObject : public TESTCPP_NS::TestFixture
 
    struct Interface: public Base0, public Base1
    {
-      virtual const std::string& a() {}
+	  virtual const std::string& a() { return ""; }
       virtual void b(bool) {}
+   };
+
+   struct Dervied: public Interface
+   {
+      virtual int  base00() {return 0;}
+      virtual bool base01(int) const {return true;}
+      virtual void base10() {}
+      virtual long base11(const std::string&) const {return 0;}
+      virtual int  base12() const {return 1;}
    };
 
 
@@ -113,6 +123,24 @@ public:
        TS_ASSERT_EQUALS(1, mock->base00());
        TS_ASSERT_EQUALS(5, mock->base00());
        TS_ASSERT_EQUALS(5, mock->base00());
+   }
+   
+   void testShouldBeAbleToSupportMocker()
+   {
+      Dervied o;
+      MOCKER(&Dervied::base00)
+           .stubs()
+           .will(returnValue(20))
+           .then(returnValue(10))
+           .then(returnValue(1))
+           .then(returnValue(5));
+
+      TS_ASSERT_EQUALS(20, o.base00());
+      TS_ASSERT_EQUALS(10, o.base00());
+      TS_ASSERT_EQUALS(1, o.base00());
+      TS_ASSERT_EQUALS(5, o.base00());
+      TS_ASSERT_EQUALS(5, o.base00());
+      GlobalMockObject::verify();
    }
 
    //void testShouldBeAbleReturnValueRepeatedly()

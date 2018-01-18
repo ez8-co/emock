@@ -21,11 +21,16 @@
 #include <mockcpp/mockcpp.h>
 #include <mockcpp/GlobalMockObject.h>
 #include <mockcpp/ApiHookHolderFactory.h>
+#include <mockcpp/MethodInfoReader.h>
 
 MOCKCPP_NS_START
 
 template <typename API>
+#ifdef _MSC_VER
 InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
+#else
+InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
+#endif
 {
     return MOCKCPP_NS::GlobalMockObject::instance.method
                  ( name
@@ -50,7 +55,7 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
       u.pmf = api;\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
-                   , reinterpret_cast<const void*>(u.pf)\
+                   , getRealAddrOfMethod<CLS, R (CLS::*)(DECL_ARGS(n))>(u.pmf)\
                    , ApiHookHolderFactory::create<R __stdcall (DECL_ARGS(n))>(u.pf));\
   }
 
@@ -61,16 +66,16 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 
   #define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
-  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
+  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)), void* p)\
   {\
       union {\
         R (*pf)(CLS* DECL_REST_ARGS(n));\
-        R (CLS::*pmf)(DECL_ARGS(n));\
+        void* p;\
       } u;\
-      u.pmf = api;\
+      u.p = p;\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
-                   , reinterpret_cast<const void*>(u.pf)\
+                   , getRealAddrOfMethod<CLS, R (CLS::*)(DECL_ARGS(n))>(p)\
                    , ApiHookHolderFactory::create<R(CLS* DECL_REST_ARGS(n))>(u.pf));\
   }
 
@@ -89,6 +94,8 @@ MOCKAPI_MEM_FUN_DEF(9)
 MOCKAPI_MEM_FUN_DEF(10)
 MOCKAPI_MEM_FUN_DEF(11)
 MOCKAPI_MEM_FUN_DEF(12)
+
+#undef MOCKAPI_MEM_FUN_DEF
 
 MOCKCPP_NS_END
 

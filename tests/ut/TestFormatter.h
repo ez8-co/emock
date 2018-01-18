@@ -226,7 +226,7 @@ public:
    void testShouldBeAbleToStringnizeVerySmallDouble()
    {
       double d = .0000000000000000000001;
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER <= 1600
       std::string expected("(double)1e-022");
 #else
 	  std::string expected("(double)1e-22");
@@ -272,7 +272,7 @@ public:
    void testShouldBeAbleToStringnizeVerySmallFloat()
    {
       float f = .0000000000000000000001;
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && _MSC_VER <= 1600
       std::string expected("(float)1e-022");
 #else
 	  std::string expected("(float)1e-22");

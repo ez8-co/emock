@@ -33,6 +33,13 @@ getIndicesOfMethod(Method m)
        (vptrIndex, vtblIndex);
 }
 
+template <typename Cls, typename Method>
+void*
+getRealAddrOfMethod(void* m)
+{
+   return m;
+}
+
 MOCKCPP_NS_END
 
 #endif

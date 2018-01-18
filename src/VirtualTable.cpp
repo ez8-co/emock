@@ -381,7 +381,7 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
    return pThis->indexInvokableGetter;
 }
 
-#ifdef _MSC_VER_
+#ifdef _MSC_VER
 
   #include<windows.h>
   #include<dbghelp.h>
@@ -442,9 +442,9 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
 #endif
 
 void*
-getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
+VirtualTable::getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
 {
-#ifdef _MSC_VER_
+#ifdef _MSC_VER
 
   HANDLE hProcess = GetCurrentProcess();
   SymSetOptions(SYMOPT_UNDNAME | SYMOPT_DEFERRED_LOADS);
@@ -467,7 +467,7 @@ getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
   }
 
   SymCleanup(hProcess);
-  return pSymbol->Address;
+  return (void*)pSymbol->Address;
 
 #else
 
