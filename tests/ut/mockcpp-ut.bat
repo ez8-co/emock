@@ -6,5 +6,6 @@ set cases=
 for /r %%i in (Debug\mockcpp-ut-*.dll) do (
    set cases=!cases! %%~pni
 )
+@echo !cases!
 testngpp-runner.exe -L. -l"testngppxmllistener result.xml" -l"testngppstdoutlistener -c " -c100 !cases!
 pause

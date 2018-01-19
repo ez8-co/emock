@@ -19,6 +19,7 @@
 
 #include <testngpp/testngpp.hpp>
 #include <mockcpp/mokc.h>
+#include <stdarg.h>
 
 
 USING_MOCKCPP_NS
@@ -35,6 +36,26 @@ int foo(int a, int b)
 }
 
 int func2(int a)
+{
+    return 0;
+}
+
+int var_func(int a, ...)
+{
+    return 0;
+}
+
+int var_func2(int a, int b, ...)
+{
+    return 0;
+}
+
+int va_list_func(int a, va_list arg)
+{
+    return 0;
+}
+
+int va_list_func2(int a, int b, va_list arg)
 {
     return 0;
 }
@@ -90,10 +111,40 @@ FIXTURE(ApiHook)
 		ASSERT_EQ(20, func2(500));
 	}
 
-        TEST(can mock 2 functions which has same prototype)
-        {
-               MOCKER(foo).stubs().will(returnValue(20));
-               ASSERT_EQ(ret, func(a, b));
-               ASSERT_EQ(20,  foo(a, b));
-        }
+    TEST(can mock 2 functions which has same prototype)
+    {
+       MOCKER(foo).stubs().will(returnValue(20));
+       ASSERT_EQ(ret, func(a, b));
+       ASSERT_EQ(20,  foo(a, b));
+    }
+
+    TEST(can mock varadic functions)
+    {
+       MOCKER(var_func).stubs().will(returnValue(20));
+       ASSERT_EQ(ret, func(a, b));
+       ASSERT_EQ(20, var_func(a, b));
+    }
+
+    TEST(can mock varadic functions with 2 arg)
+    {
+       MOCKER(var_func2).stubs().will(returnValue(20));
+       ASSERT_EQ(ret, func(a, b));
+       ASSERT_EQ(20, var_func2(a, b, ret));
+    }
+
+    TEST(can mock functions with va_list)
+    {
+       va_list arg;
+       MOCKER(va_list_func).stubs().will(returnValue(20));
+       ASSERT_EQ(ret, func(a, b));
+       ASSERT_EQ(20, va_list_func(a, arg));
+    }
+
+    TEST(can mock functions with va_list arg 2)
+    {
+       va_list arg;
+       MOCKER(va_list_func2).stubs().will(returnValue(20));
+       ASSERT_EQ(ret, func(a, b));
+       ASSERT_EQ(20, va_list_func2(a, b, arg));
+    }
 };

@@ -40,22 +40,24 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
 
 #ifdef _MSC_VER
 
-  // MSVC use ecx register to transfer `this` pointer
-  // In Windows: `__thiscall` is left-to-right 
-  //             and almost equal to `__stdcall` by `ret 8` when return
+// MSVC use ecx register to transfer `this` pointer
+// In Windows: `__thiscall` is left-to-right 
+//             and almost equal to `__stdcall` by `ret 8` when return
 
-  #define MOCKAPI_MEM_FUN_DEF(n)\
+#define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
   InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
   {\
       union {\
         R (__stdcall *pf)(DECL_ARGS(n));\
         R (CLS::*pmf)(DECL_ARGS(n));\
+        void* p;\
       } u;\
       u.pmf = api;\
+      u.p = getRealAddrOfMethod<0>(u.p, typeid(api), name);\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
-                   , getRealAddrOfMethod<CLS, R (CLS::*)(DECL_ARGS(n))>(u.pmf)\
+                   , u.p\
                    , ApiHookHolderFactory::create<R __stdcall (DECL_ARGS(n))>(u.pf));\
   }
 
@@ -75,7 +77,7 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
       u.p = p;\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
-                   , getRealAddrOfMethod<CLS, R (CLS::*)(DECL_ARGS(n))>(p)\
+                   , p\
                    , ApiHookHolderFactory::create<R(CLS* DECL_REST_ARGS(n))>(u.pf));\
   }
 

@@ -58,6 +58,9 @@ class TestMockObject : public TESTCPP_NS::TestFixture
       virtual void base10() {}
       virtual long base11(const std::string&) const {return 0;}
       virtual int  base12() const {return 1;}
+      virtual int base20() {std::string a; return 0;}
+      virtual int base20(int) {std::string a; return 0;}
+      virtual int base20(double) {std::string a; return 0;}
    };
 
 
@@ -141,6 +144,24 @@ public:
       TS_ASSERT_EQUALS(5, o.base00());
       TS_ASSERT_EQUALS(5, o.base00());
       GlobalMockObject::verify();
+
+      /*MOCKER((int (Dervied::*)())&Dervied::base20)
+           .stubs()
+           .will(returnValue(20));
+      TS_ASSERT_EQUALS(20, o.base20());
+      GlobalMockObject::verify();
+
+      MOCKER((int (Dervied::*)(int))&Dervied::base20)
+           .stubs()
+           .will(returnValue(10));
+      TS_ASSERT_EQUALS(10, o.base20(0));
+      GlobalMockObject::verify();
+
+      MOCKER((int (Dervied::*)(double))&Dervied::base20)
+           .stubs()
+           .will(returnValue(5));
+      TS_ASSERT_EQUALS(5, o.base20(0.0));
+      GlobalMockObject::verify();*/
    }
 
    //void testShouldBeAbleReturnValueRepeatedly()

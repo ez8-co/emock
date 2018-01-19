@@ -15,9 +15,16 @@
 - No extra dependencies: unless STL and std c libraries.
 - Cross platform: support popular OSs, and Linux & Windows tested.
 
-## Work-In-Process
+## Recently supported
 
 - all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
+- mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`
+
+## Work-In-Process
+
+- jumper under Windows to extend `this` pointer as first argument for member functions
+- get address of overloaded member function under Windows
+- 
 
 ## Acknowledged issues
 
@@ -28,7 +35,7 @@
 
 ### others
 
-- unable to mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`.
+- mock small continuous functions under x64
 
 ## Manual of mockcpp
 
@@ -51,7 +58,7 @@ mockcpp tries to meet these goals:
 
 mockcpp currently supports following constraints/actions:
 
-* Matching call count
+* Except for 
   - `expects()`/`stubs()`
 * Matching caller
   - `caller()`
@@ -65,13 +72,11 @@ mockcpp currently supports following constraints/actions:
   - `will()`/`then()`
 * Assigning an identifier
   - `id()`
-* Except for 
-  - `expects()`/`stubs()`
 
 other constraints/actions are optional and should appear in the order below:
 
 ```cpp
-MOCK_METHOD(object, method)
+MOCKER(function)
 	.expects(once())
 	.before(anotherMock, "close")
 	.with(eq(1), any(), neq(2.0))
@@ -109,7 +114,7 @@ Actions play important roles in mocking framework and are the most fundamental v
 To specify actions, use `will(behavior)`/`then(behavior)`. `will()` must be called before `then()` and can be called only once whereas `then()` multiple times.
 
 ```cpp
-MOCK_METHOD(mock, foo)
+MOCKER(function)
 	.stubs()
 	.will(returnValue(10))
 	.then(repeat(20, 2))
@@ -151,6 +156,8 @@ struct ITextFileReader
 	virtual ~ITextFile() {}
 };
 
+struct TextFileReader : public ITextFileReader;
+
 // Code under test
 struct AwkProcessor
 {
@@ -161,9 +168,9 @@ struct AwkProcessor
 // Test case
 void test_should_throw_exception_if_open_file_failed ()
 {
-	MockObject textFile;
+	TextFileReader textFile;
 
-	MOCK_METHOD(textFile, open)
+	MOCKER(&TextFileReader::open)
 		.stubs()
 		.will(throwException(Exception( "File Not Exist" )));
 
@@ -278,6 +285,8 @@ struct ITextFileReader
     virtual String readLine() = 0;
     virtual ~ITextFile() {}
 };
+
+struct TextFileReader : public ITextFileReader;
 ```
 
 ```cpp
@@ -293,22 +302,22 @@ struct AwkProcessor
 // Test case
 void test_should_be_able_to_process_a_text_file()
 {
-    MockObject textFile;
+    TextFileReader textFile;
     String line1("1 A"); String line2("2 B"); String line3("3 C");
     char * fileName = "testFile";
 
     ///////////////////////////////////////////////
-    MOCK_METHOD(textFile, open)
+    MOCKER(&TextFileReader::open)
         .expects(atLeast(1))
         .with(endWith(fileName));
 
-    MOCK_METHOD(textFile, close)
-         .expects(atLeast(1))
-          .will(ignoreReturnValue());
+    MOCKER(&TextFileReader::close)
+        .expects(atLeast(1))
+        .will(ignoreReturnValue());
 
-    MOCK_METHOD(textFile, readLine)
-         .stubs()
-          .will(returnObjectList(line1, line2, line3))
+    MOCKER(&TextFileReader::readLine)
+        .stubs()
+        .will(returnObjectList(line1, line2, line3))
         .then(throws(EOFError));
 
     ///////////////////////////////////////////////
@@ -339,19 +348,17 @@ It shouldn't be the case very often. But there are times when you want to specif
 `before()`/`after()` can be used multiple times in mock specification:
 
 ```cpp
-    MockObject mock;
-
-    MOCK_METHOD(mock, foo)
+    MOCKER(function)
         .stubs()
         .will(returnValue(10))
         .id("foo");
 
-    MOCK_METHOD(mock, bar)
+    MOCKER(function)
         .stubs()
         .will(returnValue(true))
         .id("bar");
 
-    MOCK_METHOD(mock, fix)
+    MOCKER(function)
         .stubs()
         .after("foo")
         .after("bar")
@@ -361,21 +368,17 @@ It shouldn't be the case very often. But there are times when you want to specif
 You can also use the overloaded version to specify a qualified id:
 
 ```cpp
-    MockObject mock0;
-    MockObject mock1;
-    MockObject mock2;
-
-    MOCK_METHOD(mock0, foo)
+    MOCKER(function)
         .stubs()
         .will(returnValue(10))
         .id("foo");
 
-    MOCK_METHOD(mock1, foo)
+    MOCKER(function)
         .stubs()
         .will(returnValue(1))
         .id("foo");
 
-    MOCK_METHOD(mock2, foo)
+    MOCKER(function)
         .stubs()
         .after(mock0, "foo")
         .after(mock1, "foo")
@@ -409,6 +412,8 @@ struct IUserValidator
     virtual bool validate(const User&) const = 0;
     virtual ~IUserValidator() {}
 };
+
+struct UserValidator : public IUserValidator;
 ```
 
 ```cpp
@@ -428,9 +433,9 @@ private:
 // Test case
 void test_should_invoke_validators_in_order()
 {
-    MockObject validator0;
-    MockObject validator1;
-    MockObject validator2;
+    UserValidator validator0;
+    UserValidator validator1;
+    UserValidator validator2;
 
     ///////////////////////////////////////////////
     SequenceUserValidator::Validators validators;
@@ -443,19 +448,19 @@ void test_should_invoke_validators_in_order()
     User user("darwin");
 
     ///////////////////////////////////////////////
-    MOCK_METHOD(validator0, validate)
+    MOCKER(&UserValidator::validate)
         .expects(atLeast(1))
         .before(validate1, "v")
         .with(eq(user))
         .will(returnValue(true));
 
-    MOCK_METHOD(validator1, validate)
+    MOCKER(&UserValidator::validate)
         .expects(atLeast(1))
         .with(eq(user))
         .will(returnValue(true))
         .id("v");
 
-    MOCK_METHOD(validator2, validate)
+    MOCKER(&UserValidator::validate)
         .expects(atLeast(1))
         .with(eq(user))
         .after(validate1, "v")
@@ -494,7 +499,7 @@ The error message is a text description, such as:
 The actual call of the detailed information is like a call specification, the basic format is:
 
 ```cpp
-METHOD(<method name>)
+MOCKER(<function name>)
 	.expects(<number of calls specified in the specification>)
 	.invoked(<number of actual calls>)
 	.before(<reference object type>, <mock specification ID>)
@@ -508,7 +513,7 @@ The details of the actual call would be printed in according to the constraints 
 
 ##### Example:
 ```cpp
-MOCK_METHOD(collector, startTestCase)
+MOCKER(function)
 	.expects(exactly(0))
 	.invoked(1)
 	.before(testcpp::TestFixture, "setUp")
@@ -519,7 +524,7 @@ MOCK_METHOD(collector, startTestCase)
 The user-defined mock specification corresponds to it in the test code:
 
 ```cpp
-MOCK_METHOD(collector, startTestCase)
+MOCKER(function)
 	.expects(exactly(0))
 	.before(fixture, "setUp")
 	.with(eq((TestCaseInfoReader*)testcase[0]))

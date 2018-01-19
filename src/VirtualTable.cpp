@@ -392,7 +392,7 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
       const char* from = NULL;
       while(*pmf_info) {
         if(*pmf_info == '(')
-          from = pmf_info + 1;
+          from = strchr(pmf_info, ' ') + 1;
         else if(*pmf_info == ')') {
           return std::string(from, pmf_info - from - 3);
         }
@@ -442,7 +442,7 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
 #endif
 
 void*
-VirtualTable::getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
+VirtualTable::getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info, const std::string& name)
 {
 #ifdef _MSC_VER
 
@@ -459,7 +459,8 @@ VirtualTable::getVtblAddrByVmfPtr(void* pmf, const std::type_info& mf_info)
   pSymbol->MaxNameLen = MAX_SYM_NAME;
 
   char szSymbolName[MAX_SYM_NAME];
-  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", PmfInfo2ClsName(mf_info.name()).c_str());
+  sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::%s", PmfInfo2ClsName(mf_info.name()).c_str(), name.c_str() + name.find_last_of(':') + 1);
+  // sprintf_s(szSymbolName, MAX_SYM_NAME, "%s::`vftable'", PmfInfo2ClsName(mf_info.name()).c_str());
   if(!SymFromName(hProcess, szSymbolName, pSymbol)) {
     SymCleanup(hProcess);
     MOCKCPP_ASSERT_TRUE("Failed to get vftable", GetLastError() == 126);

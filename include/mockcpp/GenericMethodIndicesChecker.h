@@ -55,43 +55,15 @@ getIndicesOfMethod(Method m)
 
    return std::pair<unsigned int, unsigned int>
        (vptrIndex, vtblIndex);
-};
+}
 
-template <typename Cls, typename Method>
+template<int dummy>
 void*
-getRealAddrOfMethod(Method m)
+getRealAddrOfMethod(void* p, const std::type_info& info, const std::string& name)
 {
-	union {
-		Method m;
-		void* p;
-	} u;
-	u.m = m;
-   typedef void (Cls::*Checker)(void*);
-
-   Checker check = reinterpret_cast<Checker>(m);
-
-   MethodIndiceChecker* checker = createMethodIndiceChecker(typeid(Cls));
-
-   Cls* iface = (Cls*)checker->getObject();
-
-   (iface->*check)(0);
-   
-   unsigned int vptrIndex = 0;
-   unsigned int vtblIndex = 0;
-
-   bool hasVtbl = checker->getIndice(false, vptrIndex, vtblIndex);
-
-   delete checker;
-
-   if(hasVtbl) {
-      void* vtbl = VirtualTable::getVtblAddrByVmfPtr(u.p, typeid(Method));
-      MOCKCPP_ASSERT_TRUE("Get virtual table failed.", vtbl);
-      return *(void**)((long)*(void**)((long)vtbl + vptrIndex) + vtblIndex);
-   }
-
-   return u.p;
-};
-
+	void* ptr = VirtualTable::getVtblAddrByVmfPtr(p, info, name);
+	return ptr ? ptr : p;
+}
 
 ///////////////////////////////////////////////////////////////////////
 

@@ -30,6 +30,7 @@
   #include <unistd.h>
   #include <fcntl.h>
   #include <errno.h>
+  #include <inttypes.h>
 #else
   #define PRIxPTR     "Ix"
   #define snprintf _snprintf

@@ -25,7 +25,7 @@ const unsigned char jmpCodeTemplate[]  =
 
 inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
 {
- *(uintptr_t *)&base[6] = (uintptr_t)to;
+  *(uintptr_t *)&base[6] = (uintptr_t)to;
 }
 
 #endif
