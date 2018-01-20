@@ -135,6 +135,9 @@ FIXTURE(ApiHook)
     TEST(can mock functions with va_list)
     {
        va_list arg;
+#ifdef _MSC_VER
+       va_start(arg, a);
+#endif
        MOCKER(va_list_func).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func(a, arg));
@@ -143,6 +146,9 @@ FIXTURE(ApiHook)
     TEST(can mock functions with va_list arg 2)
     {
        va_list arg;
+#ifdef _MSC_VER
+       va_start(arg, a);
+#endif
        MOCKER(va_list_func2).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func2(a, b, arg));

@@ -61,3 +61,4 @@ tests/ut/*.cpp
 *.sln
 *.ipch
 *.user
+*.opendb
