@@ -142,7 +142,7 @@ MOCKCPP_NS_START
                     return p;
                 }
                 else {
-                    char filePath[MAX_PATH];
+                    char filePath[MAX_PATH] = {0};
                     if(SymGetSymbolFile(GetCurrentProcess(), NULL, moduleInfo.ImageName, sfPdb, filePath, MAX_PATH, filePath, MAX_PATH))
                         return filePath;
                 }
@@ -204,24 +204,6 @@ MOCKCPP_NS_START
         }
     }
 
-    struct offsetEq {
-        offsetEq(int offset) : offset_(offset) {}
-        bool operator () (const std::pair<int, std::string>& other) const {
-            return other.first == offset_;
-        }
-    private:
-        int offset_;
-    };
-
-    struct signatureEq {
-        signatureEq(std::string signature) : signature_(signature) {}
-        bool operator () (const std::pair<int, std::string>& other) const {
-            return other.second == signature_;
-        }
-    private:
-        std::string signature_;
-    };
-
     bool offsetCmp(const std::pair<int, std::string>& lhs, const std::pair<int, std::string>& rhs) {
         return lhs.first < rhs.first;
     }
@@ -250,7 +232,10 @@ MOCKCPP_NS_START
 			std::string pdbPath = getPdbPath(v[0]);
             int offset = methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), signature, offsets);
             sort(offsets.begin(), offsets.end(), offsetCmp);
-            it = std::find_if(offsets.begin(), offsets.end(), offsetEq(offset));
+            for(it = offsets.begin(); it != offsets.end(); ++it) {
+                if(it->first == offset)
+                    break;
+            }
         }
         return (it != offsets.end()) ? (void*)v[it - offsets.begin()] : NULL;
     }
