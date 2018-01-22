@@ -13,7 +13,8 @@
 - all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
 - mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`
 - support overloaded member function under Windows
-- reduce warning of getting address of virtual method under Linux (get from symbol table instead of pmf-conversion by (void\*))
+- reduce warning of getting address of virtual method under Linux
+  - get address from symbol table instead of warning (`-Wpmf-conversion`) caused by `(void\*)` casting
 
 ## Work-In-Process
 
