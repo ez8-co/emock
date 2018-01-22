@@ -21,16 +21,12 @@
 #include <mockcpp/mockcpp.h>
 #include <mockcpp/GlobalMockObject.h>
 #include <mockcpp/ApiHookHolderFactory.h>
-#include <mockcpp/MethodInfoReader.h>
+#include <mockcpp/SymbolRetriever.h>
 
 MOCKCPP_NS_START
 
 template <typename API>
-#ifdef _MSC_VER
 InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
-#else
-InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
-#endif
 {
     return MOCKCPP_NS::GlobalMockObject::instance.method
                  ( name
@@ -49,16 +45,16 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
   InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
   {\
       union {\
-        R (__stdcall *pf)(DECL_ARGS(n));\
         R (CLS::*pmf)(DECL_ARGS(n));\
+        R (MOCKCPP_API *pf)(DECL_ARGS(n));\
         void* p;\
       } u;\
       u.pmf = api;\
-      u.p = getRealAddrOfMethod<0>(u.p, typeid(api), name);\
+      u.p = SymbolRetriever::getAddress(u.p, typeid(api), name);\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
                    , u.p\
-                   , ApiHookHolderFactory::create<R __stdcall (DECL_ARGS(n))>(u.pf));\
+                   , ApiHookHolderFactory::create<R MOCKCPP_API (DECL_ARGS(n))>(u.pf));\
   }
 
 #else
@@ -68,17 +64,17 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api, void*)
 
   #define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
-  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)), void* p)\
+  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
   {\
       union {\
-        R (*pf)(CLS* DECL_REST_ARGS(n));\
+        R (MOCKCPP_API *pf)(CLS* DECL_REST_ARGS(n));\
         void* p;\
       } u;\
-      u.p = p;\
+      u.p = SymbolRetriever::getAddress(NULL, typeid(api), name);\
       return MOCKCPP_NS::GlobalMockObject::instance.method\
                    ( name\
-                   , p\
-                   , ApiHookHolderFactory::create<R(CLS* DECL_REST_ARGS(n))>(u.pf));\
+                   , u.p\
+                   , ApiHookHolderFactory::create<R MOCKCPP_API (CLS* DECL_REST_ARGS(n))>(u.pf));\
   }
 
 #endif

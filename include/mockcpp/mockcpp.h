@@ -33,8 +33,10 @@
 
 #ifdef _MSC_VER
 # define MOCKCPP_EXPORT __declspec(dllexport)
+# define MOCKCPP_API __stdcall
 #else
-# define MOCKCPP_EXPORT 
+# define MOCKCPP_EXPORT
+# define MOCKCPP_API
 #endif
 
 

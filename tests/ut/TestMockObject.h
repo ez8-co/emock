@@ -47,7 +47,7 @@ class TestMockObject : public TESTCPP_NS::TestFixture
 
    struct Interface: public Base0, public Base1
    {
-	  virtual const std::string& a() { return ""; }
+	  virtual const std::string& a() { static std::string str; return str; }
       virtual void b(bool) {}
    };
 
@@ -145,7 +145,7 @@ public:
       TS_ASSERT_EQUALS(5, o.base00());
       GlobalMockObject::verify();
 
-      /*MOCKER((int (Dervied::*)())&Dervied::base20)
+      MOCKER((int (Dervied::*)())&Dervied::base20)
            .stubs()
            .will(returnValue(20));
       TS_ASSERT_EQUALS(20, o.base20());
@@ -161,7 +161,7 @@ public:
            .stubs()
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));
-      GlobalMockObject::verify();*/
+      GlobalMockObject::verify();
    }
 
    //void testShouldBeAbleReturnValueRepeatedly()

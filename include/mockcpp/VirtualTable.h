@@ -51,8 +51,6 @@ struct VirtualTable
 
    static IndexInvokableGetter* getInvokableGetter(void* Caller, unsigned int indexOfVptr);
 
-   static void* getVtblAddrByVmfPtr(void* mf_ptr, const std::type_info& mf_info, const std::string& name);
-
 private:
 	VirtualTableImpl* This;
 };

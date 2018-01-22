@@ -1,6 +1,6 @@
 /***
    mockcpp is a C/C++ mock framework.
-   Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
+   Copyright (c) 2010-2017 <http://ez8.co> <orca.zhang@yahoo.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -14,26 +14,24 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ***/
-#ifndef __MOCKCPP_GNU_METHOD_INDICES_CHECKER_H
-#define __MOCKCPP_GNU_METHOD_INDICES_CHECKER_H
 
-#include <algorithm>
+#ifndef __MOCKCPP_SYMBOL_RETRIEVER_H
+#define __MOCKCPP_SYMBOL_RETRIEVER_H
+
+#include <typeinfo>
+#include <string>
+
 #include <mockcpp/mockcpp.h>
-#include <mockcpp/GnuMethodInfoReader.h>
 
 MOCKCPP_NS_START
 
-template <typename Interface, typename Method>
-std::pair<unsigned int, unsigned int>
-getIndicesOfMethod(Method m)
+class SymbolRetriever
 {
-   unsigned int vptrIndex = getDeltaOfMethod<Interface, Method>(m);
-   unsigned int vtblIndex = getIndexOfMethod<Interface, Method>(m);
-   return std::pair<unsigned int, unsigned int>
-       (vptrIndex, vtblIndex);
-}
+public:
+   static void* getAddress(void* p, const std::type_info& info, const std::string& stringify);
+   static void reset();
+};
 
 MOCKCPP_NS_END
 
 #endif
-

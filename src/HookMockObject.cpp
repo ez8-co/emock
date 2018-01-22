@@ -24,6 +24,7 @@
 #include <mockcpp/ApiHookKey.h>
 #include <mockcpp/ReportFailure.h>
 #include <mockcpp/ApiHookHolder.h>
+#include <mockcpp/SymbolRetriever.h>
 
 MOCKCPP_NS_START
 
@@ -62,6 +63,7 @@ void
 HookMockObjectImpl::reset()
 {
     container->reset();
+    SymbolRetriever::reset();
 }
 
 //////////////////////////////////////////////////////////////

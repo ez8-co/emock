@@ -16,12 +16,10 @@
 ***/
 
 #include <algorithm>
-#include <typeinfo>
 
 #include <mockcpp/mockcpp.h>
 #include <mockcpp/MethodTypeTraits.h>
 #include <mockcpp/MethodIndiceChecker.h>
-#include <mockcpp/VirtualTable.h>
 
 MOCKCPP_NS_START
 
@@ -55,14 +53,6 @@ getIndicesOfMethod(Method m)
 
    return std::pair<unsigned int, unsigned int>
        (vptrIndex, vtblIndex);
-}
-
-template<int dummy>
-void*
-getRealAddrOfMethod(void* p, const std::type_info& info, const std::string& name)
-{
-	void* ptr = VirtualTable::getVtblAddrByVmfPtr(p, info, name);
-	return ptr ? ptr : p;
 }
 
 ///////////////////////////////////////////////////////////////////////

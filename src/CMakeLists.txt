@@ -149,6 +149,7 @@ SET(MOCKCPP_SRCS
     StringConstraint.cpp
     StubContainer.cpp
     StubsMatcher.cpp
+    SymbolRetriever.cpp
     TestFailureMatcher.cpp
     ThenStub.cpp
     TypelessConstraintAdapter.cpp

@@ -27,11 +27,7 @@
 #    define MOCKER(api) MOCKCPP_NS::GlobalMockObject::instance.method(#api)
 #  else
 #    include <mockcpp/ApiHookMocker.h>
-#  ifdef _MSC_VER
 #    define MOCKER(api) MOCKCPP_NS::mockAPI(#api, api)
-#  else
-#    define MOCKER(api) MOCKCPP_NS::mockAPI(#api, api, (void*)api)
-#  endif
 #  endif
 
 USING_MOCKCPP_NS

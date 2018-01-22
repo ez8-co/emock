@@ -30,21 +30,27 @@
 MOCKCPP_NS_START
 
 MOCKCPP_EXPORT
-std::string getDemangledName(const std::type_info& typeInfo)
+
+std::string getDemangledName(const char* info_name)
 {
 #if defined(__GNUC__)
 
    int status;
-   char* name = abi::__cxa_demangle( typeInfo.name(), 0, 0, & status);
-   std::string result(name ? name : typeInfo.name());
+   char* name = abi::__cxa_demangle(info_name, 0, 0, & status);
+   std::string result(name ? name : info_name);
    free(name);
    return result;
 
 #else
 
-   return typeInfo.name();
+   return info_name;
 
 #endif
+}
+
+std::string getDemangledName(const std::type_info& typeInfo)
+{
+   return getDemangledName(typeInfo.name());
 }
 
 MOCKCPP_NS_END

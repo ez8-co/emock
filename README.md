@@ -2,29 +2,23 @@
 
 - mockcpp is a generic easy-to-use C++ Mock Framework.
 
-## Thanks to
-
-- Original author/contributor:
-  - [godsme(darwin.yuan)](https://github.com/godsme)
-  - [sinojelly](https://github.com/sinojelly)
-- Import from [bitbucket](https://bitbucket.org/godsme/mockcpp)
-
 ## Why use mockcpp?
 
-- Easy to use: it's designed to be used without extra studies.
-- No extra dependencies: unless STL and std c libraries.
-- Cross platform: support popular OSs, and Linux & Windows tested.
+- **[Easy to use]** it's designed to be used without extra studies.
+- **[No extra dependencies]** unless STL and std c libraries.
+- **[Cross platform]** support x86 & x64 popular OSs.
 
 ## Recently supported
 
 - all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
 - mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`
+- support overloaded member function under Windows
+- reduce warning of getting address of virtual method under Linux (get from symbol table instead of pmf-conversion by (void\*))
 
 ## Work-In-Process
 
-- jumper under Windows to extend `this` pointer as first argument for member functions
-- get address of overloaded member function under Windows
-- 
+- jumper that extend `this` pointer as first argument for member functions under Windows
+- near jump under x64 avoid unexcepted coverage
 
 ## Acknowledged issues
 
@@ -35,7 +29,14 @@
 
 ### others
 
-- mock small continuous functions under x64
+- mock small continuous functions under x64 may occur coredump cause of unexcepted coverage by 14-bytes-long-jump
+
+## Thanks to
+
+- Original author/contributor:
+  - [godsme(darwin.yuan)](https://github.com/godsme)
+  - [sinojelly](https://github.com/sinojelly)
+- Import from [bitbucket](https://bitbucket.org/godsme/mockcpp)
 
 ## Manual of mockcpp
 

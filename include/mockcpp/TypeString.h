@@ -27,6 +27,8 @@
 
 MOCKCPP_NS_START
 
+std::string getDemangledName(const char* info_name);
+
 std::string getDemangledName(const std::type_info& typeInfo);
 
 template <typename T> struct TypeString
