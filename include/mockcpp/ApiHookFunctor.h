@@ -29,14 +29,14 @@ struct ApiHookFunctor
 {
 };
 
-#define __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, CallingConvention, VaradicList) \
+#define __MOCKCPP_API_HOOK_FUNCTOR_DEF(n, CallingConvention, VariadicList) \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
-struct ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VaradicList), Seq> \
+struct ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VariadicList), Seq> \
 { \
 private: \
-   typedef R CallingConvention F (DECL_ARGS(n) VaradicList); \
+   typedef R CallingConvention F (DECL_ARGS(n) VariadicList); \
  \
-   static R CallingConvention hook(DECL_PARAMS_LIST(n) VaradicList) \
+   static R CallingConvention hook(DECL_PARAMS_LIST(n) VariadicList) \
    { \
       return GlobalMockObject::instance.invoke<R>(apiAddress) \
                                 ("" DECL_REST_PARAMS(n)); \
@@ -78,9 +78,9 @@ private: \
    static unsigned int refCount; \
 }; \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
-void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VaradicList), Seq>::apiAddress = 0; \
+void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VariadicList), Seq>::apiAddress = 0; \
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
-unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VaradicList), Seq>::refCount = 0 
+unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VariadicList), Seq>::refCount = 0 
 
 #if defined(_MSC_VER)
 #define MOCKCPP_API_HOOK_FUNCTOR_DEF(n) \
