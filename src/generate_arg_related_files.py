@@ -5,25 +5,12 @@ import os.path
 from get_long_opt import *
 
 delegatedMethodDefFileName = "DelegatedMethodDef.h"
-argumentListDefFileName = "ArgumentsListDef.h"
 methodTypeTraitsDefFileName = "MethodTypeTraitsDef.h"
 maxParametersOpt   = LongOptString("max-parameters", "12")
 includePathOpt      = LongOptString("include-path", "/home/darwin/mockcpp/include")
 
 longOpts = [ maxParametersOpt
            , includePathOpt]
-
-def getArgumentListDefContent(maxParameters):
-   lineStr = ''', typename P%d = UselessType'''
-   lines = []
-   for i in range(0, maxParameters+1):
-      lines.append(lineStr % i)
-
-   return getContent(lines)
-
-def generateArgumentListDef(includePath, maxParameters):
-   content = getArgumentListDefContent(maxParameters)
-   writeFile(includePath + "/" + argumentListDefFileName, content)
 
 def getMethodTypeTraitsDefContent(maxParameters):
    lineStr0 = '''MOCKCPP_METHOD_TYPE_TRAITS_DEF(%d);'''
@@ -72,9 +59,6 @@ def main():
 
    if delegatedMethodDefFileName in args:
       generateDelegatedMethodDef(includePath, maxParameters)
-
-   if argumentListDefFileName in args:
-      generateArgumentListDef(includePath, maxParameters)
 
    if methodTypeTraitsDefFileName in args:
       generateMethodTypeTraitsDef(includePath, maxParameters)

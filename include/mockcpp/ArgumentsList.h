@@ -19,21 +19,24 @@
 #define __MOCKCPP_ARGUMENTS_LIST_H_
 
 #include <mockcpp/mockcpp.h>
+#include <mockcpp/ArgumentsMacroHelpers.h>
 
 MOCKCPP_NS_START
+
+#define TEMPLATE_ARG_USELESS(n) , typename P ## n = UselessType
 
 /////////////////////////////////////////////////
 struct UselessType {};
 
 ////////////////////////////////////////////////////
 template < typename R
-#include <mockcpp/ArgumentsListDef.h>
+   SIMPLE_REPEAT(12, TEMPLATE_ARG_USELESS)
          >
 struct ArgumentsList {};
 
 
 template < typename R
-#include <mockcpp/ArgumentsListDef.h>
+   SIMPLE_REPEAT(12, TEMPLATE_ARG_USELESS)
          >
 struct ArgumentsListConst {};
 
