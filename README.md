@@ -14,11 +14,11 @@
 - mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`
 - support overloaded member function under Windows
 - reduce warning of getting address of virtual method under Linux
-  - get address from symbol table instead of warning (`-Wpmf-conversion`) caused by `(void\*)` casting
+  - get address from symbol table instead of warning (`-Wpmf-conversions`) caused by `(void *)` casting
 
 ## Work-In-Process
 
-- jumper that extend `this` pointer as first argument for member functions under Windows
+- trampoline that extend `this` pointer as first argument for member functions under Windows
 - near jump under x64 avoid unexcepted coverage
 
 ## Acknowledged issues
@@ -78,7 +78,7 @@ mockcpp currently supports following constraints/actions:
 other constraints/actions are optional and should appear in the order below:
 
 ```cpp
-MOCKER(function)
+MOCKER(<function name>)
 	.expects(once())
 	.before(anotherMock, "close")
 	.with(eq(1), any(), neq(2.0))
@@ -116,7 +116,7 @@ Actions play important roles in mocking framework and are the most fundamental v
 To specify actions, use `will(behavior)`/`then(behavior)`. `will()` must be called before `then()` and can be called only once whereas `then()` multiple times.
 
 ```cpp
-MOCKER(function)
+MOCKER(<function name>)
 	.stubs()
 	.will(returnValue(10))
 	.then(repeat(20, 2))
@@ -350,17 +350,17 @@ It shouldn't be the case very often. But there are times when you want to specif
 `before()`/`after()` can be used multiple times in mock specification:
 
 ```cpp
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .will(returnValue(10))
         .id("foo");
 
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .will(returnValue(true))
         .id("bar");
 
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .after("foo")
         .after("bar")
@@ -370,17 +370,17 @@ It shouldn't be the case very often. But there are times when you want to specif
 You can also use the overloaded version to specify a qualified id:
 
 ```cpp
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .will(returnValue(10))
         .id("foo");
 
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .will(returnValue(1))
         .id("foo");
 
-    MOCKER(function)
+    MOCKER(<function name>)
         .stubs()
         .after(mock0, "foo")
         .after(mock1, "foo")
@@ -515,7 +515,7 @@ The details of the actual call would be printed in according to the constraints 
 
 ##### Example:
 ```cpp
-MOCKER(function)
+MOCKER(<function name>)
 	.expects(exactly(0))
 	.invoked(1)
 	.before(testcpp::TestFixture, "setUp")
@@ -526,7 +526,7 @@ MOCKER(function)
 The user-defined mock specification corresponds to it in the test code:
 
 ```cpp
-MOCKER(function)
+MOCKER(<function name>)
 	.expects(exactly(0))
 	.before(fixture, "setUp")
 	.with(eq((TestCaseInfoReader*)testcase[0]))

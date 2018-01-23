@@ -34,6 +34,9 @@ class TestMockObject : public TESTCPP_NS::TestFixture
       virtual int  base00() = 0;
       virtual bool base01(int) const = 0;
       virtual ~Base0() {}
+      virtual int base20() {return 0;}
+      virtual int base20(int) {return 0;}
+      virtual int base20(double) {return 0;}
    };
 
    struct Base1
@@ -47,7 +50,7 @@ class TestMockObject : public TESTCPP_NS::TestFixture
 
    struct Interface: public Base0, public Base1
    {
-	  virtual const std::string& a() { static std::string str; return str; }
+	    virtual const std::string& a() { static std::string str; return str; }
       virtual void b(bool) {}
    };
 
@@ -58,9 +61,6 @@ class TestMockObject : public TESTCPP_NS::TestFixture
       virtual void base10() {}
       virtual long base11(const std::string&) const {return 0;}
       virtual int  base12() const {return 1;}
-      virtual int base20() {std::string a; return 0;}
-      virtual int base20(int) {std::string a; return 0;}
-      virtual int base20(double) {std::string a; return 0;}
    };
 
 
@@ -145,19 +145,19 @@ public:
       TS_ASSERT_EQUALS(5, o.base00());
       GlobalMockObject::verify();
 
-      MOCKER((int (Dervied::*)())&Dervied::base20)
+      MOCKER((int (Base0::*)())&Base0::base20)
            .stubs()
            .will(returnValue(20));
       TS_ASSERT_EQUALS(20, o.base20());
       GlobalMockObject::verify();
 
-      MOCKER((int (Dervied::*)(int))&Dervied::base20)
+      MOCKER(static_cast<int (Base0::*)(int)>(&Base0::base20))
            .stubs()
            .will(returnValue(10));
       TS_ASSERT_EQUALS(10, o.base20(0));
       GlobalMockObject::verify();
 
-      MOCKER((int (Dervied::*)(double))&Dervied::base20)
+      MOCKER(static_cast<int (Base0::*)(double)>(&Base0::base20))
            .stubs()
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));

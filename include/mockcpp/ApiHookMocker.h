@@ -36,11 +36,11 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 
 #ifdef _MSC_VER
 
-// MSVC use ecx register to transfer `this` pointer
-// In Windows: `__thiscall` is left-to-right 
-//             and almost equal to `__stdcall` by `ret 8` when return
+  // MSVC use ecx register to transfer `this` pointer
+  // In Windows: `__thiscall` is left-to-right 
+  //             and almost equal to `__stdcall` by `ret 8` when return
 
-#define MOCKAPI_MEM_FUN_DEF(n)\
+  #define MOCKAPI_MEM_FUN_DEF(n)\
   template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
   InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
   {\

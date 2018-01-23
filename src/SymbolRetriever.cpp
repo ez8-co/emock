@@ -19,14 +19,15 @@
 
 #include <mockcpp/SymbolRetriever.h>
 #include <mockcpp/TypeString.h>
+#include <mockcpp/ReportFailure.h>
 
 #ifdef _MSC_VER
 
 	#include <windows.h>
 	#include <dbghelp.h>
-	#include <vector>
+    #include <vector>
+	#include <set>
     #include <map>
-    #include <algorithm>
 	#pragma comment(lib, "Dbghelp.lib")
 
 #else
@@ -91,7 +92,7 @@ MOCKCPP_NS_START
 
 #ifdef _MSC_VER
 
-    std::map<std::string, std::vector<std::pair<int, std::string> > > kCache;
+    std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > kCache;
     void SymbolRetriever::reset() {
         kCache.clear();
     }
@@ -151,15 +152,14 @@ MOCKCPP_NS_START
         }
 
         static BOOL CALLBACK symbolsCallback(PSYMBOL_INFO pSymInfo, ULONG, PVOID UserContext) {
-            ((std::vector<ULONG64>*)UserContext)->push_back(pSymInfo->Address);
+            ((std::set<ULONG64>*)UserContext)->insert(pSymInfo->Address);
             return TRUE;
         }
 
-        int methodOffset(const std::string& pdbPath, const std::string& mangledPrefix, const std::string& methodSginature, std::vector<std::pair<int, std::string> >& offsets) {
-            int ret = 0;
+        void methodOffset(const std::string& pdbPath, const std::string& mangledPrefix, const std::string& methodSginature, std::map<int, std::string>& offsets) {
             FILE* fp = fopen(pdbPath.c_str(), "rb");
             if (!fp)
-                return ret;
+                return;
 
             const size_t BUFFER_SIZE = 102400;
             char* buffer = new char[BUFFER_SIZE];
@@ -186,10 +186,8 @@ MOCKCPP_NS_START
                                            UNDNAME_NO_ACCESS_SPECIFIERS | 
                                            UNDNAME_NO_FUNCTION_RETURNS | 
                                            UNDNAME_NO_THISTYPE)) {
-                            if (methodSginature == undecoratedName)
-                                ret = offset;
+                            offsets.insert(std::make_pair(offset, undecoratedName));
                         }
-                        offsets.push_back(std::make_pair(offset, undecoratedName));
                         p += mangledPrefix.size() - 1;
                         p += strlen(p);
                     }
@@ -200,44 +198,43 @@ MOCKCPP_NS_START
 
             delete [] buffer;
             fclose(fp);
-            return ret;
         }
-    }
-
-    bool offsetCmp(const std::pair<int, std::string>& lhs, const std::pair<int, std::string>& rhs) {
-        return lhs.first < rhs.first;
     }
 
     void* SymbolRetriever::getAddress(void* p, const std::type_info& info, const std::string& stringify) {
         DbgHelper dbgHelper;
         std::string symbolName;
         std::string signature = extractMethodSignatureName(info.name(), symbolName, stringify);
-		std::vector<ULONG64> v;
+		std::set<ULONG64> v;
 		ULONG64 modBase = getModBase((DWORD64)p);
         SymEnumSymbols(GetCurrentProcess(), modBase, modBase > 0 ? symbolName.c_str() : std::string("*!").append(symbolName).c_str(), symbolsCallback, &v);
-        if(v.empty())
+        if(v.empty()) {
+            MOCKCPP_REPORT_FAILURE(std::string("Failed to find symbol of [").append(stringify).append("]").c_str());
             return NULL;
+        }
+		std::set<ULONG64>::const_iterator itRet = v.begin();
         if(v.size() == 1)
-            return (void*)v[0];
-        sort(v.begin(), v.end());
-        std::vector<std::pair<int, std::string> >& offsets = kCache[symbolName];
-        std::vector<std::pair<int, std::string> >::iterator it;
-        if(!offsets.empty()) {
-            for(it = offsets.begin(); it != offsets.end(); ++it) {
-                if(it->second == signature)
-                    break;
+            return (void*)*itRet;
+        std::map<int, std::string>& offsets = kCache[std::make_pair(modBase, symbolName)];
+        std::map<int, std::string>::const_iterator it;
+        if(offsets.empty()) {
+			std::string pdbPath = getPdbPath(*itRet);
+            if(pdbPath.empty()) {
+                MOCKCPP_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(stringify).append("]").c_str());
+                return NULL;
             }
+            methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), signature, offsets);
         }
-        else {
-			std::string pdbPath = getPdbPath(v[0]);
-            int offset = methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), signature, offsets);
-            sort(offsets.begin(), offsets.end(), offsetCmp);
-            for(it = offsets.begin(); it != offsets.end(); ++it) {
-                if(it->first == offset)
-                    break;
-            }
+        if(offsets.size() != v.size()) {
+            MOCKCPP_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(stringify).append("]").c_str());
+            return NULL;
         }
-        return (it != offsets.end()) ? (void*)v[it - offsets.begin()] : NULL;
+        for(it = offsets.begin(); it != offsets.end(); ++it, ++itRet) {
+            if(it->second == signature)
+                return (void*)*itRet;
+        }
+        MOCKCPP_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        return NULL;
     }
 
 #else
@@ -305,8 +302,10 @@ MOCKCPP_NS_START
 
         aux_set.insert(file_name);
         FILE *f = fopen("/proc/self/maps", "r");
-        if(!f)
+        if(!f) {
+            MOCKCPP_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(stringify).append("]").c_str());
             return NULL;
+        }
 
         while(!feof(f)) {
             char buf[PATH_MAX + 100] = {0};
@@ -325,6 +324,7 @@ MOCKCPP_NS_START
             }
         }
         fclose(f);
+        MOCKCPP_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
         return NULL;
     }
 
