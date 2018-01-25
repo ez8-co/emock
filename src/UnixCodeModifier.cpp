@@ -25,7 +25,7 @@
 
 //////////////////////////////////////////////////////////////////
 #define PAGE_SIZE   (1 << PAGE_ALIGN_BITS)
-#define ALIGN_TO_PAGE_BOUNDARY(addr) (void*) (((uintptr_t)addr) & (~((1<<(PAGE_ALIGN_BITS))-1)))
+#define ALIGN_TO_PAGE_BOUNDARY(addr) (void*) (((uintptr_t)addr) >> PAGE_ALIGN_BITS << PAGE_ALIGN_BITS)
 //////////////////////////////////////////////////////////////////
 
 MOCKCPP_NS_START
