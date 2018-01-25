@@ -34,50 +34,30 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
                  , ApiHookHolderFactory::create(api));
 }
 
-#ifdef _MSC_VER
+// MSVC use ecx register to transfer `this` pointer
+// In Windows: `__thiscall` is left-to-right 
+//             and almost equal to `__stdcall` by `ret 8` when return
 
-  // MSVC use ecx register to transfer `this` pointer
-  // In Windows: `__thiscall` is left-to-right 
-  //             and almost equal to `__stdcall` by `ret 8` when return
+// GCC push `this` at last to transfer `this` pointer
+// so we add first arg and use right-to-left `__cdecl` as mocker
 
-  #define MOCKAPI_MEM_FUN_DEF(n)\
-  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
-  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
-  {\
-      union {\
-        R (CLS::*pmf)(DECL_ARGS(n));\
-        R (MOCKCPP_API *pf)(DECL_ARGS(n));\
-        void* p;\
-      } u;\
-      u.pmf = api;\
-      u.p = SymbolRetriever::getAddress(u.p, typeid(api), name);\
-      return MOCKCPP_NS::GlobalMockObject::instance.method\
-                   ( name\
-                   , u.p\
-                   , ApiHookHolderFactory::create<R MOCKCPP_API (DECL_ARGS(n))>(u.pf));\
-  }
-
-#else
-
-  // GCC push `this` at last to transfer `this` pointer
-  // so we add first arg and use right-to-left `__cdecl` as mocker
-
-  #define MOCKAPI_MEM_FUN_DEF(n)\
-  template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
-  InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
-  {\
-      union {\
-        R (MOCKCPP_API *pf)(CLS* DECL_REST_ARGS(n));\
-        void* p;\
-      } u;\
-      u.p = SymbolRetriever::getAddress(NULL, typeid(api), name);\
-      return MOCKCPP_NS::GlobalMockObject::instance.method\
-                   ( name\
-                   , u.p\
-                   , ApiHookHolderFactory::create<R MOCKCPP_API (CLS* DECL_REST_ARGS(n))>(u.pf));\
-  }
-
-#endif
+#define MOCKAPI_MEM_FUN_DEF(n)\
+template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)))\
+{\
+    union {\
+      R (CLS::*pmf)(DECL_ARGS(n));\
+      R (MOCKCPP_API *pf)(CLS* DECL_REST_ARGS(n));\
+      void* p;\
+    } u;\
+    u.pmf = api;\
+    u.p = SymbolRetriever::getAddress(u.p, typeid(api), name);\
+    return MOCKCPP_NS::GlobalMockObject::instance.method\
+                 ( name\
+                 , u.p\
+                 , ApiHookHolderFactory::create<R MOCKCPP_API (CLS* DECL_REST_ARGS(n))>(u.pf)\
+                 , true);\
+}
 
 MOCKAPI_MEM_FUN_DEF(0)
 MOCKAPI_MEM_FUN_DEF(1)

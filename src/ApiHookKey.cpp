@@ -18,15 +18,18 @@
 #include <mockcpp/ApiHookKey.h>
 #include <mockcpp/ApiHook.h>
 #include <mockcpp/ApiHookHolder.h>
+#include <mockcpp/Trampoline.h>
 
 MOCKCPP_NS_START
 
 ///////////////////////////////////////////////////////////
-ApiHookKey::ApiHookKey(const void* api, ApiHookHolder* holder)
+ApiHookKey::ApiHookKey(const void* api, ApiHookHolder* holder, bool isMemFun)
    : apiAddress(api)
    , hookHolder(holder)
 {
-   hook = new ApiHook(api, holder->getApiHook());
+   hook = new ApiHook(api, isMemFun
+    ? Trampoline::get4MemFunc(api, holder->getApiHook())
+    : Trampoline::get(api, holder->getApiHook()));
 }
 
 ///////////////////////////////////////////////////////////
@@ -40,7 +43,7 @@ ApiHookKey::~ApiHookKey()
 {
    delete hook;
    delete hookHolder;
-}   
+}
 
 ////////////////////////////////////////////////////////////
 bool ApiHookKey::equals(

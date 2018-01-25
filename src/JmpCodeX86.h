@@ -14,14 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ***/
-#ifndef __MOCKCPP_JMP_CODE_X32_H__
-#define __MOCKCPP_JMP_CODE_X32_H__
+#ifndef __MOCKCPP_JMP_CODE_X86_H__
+#define __MOCKCPP_JMP_CODE_X86_H__
 
 const unsigned char jmpCodeTemplate[]  = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
 
 inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
 {
-  *(unsigned long*)&base[1] = (unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate);
+  *(unsigned int*)&base[1] = (unsigned int)((unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate));
 }
 
 #endif

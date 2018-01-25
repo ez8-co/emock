@@ -37,7 +37,8 @@ struct HookMockObject : public ChainableMockObjectBase
     InvocationMockBuilderGetter method
                ( const std::string& name
                , const void* api
-               , ApiHookHolder* holder);
+               , ApiHookHolder* holder
+               , bool is_mem_fun = false);
 
     // Invoking interface --  Used in Functor
     template <typename RT>

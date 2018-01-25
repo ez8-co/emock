@@ -32,20 +32,12 @@ USING_MOCKCPP_NS
 
 struct CUT;
 
-#ifdef _MSC_VER
-int __stdcall normal_method()
-#else
-int normal_method(CUT*)
-#endif
+int MOCKCPP_API normal_method(CUT*)
 {
     return 100;
 }
 
-#ifdef _MSC_VER
-int __stdcall normal_method_1(int)
-#else
-int normal_method_1(CUT* , int)
-#endif 
+int MOCKCPP_API normal_method_1(CUT* , int)
 {
     return 101;
 }
@@ -106,25 +98,17 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
     {
         // the param number of hook function is one more than the method mocked, 
         // because when call CUT.normal_method_1(2) occur, the this pointer is the first argument
+        CUT cut;
         MOCKER(&CUT::normal_method_1)
             .stubs()
-            .with(
-#ifndef _MSC_VER
-                any(), 
-#endif
-                eq(2))
+            .with(eq(&cut), eq(2))
             .will(returnValue(101));
-        CUT cut;
         ASSERT_EQ(101, cut.normal_method_1(2));
         GlobalMockObject::verify();
 
         MOCKER(&CUT::normal_method_1)
             .stubs()
-            .with(
-#ifndef _MSC_VER
-                any(), 
-#endif
-                eq(2))
+            .with(eq(&cut), eq(2))
             .will(invoke(normal_method_1));
         ASSERT_EQ(101, cut.normal_method_1(2));
         GlobalMockObject::verify();

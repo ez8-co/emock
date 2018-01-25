@@ -152,6 +152,7 @@ SET(MOCKCPP_SRCS
     SymbolRetriever.cpp
     TestFailureMatcher.cpp
     ThenStub.cpp
+    Trampoline.cpp
     TypelessConstraintAdapter.cpp
     TypelessStubAdapter.cpp
     TypeString.cpp

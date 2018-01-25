@@ -12,14 +12,11 @@
 
 - all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
 - mock variadic arg function with ellipsis (known as `...`), e.g. `int test(int a, ...)`
-- support overloaded member function under Windows
+- support mock overloaded member functions under Windows
 - reduce warning of getting address of virtual method under Linux
   - get address from symbol table instead of warning (`-Wpmf-conversions`) caused by `(void *)` casting
-
-## Work-In-Process
-
-- trampoline that extend `this` pointer as first argument for member functions under Windows
-- near jump under x64 avoid unexcepted coverage
+- [Windows ONLY] trampoline that extend `this` pointer as first argument for member functions
+- `near jump + trampoline` under x64 avoid unexcepted coverage by long jump
 
 ## Acknowledged issues
 
@@ -27,10 +24,6 @@
 
 - add `--smc-check=all` to avoid invalidation of dynamically-generated code (API hook).
 - unable to mock `syscall` related functions (e.g. `gettimeofday`) yet.
-
-### others
-
-- mock small continuous functions under x64 may occur coredump cause of unexcepted coverage by 14-bytes-long-jump
 
 ## Thanks to
 

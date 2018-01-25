@@ -1,6 +1,6 @@
 /***
    mockcpp is a C/C++ mock framework.
-   Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
+   Copyright (c) 2010-2017 <http://ez8.co> <orca.zhang@yahoo.com>
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,35 +15,22 @@
    limitations under the License.
 ***/
 
-#ifndef __MOCKCPP_API_HOOK_KEY_H__
-#define __MOCKCPP_API_HOOK_KEY_H__
+#ifndef __MOCKCPP_TRAMPOLINE_H
+#define __MOCKCPP_TRAMPOLINE_H
 
 #include <mockcpp/mockcpp.h>
 
-#include <mockcpp/ChainableMockMethodKey.h>
-
 MOCKCPP_NS_START
 
-struct ApiHook;
-struct ApiHookHolder;
-
-struct ApiHookKey
-    : public ChainableMockMethodKey
+class Trampoline
 {
-   explicit ApiHookKey(const void* api);
-   ApiHookKey(const void* api, ApiHookHolder* hookHolder, bool is_mem_fun);
+public:
+   static void* get(const void* src, void* dst);
+   static void* get4MemFunc(const void* src, void* dst);
 
-   ~ApiHookKey();
-   
-   bool equals(const ChainableMockMethodKey * const rhs) const;
-
-private:
-   const void* apiAddress;
-   ApiHook* hook;
-   ApiHookHolder* hookHolder;
+   static void reset();
 };
 
 MOCKCPP_NS_END
 
 #endif
-

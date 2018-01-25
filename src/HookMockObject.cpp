@@ -25,6 +25,7 @@
 #include <mockcpp/ReportFailure.h>
 #include <mockcpp/ApiHookHolder.h>
 #include <mockcpp/SymbolRetriever.h>
+#include <mockcpp/Trampoline.h>
 
 MOCKCPP_NS_START
 
@@ -39,7 +40,8 @@ struct HookMockObjectImpl
    getMethod( const std::string& name
             , const void* api
             , ApiHookHolder* hookHolder
-            , InvocationMockerNamespace* ns);
+            , InvocationMockerNamespace* ns
+            , bool isMemFun);
    
    ChainableMockMethodCore*
    getMethod(const void* api);
@@ -54,7 +56,8 @@ private:
    addMethod( const std::string& name
             , const void* api
 	    , ApiHookHolder* hookHolder
-	    , InvocationMockerNamespace* ns); 
+	    , InvocationMockerNamespace* ns
+      , bool isMemFun); 
 
 };
 
@@ -64,17 +67,19 @@ HookMockObjectImpl::reset()
 {
     container->reset();
     SymbolRetriever::reset();
+    Trampoline::reset();
 }
 
 //////////////////////////////////////////////////////////////
 ChainableMockMethodCore*
 HookMockObjectImpl::
-addMethod( const std::string& name 
+addMethod( const std::string& name
          , const void* api
-	 , ApiHookHolder* hookHolder
-	 , InvocationMockerNamespace* ns) 
+         , ApiHookHolder* hookHolder
+         , InvocationMockerNamespace* ns
+         , bool isMemFun)
 {
-    ApiHookKey* key = new ApiHookKey(api, hookHolder);
+    ApiHookKey* key = new ApiHookKey(api, hookHolder, isMemFun);
     ChainableMockMethodCore* method = new ChainableMockMethodCore(name, ns);
 
     container->addMethod(key, method);
@@ -86,7 +91,8 @@ ChainableMockMethodCore*
 HookMockObjectImpl::
 getMethod(const std::string& name, const void* api
          , ApiHookHolder* hookHolder
-         , InvocationMockerNamespace* ns)
+         , InvocationMockerNamespace* ns
+         , bool isMemFun)
 {
     ChainableMockMethodCore* method = getMethod(api);
     if (method != 0)
@@ -95,7 +101,7 @@ getMethod(const std::string& name, const void* api
       return method;
     }
 
-    return addMethod(name, api, hookHolder, ns);
+    return addMethod(name, api, hookHolder, ns, isMemFun);
 }
 
 //////////////////////////////////////////////////////////////
@@ -122,9 +128,9 @@ HookMockObject::~HookMockObject()
 
 //////////////////////////////////////////////////////////////
 InvocationMockBuilderGetter
-HookMockObject::method(const std::string& name, const void* api, ApiHookHolder* hookHolder)
+HookMockObject::method(const std::string& name, const void* api, ApiHookHolder* hookHolder, bool isMemFun)
 {
-    ChainableMockMethodCore* core = This->getMethod(name, api, hookHolder, this);
+    ChainableMockMethodCore* core = This->getMethod(name, api, hookHolder, this, isMemFun);
     return InvocationMockBuilderGetter(core, core);
 }
 
