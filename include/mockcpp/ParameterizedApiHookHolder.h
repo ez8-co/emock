@@ -33,7 +33,7 @@ struct ParameterizedApiHookHolder
    ParameterizedApiHookHolder(F* api) 
    {
       (m_hook = ApiHookGenerator<F, maxSeq>::findApiHook(api)) ||
-      (m_hook = ApiHookGenerator<F, maxSeq>::appyApiHook(api)); 
+      (m_hook = ApiHookGenerator<F, maxSeq>::applyApiHook(api)); 
    }
 
    void * getApiHook() const

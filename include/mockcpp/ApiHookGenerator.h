@@ -36,12 +36,12 @@ struct ApiHookGenerator
         return hook;
     }
 
-    static void* appyApiHook(F* api)
+    static void* applyApiHook(F* api)
     {
        void* hook;
 
        (hook = ApiHookFunctor<F, Seq>::applyApiHook(api)) ||
-       (hook = ApiHookGenerator<F, Seq-1>::appyApiHook(api));
+       (hook = ApiHookGenerator<F, Seq-1>::applyApiHook(api));
 
        return hook;
     }
@@ -64,7 +64,7 @@ struct ApiHookGenerator<F, 0>
     static void* findApiHook(F* api)
     { return 0; }
 
-    static void* appyApiHook(F* api)
+    static void* applyApiHook(F* api)
     { 
         oss_t oss;
         
