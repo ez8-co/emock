@@ -16,6 +16,7 @@
 ***/
 
 #include <typeinfo>
+#include <set>
 
 #include <mockcpp/SymbolRetriever.h>
 #include <mockcpp/TypeString.h>
@@ -26,7 +27,6 @@
 	#include <windows.h>
 	#include <dbghelp.h>
     #include <vector>
-	#include <set>
     #include <map>
 	#pragma comment(lib, "Dbghelp.lib")
 
@@ -41,7 +41,6 @@
 	#include <cassert>
 	#include <stdio.h>
     #include <linux/limits.h>
-    #include <set>
 
 #endif
 
@@ -92,9 +91,9 @@ MOCKCPP_NS_START
 
 #ifdef _MSC_VER
 
-    std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > kCache;
+    std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > g_symbolCache;
     void SymbolRetriever::reset() {
-        kCache.clear();
+        g_symbolCache.clear();
     }
 
     namespace {
@@ -215,7 +214,7 @@ MOCKCPP_NS_START
 		std::set<ULONG64>::const_iterator itRet = v.begin();
         if(v.size() == 1)
             return (void*)*itRet;
-        std::map<int, std::string>& offsets = kCache[std::make_pair(modBase, symbolName)];
+        std::map<int, std::string>& offsets = g_symbolCache[std::make_pair(modBase, symbolName)];
         std::map<int, std::string>::const_iterator it;
         if(offsets.empty()) {
 			std::string pdbPath = getPdbPath(*itRet);
@@ -301,15 +300,15 @@ MOCKCPP_NS_START
             return (void*)ret;
 
         aux_set.insert(file_name);
-        FILE *f = fopen("/proc/self/maps", "r");
-        if(!f) {
+        FILE* fp = fopen("/proc/self/maps", "r");
+        if(!fp) {
             MOCKCPP_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(stringify).append("]").c_str());
             return NULL;
         }
 
-        while(!feof(f)) {
+        while(!feof(fp)) {
             char buf[PATH_MAX + 100] = {0};
-            if(fgets(buf, sizeof(buf), f) == 0)
+            if(fgets(buf, sizeof(buf), fp) == 0)
                 break;
 
             unsigned long begin;
@@ -317,13 +316,13 @@ MOCKCPP_NS_START
             if(aux_set.count(file_name) == 0) {
                 Dl_info dlinfo;
                 if(dladdr((void*)begin, &dlinfo) && ((ret = findAddrInElf(dlinfo.dli_fname, signature)) > 0)) {
-                    fclose(f);
+                    fclose(fp);
                     return (void*)((long)dlinfo.dli_fbase + ret);
                 }
                 aux_set.insert(file_name);
             }
         }
-        fclose(f);
+        fclose(fp);
         MOCKCPP_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
         return NULL;
     }
