@@ -45,9 +45,7 @@ ValueType* __type_any_cast(AnyBase *operand)
    typedef Holder<nonref> holder;
 
    if (operand->type() != typeid(ValueType))
-   {
-	   return 0;
-   }
+      return 0;
 
    holder* p = dynamic_cast<holder*>(operand->getContent());
    return p ? &const_cast<ValueType&>(p->getValue()) : 0;
@@ -56,13 +54,10 @@ ValueType* __type_any_cast(AnyBase *operand)
 template <typename ValueType>
 ValueType* __any_cast(AnyBase* operand)
 {
-   if (operand == 0)
-   {
+   if(operand == 0)
       return 0;
-   }
 
    ValueType *p = __type_any_cast<ValueType>(operand);
-
    return p ? p : __ignore_type_any_cast<ValueType>(operand);
 }
 

@@ -41,8 +41,7 @@ struct RefHolder : public Holder<ValueType>
 
     void changeValue(const ValueType& val)
     {
-      ValueType* addr = &const_cast<ValueType&>(ref);
-      (*addr) = val;
+      *(ValueType*)&const_cast<ValueType&>(ref) = val;
     }
 
 private:
