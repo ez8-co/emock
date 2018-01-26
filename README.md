@@ -16,14 +16,14 @@
 
 <table>
    <tr>
-      <td>Library</td>
+      <td></td>
       <td colspan="2">platform</td>
       <td colspan="3">member function</td>
       <td colspan="3">normal function</td>
       <td>misc</td>
    </tr>
    <tr>
-      <td></td>
+      <td>Library</td>
       <td>Linux</td>
       <td>Windows</td>
       <td>virtual(IoC-less)</td>
