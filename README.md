@@ -8,18 +8,18 @@
 - **[No Dependencies]** unless STL and std C libraries.
 - **[Cross Platform]** support popular OS both x86 & x64.
 - **[Fully]** support all kinds of functions.
-- **[No Intrusions]** no need to modify event one line of your source code.
+- **[No Intrusions]** no need to modify any source code.
 
-## Featrue sheet
+## Feature sheet
 
-- some of the conclusion below maybe is not exactly, contact me to change if error occurs.
+- some of the conclusion below may be not exactly, contact me to change if error occurs.
 
 <table>
    <th>
       <td colspan="2">platform</td>
       <td colspan="3">member function</td>
       <td colspan="3">normal function</td>
-      <td colspan="2">miscellaneous</td>
+      <td colspan="2">misc</td>
    </th>
    <tr>
       <td>Library</td>
@@ -49,8 +49,8 @@
       <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[0]</sup>)</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[0]</sup>)</td>
+      <td>:x:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
@@ -61,67 +61,67 @@
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[1]</sup>)</td>
+      <td>:x:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:x:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:x:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[2]</sup>)</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[2]</sup>)</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/tpounds/mockitopp">mockitopp</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[1]</sup>)</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/hjagodzinski/C-Mock">C-Mock</a></td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
+      <td>:x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[1]</sup>)</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
+      <td>:x:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
+      <td>:x:</td>
+      <td>:heavy_check_mark:(:x:<sup>[1]</sup>)</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_multiplication_x:</td>
+      <td>:x:</td>
    </tr>
 </table>
 
 - NOTES:
-  - [0]: need IoC setter and implement of interface
-  - [1]: need declarartion of interface, not support hybrid class (virtual & normal mem_fun at same time)
+  - [0]: need IoC setter and override virtual functions of base class
+  - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
   - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
 `emock` should also work under UNIX, Android, MacOS and iOS, or maybe need minor adaptation.
@@ -157,7 +157,7 @@
 
 ## Manual
 
-- [How to use `emock`](https://github.com/ez8-co/emock/wiki)
+- [Visit wiki to see how to use `emock`](https://github.com/ez8-co/emock/wiki)
 
 ## Thanks
 
