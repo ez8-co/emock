@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,11 +21,11 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/IdentityBuilder.h>
-#include <mockcpp/InvocationMocker.h>
-#include <mockcpp/InvocationId.h>
+#include <emock/IdentityBuilder.h>
+#include <emock/InvocationMocker.h>
+#include <emock/InvocationId.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 void IdentityBuilder::id(const std::string& id)
 {
@@ -27,6 +33,6 @@ void IdentityBuilder::id(const std::string& id)
 }
 
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
 

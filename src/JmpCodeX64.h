@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -14,8 +20,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ***/
-#ifndef __MOCKCPP_JMP_CODE_X64_H__
-#define __MOCKCPP_JMP_CODE_X64_H__
+#ifndef __EMOCK_JMP_CODE_X64_H__
+#define __EMOCK_JMP_CODE_X64_H__
 
 // FF 25 : JMP /4   jmp absolute indirect
 // bytes 2 ~ 5 : operand of jmp, relative to the memory that recorded the thunk addr. it should be zero.

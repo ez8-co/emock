@@ -7,14 +7,14 @@ from get_long_opt import *
 delegatedMethodDefFileName = "DelegatedMethodDef.h"
 methodTypeTraitsDefFileName = "MethodTypeTraitsDef.h"
 maxParametersOpt   = LongOptString("max-parameters", "12")
-includePathOpt      = LongOptString("include-path", "/home/darwin/mockcpp/include")
+includePathOpt      = LongOptString("include-path", "../include")
 
 longOpts = [ maxParametersOpt
            , includePathOpt]
 
 def getMethodTypeTraitsDefContent(maxParameters):
-   lineStr0 = '''MOCKCPP_METHOD_TYPE_TRAITS_DEF(%d);'''
-   lineStr1 = '''MOCKCPP_CONST_METHOD_TYPE_TRAITS_DEF(%d);'''
+   lineStr0 = '''EMOCK_METHOD_TYPE_TRAITS_DEF(%d);'''
+   lineStr1 = '''EMOCK_CONST_METHOD_TYPE_TRAITS_DEF(%d);'''
    lines = []
    for i in range(0, maxParameters+1):
       lines.append(lineStr0 % i)
@@ -27,8 +27,8 @@ def generateMethodTypeTraitsDef(includePath, maxParameters):
    writeFile(includePath + "/" + methodTypeTraitsDefFileName, content)
 
 def getDelegatedMethodDefContent(maxParameters):
-   lineStr0 = '''MOCKCPP_DELEGATED_METHOD_DEF(%d);'''
-   lineStr1 = '''MOCKCPP_CONST_DELEGATED_METHOD_DEF(%d);'''
+   lineStr0 = '''EMOCK_DELEGATED_METHOD_DEF(%d);'''
+   lineStr1 = '''EMOCK_CONST_DELEGATED_METHOD_DEF(%d);'''
    lines = []
    for i in range(0, maxParameters+1):
       lines.append(lineStr0 % i)

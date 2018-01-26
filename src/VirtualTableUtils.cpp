@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -18,13 +24,13 @@
 #include <typeinfo>
 #include <string.h>
 
-#include <mockcpp/mockcpp.h>
+#include <emock/emock.h>
 
 #if defined(_MSC_VER)
-#include <mockcpp/MsvcRtti.h>
+#include <emock/MsvcRtti.h>
 #endif
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 ///////////////////////////////////////////////////////////////////////
 namespace
@@ -34,7 +40,7 @@ namespace
 #elif defined(_MSC_VER)
    const unsigned int EXTRA_VTBL_SLOT = 1;
 #endif
-   const unsigned int SLOTS_PER_VTBL = MOCKCPP_MAX_VTBL_SIZE + EXTRA_VTBL_SLOT;
+   const unsigned int SLOTS_PER_VTBL = EMOCK_MAX_VTBL_SIZE + EXTRA_VTBL_SLOT;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -105,4 +111,4 @@ void initializeVtbls(void** vptr, void**vtbl, unsigned int numberOfVptr, const s
 ///////////////////////////////////////////////////////////////////////
 
 
-MOCKCPP_NS_END
+EMOCK_NS_END

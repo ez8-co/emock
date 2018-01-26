@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -17,14 +23,14 @@
 ***/
 
 #include <testcpp/testcpp.hpp>
-#include <mockcpp/InvocationMocker.h>
-#include <mockcpp/Invocation.h>
-#include <mockcpp/InvocationMockBuilder.h>
-#include <mockcpp/ChainingMockHelper.h>
-#include <mockcpp/types/Any.h>
-#include <mockcpp/InvokedTimesRecorder.h>
+#include <emock/InvocationMocker.h>
+#include <emock/Invocation.h>
+#include <emock/InvocationMockBuilder.h>
+#include <emock/ChainingMockHelper.h>
+#include <emock/types/Any.h>
+#include <emock/InvokedTimesRecorder.h>
 
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 
 class TestInvocationMocker : public TESTCPP_NS::TestFixture
 {

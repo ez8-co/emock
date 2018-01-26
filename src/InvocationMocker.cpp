@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,19 +21,19 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/InvocationMocker.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/Matcher.h>
-#include <mockcpp/Stub.h>
-#include <mockcpp/Asserter.h>
-#include <mockcpp/InvocationId.h>
-#include <mockcpp/Method.h>
-#include <mockcpp/StubContainer.h>
+#include <emock/InvocationMocker.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/Matcher.h>
+#include <emock/Stub.h>
+#include <emock/Asserter.h>
+#include <emock/InvocationId.h>
+#include <emock/Method.h>
+#include <emock/StubContainer.h>
 
 #include <list>
 #include <algorithm>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 namespace
 {
@@ -252,7 +258,7 @@ Any& InvocationMocker::invoke(const Invocation& inv)
     }
     catch (Exception& ex)
     {
-      MOCKCPP_FAIL(ex.getMessage() + "\n" + This->toString());
+      EMOCK_FAIL(ex.getMessage() + "\n" + This->toString());
     }
 
 	return getEmptyAny();
@@ -267,11 +273,11 @@ void InvocationMocker::verify()
     }
     catch (Exception& ex)
     {
-      MOCKCPP_FAIL(ex.getMessage() + "\n" + This->toString());
+      EMOCK_FAIL(ex.getMessage() + "\n" + This->toString());
     }
 }
 
 ///////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -17,10 +23,10 @@
 ***/
 
 #include <testcpp/testcpp.hpp>
-#include <mockcpp/Formatter.h>
+#include <emock/Formatter.h>
 #include <stdio.h>
 
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 
 class TestFormatter : public TESTCPP_NS::TestFixture
 {
@@ -387,7 +393,7 @@ public:
 
    void testShouldBeAbleToStringnizeLongLong()
    {
-#if (MOCKCPP_SUPPORT_LONG_LONG == 1)
+#if (EMOCK_SUPPORT_LONG_LONG == 1)
       long long ll = 1234;
       std::string expected("(long long)0x4d2/1234");
       TS_ASSERT_EQUALS(expected, toTypeAndValueString(ll));
@@ -396,7 +402,7 @@ public:
 
    void testShouldBeAbleToStringnizeUnsignedLongLong()
    {
-#if (MOCKCPP_SUPPORT_LONG_LONG == 1)
+#if (EMOCK_SUPPORT_LONG_LONG == 1)
       unsigned long long ll = 1234;
       std::string expected("(unsigned long long)0x4d2/1234");
       TS_ASSERT_EQUALS(expected, toTypeAndValueString(ll));
@@ -405,7 +411,7 @@ public:
 
    void testShouldBeAbleToStringnizeNegativeLongLong()
    {
-#if (MOCKCPP_SUPPORT_LONG_LONG == 1)
+#if (EMOCK_SUPPORT_LONG_LONG == 1)
       long long ll = -1234;
       std::string expected("(long long)0xfffffffffffffb2e/-1234");
       TS_ASSERT_EQUALS(expected, toTypeAndValueString(ll));

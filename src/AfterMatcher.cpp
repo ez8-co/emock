@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,14 +21,14 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/AfterMatcher.h>
-#include <mockcpp/InvocationMocker.h>
-#include <mockcpp/Asserter.h>
-#include <mockcpp/Invocation.h>
-#include <mockcpp/InvocationId.h>
-#include <mockcpp/ChainableMockMethodCore.h>
+#include <emock/AfterMatcher.h>
+#include <emock/InvocationMocker.h>
+#include <emock/Asserter.h>
+#include <emock/Invocation.h>
+#include <emock/InvocationId.h>
+#include <emock/ChainableMockMethodCore.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 //////////////////////////////////////////////////////
 AfterMatcher::AfterMatcher()
@@ -43,7 +49,7 @@ void AfterMatcher::increaseInvoked(const Invocation& inv)
         << previousCall->getId()->getId()
         << "\", but that invocation has NOT been invoked yet.";
 
-    MOCKCPP_ASSERT_TRUE_MESSAGE(
+    EMOCK_ASSERT_TRUE_MESSAGE(
          oss.str(), 
          previousCall->hasBeenInvoked());
 }
@@ -71,5 +77,5 @@ void AfterMatcher::setOrderingInvocationMocker(InvocationMocker* mocker)
     previousCall = mocker;
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

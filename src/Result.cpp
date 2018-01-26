@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,22 +21,22 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/types/Any.h>
+#include <emock/types/Any.h>
 
-#include <mockcpp/Result.h>
-#include <mockcpp/SelfDescribe.h>
-#include <mockcpp/ResultHandler.h>
+#include <emock/Result.h>
+#include <emock/SelfDescribe.h>
+#include <emock/ResultHandler.h>
 
-#include <mockcpp/IgnoreResultHandlerFactory.h>
-#include <mockcpp/VoidResultHandlerFactory.h>
-#include <mockcpp/MismatchResultHandlerFactory.h>
-#include <mockcpp/NormalResultHandlerFactory.h>
-#include <mockcpp/SelfDescribe.h>
+#include <emock/IgnoreResultHandlerFactory.h>
+#include <emock/VoidResultHandlerFactory.h>
+#include <emock/MismatchResultHandlerFactory.h>
+#include <emock/NormalResultHandlerFactory.h>
+#include <emock/SelfDescribe.h>
 
 #include <typeinfo>
 #include <list>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 namespace {
 
@@ -133,5 +139,5 @@ const Any& Result::getResult(const Any& result) const
     return This->getResult(result);
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,15 +21,15 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/mockcpp.h>
+#include <emock/emock.h>
 
-#include <mockcpp/ChainableMockObject.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/InvocationMockBuilderGetter.h>
-#include <mockcpp/ChainableMockMethodNameKey.h>
-#include <mockcpp/InvocationMockerNamespace.h>
+#include <emock/ChainableMockObject.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/InvocationMockBuilderGetter.h>
+#include <emock/ChainableMockMethodNameKey.h>
+#include <emock/InvocationMockerNamespace.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 //////////////////////////////////////////////////////////////
 struct ChainableMockObjectImpl
@@ -118,6 +124,6 @@ void ChainableMockObject::reset()
 
 //////////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
 

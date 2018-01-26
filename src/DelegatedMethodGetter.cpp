@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,11 +21,11 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/mockcpp.h>
-#include <mockcpp/OutputStringStream.h>
-#include <mockcpp/ReportFailure.h>
+#include <emock/emock.h>
+#include <emock/OutputStringStream.h>
+#include <emock/ReportFailure.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 void maxVtblSizeTooBigError(unsigned int index)
 {
@@ -28,10 +34,10 @@ void maxVtblSizeTooBigError(unsigned int index)
    oss << "VTBL index ("
        << index 
        << ") exceeds the limitation of configuration ("
-       << MOCKCPP_MAX_VTBL_SIZE
+       << EMOCK_MAX_VTBL_SIZE
        << ")";
 
-   MOCKCPP_REPORT_FAILURE(oss.str());
+   EMOCK_REPORT_FAILURE(oss.str());
 }
 
 void maxInheritanceTooBigError(unsigned int index)
@@ -41,11 +47,11 @@ void maxInheritanceTooBigError(unsigned int index)
    oss << "VPTR index ("
        << index 
        << ") exceeds the limitation of inheritance("
-       << MOCKCPP_MAX_INHERITANCE
+       << EMOCK_MAX_INHERITANCE
        << ")";
 
-   MOCKCPP_REPORT_FAILURE(oss.str());
+   EMOCK_REPORT_FAILURE(oss.str());
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

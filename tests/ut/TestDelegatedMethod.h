@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -18,7 +24,7 @@
 
 #include <testcpp/testcpp.hpp>
 
-#include <mockcpp/DelegatedMethod.h>
+#include <emock/DelegatedMethod.h>
 
 class TestDelegatedMethod: public TESTCPP_NS::TestFixture
 {
@@ -65,27 +71,27 @@ public:
 
 	void testShouldBeAbleToChooseCorrectDelegatedMethod()
 	{
-      bool isConst = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsList<int> >::IsConst;
+      bool isConst = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsList<int> >::IsConst;
       TS_ASSERT(!isConst);
-      unsigned int numberOfParameters = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsList<int> >::NumberOfParameters;
+      unsigned int numberOfParameters = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsList<int> >::NumberOfParameters;
       TS_ASSERT_EQUALS(0, numberOfParameters);
 
       /////////////////////////////////////////////////////////////////////////////////////////
-      isConst = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsListConst<int> >::IsConst;
+      isConst = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsListConst<int> >::IsConst;
       TS_ASSERT(isConst);
-      numberOfParameters = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsListConst<int> >::NumberOfParameters;
+      numberOfParameters = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsListConst<int> >::NumberOfParameters;
       TS_ASSERT_EQUALS(0, numberOfParameters);
 
       /////////////////////////////////////////////////////////////////////////////////////////
-      isConst = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsList<int, float> >::IsConst;
+      isConst = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsList<int, float> >::IsConst;
       TS_ASSERT(!isConst);
-      numberOfParameters = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsList<int, float> >::NumberOfParameters;
+      numberOfParameters = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsList<int, float> >::NumberOfParameters;
       TS_ASSERT_EQUALS(1, numberOfParameters);
 
       /////////////////////////////////////////////////////////////////////////////////////////
-      isConst = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsListConst<int, float> >::IsConst;
+      isConst = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsListConst<int, float> >::IsConst;
       TS_ASSERT(isConst);
-      numberOfParameters = MOCKCPP_NS::DelegatedMethod<0,0, MOCKCPP_NS::ArgumentsListConst<int, float> >::NumberOfParameters;
+      numberOfParameters = EMOCK_NS::DelegatedMethod<0,0, EMOCK_NS::ArgumentsListConst<int, float> >::NumberOfParameters;
       TS_ASSERT_EQUALS(1, numberOfParameters);
 	}
 

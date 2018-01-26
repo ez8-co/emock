@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,7 +21,7 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/mockcpp.h>
+#include <emock/emock.h>
 
 #include <typeinfo>
 
@@ -27,9 +33,9 @@
 
 #include <string>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
-MOCKCPP_EXPORT
+EMOCK_EXPORT
 
 std::string getDemangledName(const char* info_name)
 {
@@ -53,5 +59,5 @@ std::string getDemangledName(const std::type_info& typeInfo)
    return getDemangledName(typeInfo.name());
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

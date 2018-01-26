@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,12 +21,12 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/MethodIndiceChecker.h>
-#include <mockcpp/MethodInfoReader.h>
-#include <mockcpp/Asserter.h>
-#include <mockcpp/VirtualTableUtils.h>
+#include <emock/MethodIndiceChecker.h>
+#include <emock/MethodInfoReader.h>
+#include <emock/Asserter.h>
+#include <emock/VirtualTableUtils.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 ///////////////////////////////////////////////////////////////////////
 namespace
@@ -55,7 +61,7 @@ struct VTBL
 ////////////////////////////////////////////////////////////////////////
 struct FakeObject
 {
-   void* vptr[MOCKCPP_MAX_INHERITANCE];
+   void* vptr[EMOCK_MAX_INHERITANCE];
    Indices* indices;
 
    FakeObject(const std::type_info& info, Indices* ind);
@@ -94,21 +100,21 @@ struct Method
 };
 
 ///////////////////////////////////////////////////////////////////////
-#define MOCKCPP_SET_METHOD_INDICE_CHECKER_VTBL(I, J) do{ \
+#define EMOCK_SET_METHOD_INDICE_CHECKER_VTBL(I, J) do{ \
    table[getRealVtblIndex(I,J)] = getAddrOfMethod(&Method<I,J,DummyType>::check); \
 }while(0)
 
 ////////////////////////////////////////////////////////////////////////
 VTBL::VTBL()
 {
-   table = createVtbls(MOCKCPP_MAX_INHERITANCE);
-   #include <mockcpp/MethodIndiceCheckerDef.h>
+   table = createVtbls(EMOCK_MAX_INHERITANCE);
+   #include <emock/MethodIndiceCheckerDef.h>
 }
 
 ////////////////////////////////////////////////////////////////////////
 VTBL::~VTBL()
 {
-   freeVtbls(table, MOCKCPP_MAX_INHERITANCE);
+   freeVtbls(table, EMOCK_MAX_INHERITANCE);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -116,7 +122,7 @@ FakeObject::
 FakeObject(const std::type_info& info, Indices* ind)
    : indices(ind)
 {
-   initializeVtbls(vptr, vtbl.table, MOCKCPP_MAX_INHERITANCE, info, false);
+   initializeVtbls(vptr, vtbl.table, EMOCK_MAX_INHERITANCE, info, false);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -180,5 +186,5 @@ MethodIndiceChecker* createMethodIndiceChecker(const std::type_info& info)
 
 ///////////////////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

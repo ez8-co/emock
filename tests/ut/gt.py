@@ -6,9 +6,9 @@ import os.path
 template = '''
 #include <testcpp/testcpp.hpp>
 
-#include <mockcpp/%s.h>
+#include <emock/%s.h>
 
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 USING_TESTCPP_NS
 
 class Test%s: public TESTCPP_NS::TestFixture

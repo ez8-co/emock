@@ -32,10 +32,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#include <mockcpp/Asserter.h>
+#include <emock/Asserter.h>
 #include <gtest/gtest.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 void
 reportFailure(unsigned srcline, const char* srcfile,
@@ -49,9 +49,9 @@ reportFailure(unsigned srcline, const char* srcfile,
                 , srcline
                 , message.c_str()) = Message();
 
-    MOCKCPP_FAIL("failed due to mockcpp exception");
+    EMOCK_FAIL("failed due to mockcpp exception");
 }
 
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

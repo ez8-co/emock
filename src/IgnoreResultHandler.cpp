@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,12 +21,12 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/IgnoreResultHandler.h>
-#include <mockcpp/Ignore.h>
-#include <mockcpp/types/Any.h>
-#include <mockcpp/types/AnyCast.h>
+#include <emock/IgnoreResultHandler.h>
+#include <emock/Ignore.h>
+#include <emock/types/Any.h>
+#include <emock/types/AnyCast.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 bool IgnoreResultHandler::matches(const Any& val) const
 {
@@ -32,5 +38,5 @@ const Any& IgnoreResultHandler::getResult(const Any& val) const
 	return val;
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

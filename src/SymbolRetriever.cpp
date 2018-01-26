@@ -1,26 +1,17 @@
 /***
-   mockcpp is a C/C++ mock framework.
-   Copyright (c) 2010-2017 <http://ez8.co> <orca.zhang@yahoo.com>
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
 
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
 ***/
 
 #include <typeinfo>
 #include <set>
 
-#include <mockcpp/SymbolRetriever.h>
-#include <mockcpp/TypeString.h>
-#include <mockcpp/ReportFailure.h>
+#include <emock/SymbolRetriever.h>
+#include <emock/TypeString.h>
+#include <emock/ReportFailure.h>
 
 #ifdef _MSC_VER
 
@@ -44,7 +35,7 @@
 
 #endif
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
     namespace {
         static std::string extractMethodName(const std::string& stringify) {
@@ -208,7 +199,7 @@ MOCKCPP_NS_START
 		ULONG64 modBase = getModBase((DWORD64)p);
         SymEnumSymbols(GetCurrentProcess(), modBase, modBase > 0 ? symbolName.c_str() : std::string("*!").append(symbolName).c_str(), symbolsCallback, &v);
         if(v.empty()) {
-            MOCKCPP_REPORT_FAILURE(std::string("Failed to find symbol of [").append(stringify).append("]").c_str());
+            EMOCK_REPORT_FAILURE(std::string("Failed to find symbol of [").append(stringify).append("]").c_str());
             return NULL;
         }
 		std::set<ULONG64>::const_iterator itRet = v.begin();
@@ -219,20 +210,20 @@ MOCKCPP_NS_START
         if(offsets.empty()) {
 			std::string pdbPath = getPdbPath(*itRet);
             if(pdbPath.empty()) {
-                MOCKCPP_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(stringify).append("]").c_str());
+                EMOCK_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(stringify).append("]").c_str());
                 return NULL;
             }
             methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), signature, offsets);
         }
         if(offsets.size() != v.size()) {
-            MOCKCPP_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(stringify).append("]").c_str());
+            EMOCK_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(stringify).append("]").c_str());
             return NULL;
         }
         for(it = offsets.begin(); it != offsets.end(); ++it, ++itRet) {
             if(it->second == signature)
                 return (void*)*itRet;
         }
-        MOCKCPP_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
         return NULL;
     }
 
@@ -302,7 +293,7 @@ MOCKCPP_NS_START
         aux_set.insert(file_name);
         FILE* fp = fopen("/proc/self/maps", "r");
         if(!fp) {
-            MOCKCPP_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(stringify).append("]").c_str());
+            EMOCK_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(stringify).append("]").c_str());
             return NULL;
         }
 
@@ -323,10 +314,10 @@ MOCKCPP_NS_START
             }
         }
         fclose(fp);
-        MOCKCPP_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
         return NULL;
     }
 
 #endif
 
-MOCKCPP_NS_END
+EMOCK_NS_END

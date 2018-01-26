@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -17,23 +23,23 @@
 
 #include <typeinfo>
 
-#include <mockcpp/VirtualTable.h>
-#include <mockcpp/ReportFailure.h>
-#include <mockcpp/OutputStringStream.h>
-#include <mockcpp/MethodInfoReader.h>
-#include <mockcpp/ObjNameGetter.h>
-#include <mockcpp/VirtualTableUtils.h>
-#include <mockcpp/TypeString.h>
+#include <emock/VirtualTable.h>
+#include <emock/ReportFailure.h>
+#include <emock/OutputStringStream.h>
+#include <emock/MethodInfoReader.h>
+#include <emock/ObjNameGetter.h>
+#include <emock/VirtualTableUtils.h>
+#include <emock/TypeString.h>
 
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 /////////////////////////////////////////////////////////////////
 namespace
 {
    struct FakeObject
    {
-      void* vptr[MOCKCPP_MAX_INHERITANCE+1];
+      void* vptr[EMOCK_MAX_INHERITANCE+1];
    };
 }
 
@@ -70,7 +76,7 @@ VirtualTableImpl::validateVptr(void** pVptr)
 {
    if(pVptr != fakeObject->vptr)
    {
-      MOCKCPP_REPORT_FAILURE( PACKAGE " internal error(1018). please report this bug to "
+      EMOCK_REPORT_FAILURE( PACKAGE " internal error(1018). please report this bug to "
              PACKAGE_BUGREPORT ".");
    }
 }
@@ -78,7 +84,7 @@ VirtualTableImpl::validateVptr(void** pVptr)
 void
 VirtualTableImpl::validateNumberOfVptr()
 {
-   if(numberOfVptr > MOCKCPP_MAX_INHERITANCE)
+   if(numberOfVptr > EMOCK_MAX_INHERITANCE)
    {
       oss_t oss;
 
@@ -88,11 +94,11 @@ VirtualTableImpl::validateNumberOfVptr()
           << "), or it's not a pure virtual class. "
           << "Here are some hints for you: \n"
           << "1. " PACKAGE " only supports mocking pure virtual class; \n"
-          << "2. you can change the MOCKCPP_MAX_INHERITANCE setting to "
+          << "2. you can change the EMOCK_MAX_INHERITANCE setting to "
              "maximun 7, then rebuild " PACKAGE "; \n"
           << "3. you can refine your design to make it simpler.";
 
-      MOCKCPP_REPORT_FAILURE(oss.str());
+      EMOCK_REPORT_FAILURE(oss.str());
    }
 }
 /////////////////////////////////////////////////////////////////
@@ -103,16 +109,16 @@ VirtualTableImpl::validateIndexOfVtbl(unsigned int index)
 
    oss << "Did you define too many methods in an interface? "
        << "Probably you should refine your design, "
-       << "or you can reconfig MOCKCPP_MAX_VTBL_SIZE bigger, "
+       << "or you can reconfig EMOCK_MAX_VTBL_SIZE bigger, "
        << "it's current setting is " 
-       << MOCKCPP_MAX_VTBL_SIZE 
+       << EMOCK_MAX_VTBL_SIZE 
        << ", the biggest value it could be set is 50. "
        << "FYI: the index of method which you are trying to mock is "
        << index + 1 << ".";
 
-   MOCKCPP_ASSERT_TRUE(
+   EMOCK_ASSERT_TRUE(
       oss.str(), 
-      index < MOCKCPP_MAX_VTBL_SIZE);
+      index < EMOCK_MAX_VTBL_SIZE);
 }
 
 /////////////////////////////////////////////////////////////////
@@ -121,7 +127,7 @@ VirtualTableImpl::validateIndexOfVptr(unsigned int index)
 {
    if(index >= numberOfVptr)
    {
-      MOCKCPP_REPORT_FAILURE(PACKAGE " internal error. please report it to " PACKAGE_BUGREPORT ".");
+      EMOCK_REPORT_FAILURE(PACKAGE " internal error. please report it to " PACKAGE_BUGREPORT ".");
    }
 }
 
@@ -132,7 +138,7 @@ namespace
    getVirtualTableImpl(void* caller, unsigned int vptrIndex)
    {
       void** vptr = &((void**)caller)[-(int)vptrIndex];
-      VirtualTableImpl* pThis = (VirtualTableImpl*)vptr[MOCKCPP_MAX_INHERITANCE];
+      VirtualTableImpl* pThis = (VirtualTableImpl*)vptr[EMOCK_MAX_INHERITANCE];
       pThis->validateVptr(vptr);
       return pThis;
    }
@@ -157,13 +163,13 @@ namespace
 
 
 
-         MOCKCPP_REPORT_FAILURE(oss.str());
+         EMOCK_REPORT_FAILURE(oss.str());
       }
    };
 }
 
 /////////////////////////////////////////////////////////////////
-#define MOCKCPP_SET_DEFAULT_METHOD(I, J) do {\
+#define EMOCK_SET_DEFAULT_METHOD(I, J) do {\
    if(numberOfVptr > I) \
    { \
      vtbl[getRealVtblIndex(I, J)] = getAddrOfMethod(&DefaultMethodHolder<I, J, MethodHolderDummy>::method); \
@@ -174,7 +180,7 @@ namespace
 void
 VirtualTableImpl::reset()
 {
-   #include <mockcpp/DefaultMethodAddrGetterDef.h>
+   #include <emock/DefaultMethodAddrGetterDef.h>
 
    expectsBeingDeleted = false;
    expectsKeepAlive = false;
@@ -209,7 +215,7 @@ VirtualTableImpl::VirtualTableImpl
 
    initializeVtbls(vptr, vtbl, numberOfVptr,refTypeInfo, true);
 
-   vptr[MOCKCPP_MAX_INHERITANCE] = (void*)this;
+   vptr[EMOCK_MAX_INHERITANCE] = (void*)this;
 
    deleted = false;
 
@@ -278,7 +284,7 @@ namespace
          VirtualTableImpl* pThis = getVirtualTableImpl(this, VPTRIndex);
          if(pThis->expectsKeepAlive)
          {
-            MOCKCPP_REPORT_FAILURE("trying to delete an object expected keeping alive.");
+            EMOCK_REPORT_FAILURE("trying to delete an object expected keeping alive.");
          }
 
          // FIXME: The memory won't be freed automatically.
@@ -286,7 +292,7 @@ namespace
          // delete [] pThis->vtbl;
          if(pThis->deleted)
          {
-            MOCKCPP_REPORT_FAILURE("object has been deleted previously, you are deleting it again.");
+            EMOCK_REPORT_FAILURE("object has been deleted previously, you are deleting it again.");
          }
 
          pThis->deleted = true;
@@ -294,7 +300,7 @@ namespace
    };
 }
 
-#define MOCKCPP_GET_DESTRUCTOR_ADDR(I) \
+#define EMOCK_GET_DESTRUCTOR_ADDR(I) \
    case I: \
       destructorAddr = getAddrOfMethod(&DestructorHolder<I, DummyClass>::destructor); \
       break;
@@ -310,7 +316,7 @@ VirtualTable::setDestructor(unsigned int vptrIndex, unsigned int vtblIndex)
 
     switch(vptrIndex)
     {
-    #include <mockcpp/DestructorAddrGetterDef.h>
+    #include <emock/DestructorAddrGetterDef.h>
     }
 
     This->vtbl[getRealVtblIndex(vptrIndex, vtblIndex)] = destructorAddr;
@@ -329,7 +335,7 @@ VirtualTable::verify()
 {
    if(This->expectsBeingDeleted && !This->deleted)
    {
-      MOCKCPP_REPORT_FAILURE("Object is expected Being Deleted, but it actually didn't happen.");
+      EMOCK_REPORT_FAILURE("Object is expected Being Deleted, but it actually didn't happen.");
    }
 
    This->expectsBeingDeleted = false;
@@ -342,7 +348,7 @@ VirtualTable::expectsBeingDeleted()
 {
     if(This->expectsKeepAlive)
     {
-       MOCKCPP_REPORT_FAILURE("What do you really want? You are expecting "
+       EMOCK_REPORT_FAILURE("What do you really want? You are expecting "
                     "to delete an object alive which you expected "
                     "it should keep alive");
     }
@@ -356,12 +362,12 @@ VirtualTable::expectsKeepAlive()
 {
    if(This->deleted)
    {
-       MOCKCPP_REPORT_FAILURE("The object you expects keeping alive has actually been deleted.");
+       EMOCK_REPORT_FAILURE("The object you expects keeping alive has actually been deleted.");
    }
 
    if(This->expectsBeingDeleted)
    {
-       MOCKCPP_REPORT_FAILURE("What do you really want? You are expecting "
+       EMOCK_REPORT_FAILURE("What do you really want? You are expecting "
                     "to keep an object alive which you expected "
                     "it should be deleted");
    }
@@ -375,10 +381,10 @@ VirtualTable::getInvokableGetter(void* caller, unsigned int vptrIndex)
    VirtualTableImpl* pThis = getVirtualTableImpl(caller, vptrIndex);
    if(pThis->deleted)
    {
-       MOCKCPP_REPORT_FAILURE("The object you are trying to access has been deleted.");
+       EMOCK_REPORT_FAILURE("The object you are trying to access has been deleted.");
    }
 
    return pThis->indexInvokableGetter;
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END

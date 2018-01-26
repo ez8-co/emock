@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,23 +21,23 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/types/Any.h>
-#include <mockcpp/Stub.h>
-#include <mockcpp/Asserter.h>
-#include <mockcpp/Invocation.h>
-#include <mockcpp/InvocationId.h>
-#include <mockcpp/DefaultMatcher.h>
-#include <mockcpp/StubsMatcher.h>
-#include <mockcpp/ExpectsMatcher.h>
-#include <mockcpp/InvocationMocker.h>
-#include <mockcpp/InvokedTimesMatcher.h>
-#include <mockcpp/InvocationMockerSet.h>
-#include <mockcpp/InvokedTimesRecorder.h>
-#include <mockcpp/InvocationTimesMatcher.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/SimpleInvocationRecorder.h>
+#include <emock/types/Any.h>
+#include <emock/Stub.h>
+#include <emock/Asserter.h>
+#include <emock/Invocation.h>
+#include <emock/InvocationId.h>
+#include <emock/DefaultMatcher.h>
+#include <emock/StubsMatcher.h>
+#include <emock/ExpectsMatcher.h>
+#include <emock/InvocationMocker.h>
+#include <emock/InvokedTimesMatcher.h>
+#include <emock/InvocationMockerSet.h>
+#include <emock/InvokedTimesRecorder.h>
+#include <emock/InvocationTimesMatcher.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/SimpleInvocationRecorder.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 //////////////////////////////////////////////////////////
 struct ChainableMockMethodCoreImpl
@@ -120,7 +126,7 @@ ChainableMockMethodCoreImpl::invoke(const Invocation& inv
       return result2;
     }
 
-	 MOCKCPP_FAIL(tellNoMatchedExpectation(inv));
+	 EMOCK_FAIL(tellNoMatchedExpectation(inv));
    
 	 return getEmptyAny();
 }
@@ -208,5 +214,5 @@ void ChainableMockMethodCore::verify()
 
 //////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

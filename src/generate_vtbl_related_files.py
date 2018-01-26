@@ -13,7 +13,7 @@ defaultMethodGetterDefFileName = "DefaultMethodAddrGetterDef.h"
 allowMIOpt          = LongOptString("allow-mi", "yes")
 maxInheritanceOpt   = LongOptString("max-inheritance", "2")
 maxVtblSizeOpt      = LongOptString("max-vtbl-size", "10")
-includePathOpt      = LongOptString("include-path", "/home/darwin/mockcpp/include")
+includePathOpt      = LongOptString("include-path", "../include")
 
 longOpts = [ allowMIOpt
            , maxInheritanceOpt
@@ -21,7 +21,7 @@ longOpts = [ allowMIOpt
            , includePathOpt]
 
 def getDestructorAddrGetterDefContent(maxInheritance):
-   lineStr = '''MOCKCPP_GET_DESTRUCTOR_ADDR(%d)'''
+   lineStr = '''EMOCK_GET_DESTRUCTOR_ADDR(%d)'''
    lines = []
    for i in range(0, maxInheritance):
       lines.append(lineStr % i)
@@ -33,7 +33,7 @@ def generateDestructorAddrGetterDef(includePath, maxInheritance):
    writeFile(includePath + "/" + destructorGetterDefFileName, content)
 
 def getMethodIndiceCheckerDefContent(maxInheritance, maxVtblSize):
-   lineStr = '''MOCKCPP_SET_METHOD_INDICE_CHECKER_VTBL(%d, %d);'''
+   lineStr = '''EMOCK_SET_METHOD_INDICE_CHECKER_VTBL(%d, %d);'''
    lines = []
    for i in range(0, maxInheritance):
       for j in range(0, maxVtblSize):
@@ -46,7 +46,7 @@ def generateMethodIndiceCheckerDef(includePath, maxInheritance, maxVtblSize):
    writeFile(includePath + "/" + methodIndiceCheckerDefFileName, content)
 
 def getDefaultMethodAddrGetterDefContent(maxInheritance, maxVtblSize):
-   lineStr = '''MOCKCPP_SET_DEFAULT_METHOD(%d, %d);'''
+   lineStr = '''EMOCK_SET_DEFAULT_METHOD(%d, %d);'''
    lines = []
    for i in range(0, maxInheritance):
       for j in range(0, maxVtblSize):

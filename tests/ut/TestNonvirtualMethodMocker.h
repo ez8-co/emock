@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -17,9 +23,9 @@
 ***/
 
 #include <testngpp/testngpp.hpp>
-#include <mockcpp/mokc.h>
+#include <emock/mokc.h>
 
-#include <mockcpp/mockcpp.hpp>
+#include <emock/emock.hpp>
 
 
 //..\..\build_testngpp\src\runner\Debug\testngpp-runner.exe
@@ -28,16 +34,16 @@
 
 
 //USING_TESTNGPP_NS
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 
 struct CUT;
 
-int MOCKCPP_API normal_method(CUT*)
+int EMOCK_API normal_method(CUT*)
 {
     return 100;
 }
 
-int MOCKCPP_API normal_method_1(CUT* , int)
+int EMOCK_API normal_method_1(CUT* , int)
 {
     return 101;
 }

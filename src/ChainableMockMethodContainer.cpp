@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,16 +21,16 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/ChainableMockMethodContainer.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/ChainableMockMethodKey.h>
-#include <mockcpp/ReportFailure.h>
+#include <emock/ChainableMockMethodContainer.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/ChainableMockMethodKey.h>
+#include <emock/ReportFailure.h>
 
 #include <list>
 #include <utility>
 #include <algorithm>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 /////////////////////////////////////////////////////////////////////////
 struct ChainableMockMethodContainerImpl
@@ -200,7 +206,7 @@ ChainableMockMethodContainer::addMethod(ChainableMockMethodKey* key, \
 {
     if(getMethod(key) != 0)
     {
-       MOCKCPP_REPORT_FAILURE("internal error (1022), please report this bug to" PACKAGE_BUGREPORT ".");
+       EMOCK_REPORT_FAILURE("internal error (1022), please report this bug to" PACKAGE_BUGREPORT ".");
     }
 
     This->addMethod(key, method);
@@ -228,5 +234,5 @@ ChainableMockMethodContainer::verify()
 }
 
 /////////////////////////////////////////////////////////////////////////
-MOCKCPP_NS_END
+EMOCK_NS_END
 

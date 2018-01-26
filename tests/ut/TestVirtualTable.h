@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -20,15 +26,15 @@
 
 #include <testcpp/testcpp.hpp>
 
-#include <mockcpp/VirtualTable.h>
-#include <mockcpp/IndexInvokableGetter.h>
-#include <mockcpp/Invokable.h>
-#include <mockcpp/Exception.h>
-#include <mockcpp/MethodInfoReader.h>
-#include <mockcpp/DestructorChecker.h>
-#include <mockcpp/ObjNameGetter.h>
+#include <emock/VirtualTable.h>
+#include <emock/IndexInvokableGetter.h>
+#include <emock/Invokable.h>
+#include <emock/Exception.h>
+#include <emock/MethodInfoReader.h>
+#include <emock/DestructorChecker.h>
+#include <emock/ObjNameGetter.h>
 
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 
 struct IndexInvokableGetterStub : public IndexInvokableGetter
 {
@@ -120,13 +126,13 @@ public:
    template <typename Method>
    int getIndexOfMethod(Method m)
    {
-      return MOCKCPP_NS::getIndexOfMethod<Interface, Method>(m);
+      return EMOCK_NS::getIndexOfMethod<Interface, Method>(m);
    }
 
    template <typename Method>
    int getDeltaOfMethod(Method m)
    {
-      return MOCKCPP_NS::getDeltaOfMethod<Interface, Method>(m);
+      return EMOCK_NS::getDeltaOfMethod<Interface, Method>(m);
    }
 
 	/////////////////////////////////////////////////////////
@@ -136,7 +142,7 @@ public:
    {
       Interface* p = (Interface*) vtbl->toPointerToInterface();
 
-      TS_ASSERT_THROWS(p->a(), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(p->a(), EMOCK_NS::Exception);
    }
 
    // @test
@@ -145,7 +151,7 @@ public:
       TS_ASSERT_THROWS( new VirtualTable(&indexInvokableGetter
                       , &object
                       , 10 
-                      , typeid(Interface)), MOCKCPP_NS::Exception);
+                      , typeid(Interface)), EMOCK_NS::Exception);
    }
 
    // @test
@@ -154,7 +160,7 @@ public:
       unsigned int indexOfVtbl = getIndexOfMethod(&Interface::base11);
       unsigned int indexOfVptr = getDeltaOfMethod(&Interface::base11);
 
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
  
       vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr);
 
@@ -172,38 +178,38 @@ public:
    {
       unsigned int indexOfVtbl = getIndexOfMethod(&Interface::base11);
       unsigned int indexOfVptr = getDeltaOfMethod(&Interface::base11);
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
       vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr);
 
       Interface* p = (Interface*) vtbl->toPointerToInterface();
 
       p->base11(true);
 
-      TS_ASSERT_THROWS(p->base00(), MOCKCPP_NS::Exception);
-      TS_ASSERT_THROWS(p->base01(0), MOCKCPP_NS::Exception);
-      TS_ASSERT_THROWS(p->base10(), MOCKCPP_NS::Exception);
-      TS_ASSERT_THROWS(p->a(), MOCKCPP_NS::Exception);
-      TS_ASSERT_THROWS(p->b(true), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(p->base00(), EMOCK_NS::Exception);
+      TS_ASSERT_THROWS(p->base01(0), EMOCK_NS::Exception);
+      TS_ASSERT_THROWS(p->base10(), EMOCK_NS::Exception);
+      TS_ASSERT_THROWS(p->a(), EMOCK_NS::Exception);
+      TS_ASSERT_THROWS(p->b(true), EMOCK_NS::Exception);
    }
 
    // @test
    void shouldThrowExceptionIfIndexOfVtblExceedsTheLimitationOfConfiguration()
    {
-      unsigned int indexOfVtbl = 20; //MOCKCPP_MAX_VTBL_SIZE;
+      unsigned int indexOfVtbl = 20; //EMOCK_MAX_VTBL_SIZE;
       unsigned int indexOfVptr = getDeltaOfMethod(&Interface::base11);
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
  
-      TS_ASSERT_THROWS(vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr), EMOCK_NS::Exception);
    }
 
    // @test
    void shouldThrowExceptionIfIndexOfVtblExceedsTheNumberOfVptr()
    {
       unsigned int indexOfVtbl = getIndexOfMethod(&Interface::base11);
-      unsigned int indexOfVptr = 5; //MOCKCPP_MAX_INHERITANCE;
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      unsigned int indexOfVptr = 5; //EMOCK_MAX_INHERITANCE;
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
  
-      TS_ASSERT_THROWS(vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr), EMOCK_NS::Exception);
    }
 
    // @test
@@ -211,7 +217,7 @@ public:
    {
       unsigned int indexOfVtbl = getIndexOfMethod(&Interface::base11);
       unsigned int indexOfVptr = getDeltaOfMethod(&Interface::base11);
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
  
       vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr);
 
@@ -314,7 +320,7 @@ public:
 
       unsigned int indexOfVtbl = getIndexOfMethod(&Interface::base11);
       unsigned int indexOfVptr = getDeltaOfMethod(&Interface::base11);
-      void* methodAddr = MOCKCPP_NS::getAddrOfMethod(&TestMethodHolder::base11);
+      void* methodAddr = EMOCK_NS::getAddrOfMethod(&TestMethodHolder::base11);
       vtbl->addMethod(methodAddr, indexOfVtbl, indexOfVptr);
 
       Interface* p = (Interface*) vtbl->toPointerToInterface();

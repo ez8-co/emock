@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -19,13 +25,13 @@
 
 #include <cxxabi.h>
 
-#include <mockcpp/mockcpp.h>
-#include <mockcpp/Exception.h>
-#include <mockcpp/ReportFailure.h>
+#include <emock/emock.h>
+#include <emock/Exception.h>
+#include <emock/ReportFailure.h>
 
 using namespace __cxxabiv1;
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 //////////////////////////////////////////////////////
 unsigned int
@@ -39,13 +45,13 @@ getNumberOfVtblsByBaseClassTypeInfo(const __base_class_type_info& info
 {
    if(info.__offset_flags & __base_class_type_info::__virtual_mask)
    {
-      MOCKCPP_REPORT_FAILURE("virtual inheritance of interfaces is not" \
+      EMOCK_REPORT_FAILURE("virtual inheritance of interfaces is not" \
                   " a good practice, hence, mockcpp does not support it");
    }
 
    if(!(info.__offset_flags & __base_class_type_info::__public_mask))
    {
-      MOCKCPP_REPORT_FAILURE("non-public inheritance of interfaces is not" \
+      EMOCK_REPORT_FAILURE("non-public inheritance of interfaces is not" \
                   " a good practice, hence, mockcpp does not support it");
    }
 
@@ -58,7 +64,7 @@ getNumberOfVtblsByVmi(const __vmi_class_type_info* vmi, unsigned int number)
 {
    if(vmi->__flags&__vmi_class_type_info::__diamond_shaped_mask)
    {
-      MOCKCPP_REPORT_FAILURE("Diamond inheritance of interfaces is not" \
+      EMOCK_REPORT_FAILURE("Diamond inheritance of interfaces is not" \
                   " a good practice, hence, mockcpp does not support it");
    }
 
@@ -97,7 +103,7 @@ getNumberOfBaseClasses(const std::type_info& info)
    }
    catch(std::bad_cast& e)
    {
-      MOCKCPP_REPORT_FAILURE("the type you are trying to mock is not a class.");
+      EMOCK_REPORT_FAILURE("the type you are trying to mock is not a class.");
    }
 
    return 0;
@@ -122,7 +128,7 @@ getNumberOfBaseClassesByClassTypeInfo(const __class_type_info* info, unsigned in
    return number + 1;
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
 #endif
 

@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,19 +21,19 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/mockcpp.h>
+#include <emock/emock.h>
 
-#include <mockcpp/HookMockObject.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/InvocationMockBuilderGetter.h>
-#include <mockcpp/InvocationMockerNamespace.h>
-#include <mockcpp/ApiHookKey.h>
-#include <mockcpp/ReportFailure.h>
-#include <mockcpp/ApiHookHolder.h>
-#include <mockcpp/SymbolRetriever.h>
-#include <mockcpp/Trampoline.h>
+#include <emock/HookMockObject.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/InvocationMockBuilderGetter.h>
+#include <emock/InvocationMockerNamespace.h>
+#include <emock/ApiHookKey.h>
+#include <emock/ReportFailure.h>
+#include <emock/ApiHookHolder.h>
+#include <emock/SymbolRetriever.h>
+#include <emock/Trampoline.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 //////////////////////////////////////////////////////////////
 struct HookMockObjectImpl
@@ -140,7 +146,7 @@ Invokable*
 HookMockObject::getInvokable(const void* api) 
 {
    ChainableMockMethodCore* method = This->getMethod(api);
-   MOCKCPP_ASSERT_TRUE(
+   EMOCK_ASSERT_TRUE(
 	   "mockcpp internal error (3001): unable to get api pointer",
 	   method != 0);
    return method;
@@ -154,6 +160,6 @@ void HookMockObject::reset()
 
 //////////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
 

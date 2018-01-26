@@ -71,9 +71,9 @@ IF(CMAKE_CL_64)
 ENDIF(CMAKE_CL_64)
 
 LINK_DIRECTORIES(
-	${PROJECT_HOME}/build_mockcpp/src/Debug
+	${PROJECT_HOME}/build_emock/src/Debug
 	${PROJECT_HOME}/build_testngpp/src/Debug
-    ${PROJECT_HOME}/build_mockcpp/src
+    ${PROJECT_HOME}/build_emock/src
     ${PROJECT_HOME}/build_testngpp/src)
 
 INCLUDE_DIRECTORIES(BEFORE 
@@ -83,7 +83,7 @@ INCLUDE_DIRECTORIES(BEFORE
   )
 
 SET(TEST_GENERATOR ${CMAKE_SOURCE_DIR}/3rdparty/testngpp/scripts/testngppgen.py)
-SET(TESTCASE_PREFIX mockcpp-ut)
+SET(TESTCASE_PREFIX emock-ut)
 
 IF(MSVC)
     ADD_DEFINITIONS(-DMSVC_VMG_ENABLED)
@@ -114,7 +114,7 @@ FOREACH(CASE ${UT_CASES})
 
   TARGET_LINK_LIBRARIES(${CASE_MODULE}
     testngpp
-    mockcpp)
+    emock)
 
   ADD_CUSTOM_COMMAND(
     OUTPUT ${CASE_SRC}

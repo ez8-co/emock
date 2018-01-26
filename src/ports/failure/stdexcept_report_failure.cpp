@@ -32,10 +32,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#include <mockcpp/AssertionFailedError.h>
-#include <mockcpp/Exception.h>
+#include <emock/AssertionFailedError.h>
+#include <emock/Exception.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 void
 reportFailure(unsigned srcline, const char* srcfile,
@@ -45,5 +45,5 @@ reportFailure(unsigned srcline, const char* srcfile,
 }
 
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,12 +21,12 @@
    limitations under the License.
 ***/
 
-#ifndef __MOCKCPP_JMP_ONLY_API_HOOK_H__
-#define __MOCKCPP_JMP_ONLY_API_HOOK_H__
+#ifndef __EMOCK_JMP_ONLY_API_HOOK_H__
+#define __EMOCK_JMP_ONLY_API_HOOK_H__
 
-#include <mockcpp/mockcpp.h>
+#include <emock/emock.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 struct JmpOnlyApiHookImpl;
 
@@ -36,6 +42,6 @@ private:
     JmpOnlyApiHookImpl* This;;
 };
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
 #endif

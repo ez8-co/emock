@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -19,14 +25,14 @@
 #include <testcpp/testcpp.hpp>
 
 
-#include <mockcpp/ChainableMockMethodContainer.h>
-#include <mockcpp/ChainableMockMethodCore.h>
-#include <mockcpp/InvocationMockBuilderGetter.h>
-#include <mockcpp/ChainableMockMethodNameKey.h>
-#include <mockcpp/Exception.h>
-#include <mockcpp/ChainingMockHelper.h>
+#include <emock/ChainableMockMethodContainer.h>
+#include <emock/ChainableMockMethodCore.h>
+#include <emock/InvocationMockBuilderGetter.h>
+#include <emock/ChainableMockMethodNameKey.h>
+#include <emock/Exception.h>
+#include <emock/ChainingMockHelper.h>
 
-USING_MOCKCPP_NS
+USING_EMOCK_NS
 
 class TestChainableMockMethodContainer : public TESTCPP_NS::TestFixture
 {
@@ -51,7 +57,7 @@ class TestChainableMockMethodContainer : public TESTCPP_NS::TestFixture
 
 private:
 
-    MOCKCPP_NS::ChainableMockMethodNameKey* key;
+    EMOCK_NS::ChainableMockMethodNameKey* key;
     InvocationMockerNamespaceStub ns;
     ChainableMockMethodCore* method;
 
@@ -80,7 +86,7 @@ public:
    // @test
 	void shouldBeAbleToAddAMethod()
 	{
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
       TS_ASSERT_EQUALS(method, container.getMethod(key));
 	}
@@ -88,7 +94,7 @@ public:
    // @test
    void ShouldReturnNullIfMethodWithTheSpecifiedKeyWasNotAddedToContainer()
    {
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
 
       __DO__
 
@@ -105,16 +111,16 @@ public:
    // @test
    void ShouldThrowExceptionIfAMethodWithTheSameKeyHasBeedAdded()
    {
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
 
-      TS_ASSERT_THROWS(container.addMethod(key, method), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(container.addMethod(key, method), EMOCK_NS::Exception);
    }
 
    // @test
    void YouCannotGetTheMethodAnyLongerAfterTheContainerIsReset()
    {
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
       container.reset();
       TS_ASSERT(0 == container.getMethod(key));
@@ -127,10 +133,10 @@ public:
 
       builderGetter.expects(once());
 
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
 
-      TS_ASSERT_THROWS(container.verify(), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(container.verify(), EMOCK_NS::Exception);
    }
   
    // @test
@@ -140,7 +146,7 @@ public:
 
       builderGetter.expects(once()).id("1");
 
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
 
       TS_ASSERT(container.findInvocationMocker("1") != 0);
@@ -153,7 +159,7 @@ public:
 
       builderGetter.expects(once()).id("1");
 
-      MOCKCPP_NS::ChainableMockMethodContainer container;
+      EMOCK_NS::ChainableMockMethodContainer container;
       container.addMethod(key, method);
 
       TS_ASSERT(container.findInvocationMocker("0") == 0);

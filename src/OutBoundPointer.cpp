@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,11 +21,11 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/OutBoundPointer.h>
-#include <mockcpp/Formatter.h>
-#include <mockcpp/Asserter.h>
+#include <emock/OutBoundPointer.h>
+#include <emock/Formatter.h>
+#include <emock/Asserter.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 ////////////////////////////////////////////////////////////////////////////
 void OutBoundPointerCheckConst(const std::string& typeString, bool isConst) 
@@ -29,19 +35,19 @@ void OutBoundPointerCheckConst(const std::string& typeString, bool isConst)
    oss << "A constant pointer " << typeString
        << " cannot be outbounded";
 
-   MOCKCPP_ASSERT_FALSE_MESSAGE( oss.str(), isConst);
+   EMOCK_ASSERT_FALSE_MESSAGE( oss.str(), isConst);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 OutBoundPointer<void*>::OutBoundPointer(void* p, size_t size, Constraint* constraint)
 	 : OutBoundPointerBase<void*>(p, size, constraint)
 {
-	MOCKCPP_ASSERT_TRUE_MESSAGE(
+	EMOCK_ASSERT_TRUE_MESSAGE(
             "parameter \"size\" of OutBoundPointer<void*> cannot be specified as 0",
             size > 0);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 

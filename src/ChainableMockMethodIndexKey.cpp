@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,14 +21,14 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/ChainableMockMethodIndexKey.h>
+#include <emock/ChainableMockMethodIndexKey.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 ///////////////////////////////////////////////////////////
 ChainableMockMethodIndexKey::ChainableMockMethodIndexKey(
       unsigned int vptrIndex, unsigned int vtblIndex)
-    : index(vptrIndex*MOCKCPP_MAX_VTBL_SIZE + vtblIndex)
+    : index(vptrIndex*EMOCK_MAX_VTBL_SIZE + vtblIndex)
 {
 }
 
@@ -57,4 +63,4 @@ unsigned int ChainableMockMethodIndexKey::getIndex() const
    return index;
 }
 
-MOCKCPP_NS_END
+EMOCK_NS_END

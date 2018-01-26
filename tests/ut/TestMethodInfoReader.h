@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
     mockcpp is a generic C/C++ mock framework.
     Copyright (C) <2009>  <Darwin Yuan: darwin.yuan@gmail.com>
 
@@ -18,8 +24,8 @@
 
 #include <testcpp/testcpp.hpp>
 
-#include <mockcpp/Exception.h>
-#include <mockcpp/MethodInfoReader.h>
+#include <emock/Exception.h>
+#include <emock/MethodInfoReader.h>
 
 class TestMethodInfoReader : public TESTCPP_NS::TestFixture
 {
@@ -53,7 +59,7 @@ public:
    template <typename Method>
    int getIndexOfMethod(Method m)
    {
-		return MOCKCPP_NS::getIndexOfMethod<Interface, Method>(m);
+		return EMOCK_NS::getIndexOfMethod<Interface, Method>(m);
    }
 
 	void testShouldBeAbleToCalcVptrIndex()
@@ -100,7 +106,7 @@ public:
    template <typename Method>
    int getDeltaOfMethod(Method m)
    {
-		return MOCKCPP_NS::getDeltaOfMethod<Interface, Method>(m);
+		return EMOCK_NS::getDeltaOfMethod<Interface, Method>(m);
    }
 
 	void testShouldBeAbleToGetVtblIndex()
@@ -128,17 +134,17 @@ public:
 
    void testShouldThrowAnExceptionIfTryToGetVtblIndexOfANonVirtualMethod()
    {
-      TS_ASSERT_THROWS(getIndexOfMethod(&Interface::c), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(getIndexOfMethod(&Interface::c), EMOCK_NS::Exception);
    }
 
    void testShouldThrowAnExceptionIfTryToGetVptrIndexOfANonVirtualMethod()
    {
-      TS_ASSERT_THROWS(getDeltaOfMethod(&Interface::c), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(getDeltaOfMethod(&Interface::c), EMOCK_NS::Exception);
    }
 
    void testShouldThrowAnExceptionIfTryToGetAddressOfAVirtualMethod()
    {
-      TS_ASSERT_THROWS(MOCKCPP_NS::getAddrOfMethod(&Interface::base00), MOCKCPP_NS::Exception);
+      TS_ASSERT_THROWS(EMOCK_NS::getAddrOfMethod(&Interface::base00), EMOCK_NS::Exception);
    }
 };
 

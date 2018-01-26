@@ -1,4 +1,10 @@
 /***
+   emock is a cross-platform easy-to-use C++ Mock Framework based on mockcpp.
+   Copyright [2017] [ez8.co] [orca <orca.zhang@yahoo.com>]
+
+   This library is released under the Apache License, Version 2.0.
+   Please see LICENSE file or visit https://github.com/ez8-co/emock for details.
+
    mockcpp is a C/C++ mock framework.
    Copyright [2008] [Darwin Yuan <darwin.yuan@gmail.com>]
 
@@ -15,16 +21,16 @@
    limitations under the License.
 ***/
 
-#include <mockcpp/types/Any.h>
-#include <mockcpp/types/AnyCast.h>
+#include <emock/types/Any.h>
+#include <emock/types/AnyCast.h>
 
-#include <mockcpp/Void.h>
-#include <mockcpp/OutputStringStream.h>
-#include <mockcpp/VoidResultHandler.h>
-#include <mockcpp/SelfDescribe.h>
-#include <mockcpp/Asserter.h>
+#include <emock/Void.h>
+#include <emock/OutputStringStream.h>
+#include <emock/VoidResultHandler.h>
+#include <emock/SelfDescribe.h>
+#include <emock/Asserter.h>
 
-MOCKCPP_NS_START
+EMOCK_NS_START
 
 /////////////////////////////////////////////////////////
 VoidResultHandler::VoidResultHandler(
@@ -52,12 +58,12 @@ const Any& VoidResultHandler::getResult(const Any& result) const
         << resultProvider->toString() << "\n"
         << "Expected Return Type: " << expectedTypeString << "\n";
 
-    MOCKCPP_FAIL(oss.str());
+    EMOCK_FAIL(oss.str());
 
     return getEmptyAny();
 }
 
 /////////////////////////////////////////////////////////
 
-MOCKCPP_NS_END
+EMOCK_NS_END
 
