@@ -7,23 +7,23 @@
 - **[Easy to Use]** only one MACRO, without extra studies.
 - **[No Dependencies]** unless STL and std C libraries.
 - **[Cross Platform]** support popular OS both x86 & x64.
-- **[Fully support]** support all kinds of functions.
+- **[Fully Support]** support all kinds of functions.
 - **[No Intrusions]** no need to modify any source code.
 
 ## Feature sheet
 
-- some of the conclusion below may be not exactly, contact me to fix if there were mistakes
+### some of the conclusion below may be not exactly, contact me to fix if there were mistakes
 
 <table>
    <tr>
-      <td></td>
+      <td>Library</td>
       <td colspan="2">platform</td>
       <td colspan="3">member function</td>
       <td colspan="3">normal function</td>
-      <td></td>
+      <td>misc</td>
    </tr>
    <tr>
-      <td>Library</td>
+      <td></td>
       <td>Linux</td>
       <td>Windows</td>
       <td>virtual(IoC-less)</td>
@@ -120,12 +120,17 @@
    </tr>
 </table>
 
-- comparison of libraries those use api hook tech
+- NOTES:
+  - [0]: need IoC setter and override virtual functions of base class
+  - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
+  - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
+
+### comparison of libraries those use api hook tech
 
 <table>
    <tr>
-      <td>Library</td>
-      <td>longjump-safe</td>
+      <td></td>
+      <td>jump-safe</td>
       <td>comment</td>
    </tr>
    <tr>
@@ -136,19 +141,14 @@
    <tr>
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:x:</td>
-      <td></td>
+      <td>long jump only</td>
    </tr>
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
       <td>:x:</td>
-      <td></td>
+      <td>long jump only</td>
    </tr>
 </table>
-
-- NOTES:
-  - [0]: need IoC setter and override virtual functions of base class
-  - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
-  - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
 - `emock` should also work under UNIX, Android, MacOS and iOS, or maybe need minor adaptation.
 
@@ -160,13 +160,6 @@
 - reduce warning of getting address of virtual method under Linux
 - trampoline that extend `this` pointer as first argument for member functions under Windows
 - :clap: `near jump + trampoline` under x64 avoid unexcepted coverage by long jump
-
-## Acknowledged issues
-
-### work with `valgrind`
-
-- add `--smc-check=all` to avoid invalidation of dynamically-generated code (API hook).
-- unable to mock `syscall` related functions using valgrind (e.g. `gettimeofday`) yet.
 
 ## Quick view
 
@@ -193,8 +186,13 @@
   - [sinojelly](https://github.com/sinojelly)
 - inital version is imported from [mockcpp@bitbucket](https://bitbucket.org/godsme/mockcpp)
 
+## Acknowledged issues
+
+- work with `valgrind`
+  - add `--smc-check=all` to avoid invalidation of dynamically-generated code (API hook).
+  - unable to mock `syscall` related functions (e.g. `gettimeofday`) yet.
+
 ## What's more
 
 - Please feel free to use `emock`.
-- If your project is using `emock`, you can show your project or company here.
-- Looking forward to your feeback, if you have any suggestions or questions, please [create new issues](https://github.com/ez8-co/emock/issues/new).
+- Looking forward to your feeback.[create new issues](https://github.com/ez8-co/emock/issues/new).
