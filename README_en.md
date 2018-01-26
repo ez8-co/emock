@@ -1,4 +1,4 @@
-[简体中文](./README.md)
+# [简体中文](./README.md)
 
 ## What is `emock`?
 
@@ -6,7 +6,7 @@
 
 ## Work-in-process features
 
-- [UNIQUE]reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
+- **[UNIQUE]** reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
 - support mocking functions with `throw` specifications
 - provide best practice of `malloc` mocking
 
