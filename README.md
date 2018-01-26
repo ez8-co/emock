@@ -34,7 +34,7 @@
       <td>reflection-like</td>
    </tr>
    <tr>
-      <td>[emock](https://github.com/ez8-co/emock)</td>
+      <td><a href="https://github.com/ez8-co/emock">emock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:(:heavy_check_mark:)</td>
@@ -46,10 +46,10 @@
       <td>[WIP]</td>
    </tr>
    <tr>
-      <td>[CppUMock](https://github.com/cpputest/cpputest)</td>
+      <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[0])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[0]</sup>)</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
@@ -58,10 +58,10 @@
       <td>:heavy_check_mark:</td>
    </tr>
    <tr>
-      <td>[mockcpp](https://github.com/sinojelly/mockcpp)</td>
+      <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[1])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
@@ -70,10 +70,10 @@
       <td>:heavy_multiplication_x:</td>
    </tr>
    <tr>
-      <td>[googlemock](https://github.com/google/googletest/tree/master/googlemock)</td>
+      <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[2])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[2]</sup>)</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_multiplication_x:</td>
@@ -82,10 +82,10 @@
       <td>:heavy_multiplication_x:</td>
    </tr>
    <tr>
-      <td>[mockitopp](https://github.com/tpounds/mockitopp)</td>
+      <td><a href="https://github.com/tpounds/mockitopp">mockitopp</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[1])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_multiplication_x:</td>
       <td>:heavy_multiplication_x:</td>
@@ -94,10 +94,10 @@
       <td>:heavy_multiplication_x:</td>
    </tr>
    <tr>
-      <td>[C-Mock](https://github.com/hjagodzinski/C-Mock)</td>
+      <td><a href="https://github.com/hjagodzinski/C-Mock">C-Mock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_multiplication_x:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[1])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
@@ -106,10 +106,10 @@
       <td>:heavy_multiplication_x:</td>
    </tr>
    <tr>
-      <td>[CppFreeMock](https://github.com/gzc9047/CppFreeMock)</td>
+      <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_multiplication_x:</td>
-      <td>:heavy_check_mark:(:heavy_multiplication_x:[1])</td>
+      <td>:heavy_check_mark:(:heavy_multiplication_x:<sup>[1]</sup>)</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
@@ -119,9 +119,10 @@
    </tr>
 </table>
 
-- [0]: need IoC setter and implement of interface
-- [1]: need declarartion of interface, not support hybrid class (virtual & normal mem_fun at same time)
-- [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
+- NOTES:
+  - [0]: need IoC setter and implement of interface
+  - [1]: need declarartion of interface, not support hybrid class (virtual & normal mem_fun at same time)
+  - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
 `emock` should also work under UNIX, Android, MacOS and iOS, or maybe need minor adaptation.
 
