@@ -6,7 +6,7 @@
 
 - **[Easy to Use]** only one MACRO, without extra studies.
 - **[No Dependencies]** unless STL and std C libraries.
-- **[Cross Platform]** support popular OS both x86 & x64.
+- **[Cross Platform]** support popular OS (both x86 & x64).
 - **[Fully Support]** support all kinds of functions.
 - **[No Intrusions]** no need to modify any source code.
 
@@ -17,22 +17,22 @@
 <table>
    <tr>
       <td></td>
-      <td colspan="2">platform</td>
-      <td colspan="3">member function</td>
-      <td colspan="3">normal function</td>
+      <td colspan="2">Platform</td>
+      <td colspan="3">Member function</td>
+      <td colspan="3">General function</td>
       <td>misc</td>
    </tr>
    <tr>
       <td>Library</td>
       <td>Linux</td>
       <td>Windows</td>
-      <td>virtual(IoC-less)</td>
-      <td>normal</td>
-      <td>static</td>
-      <td>global</td>
-      <td>variadic</td>
-      <td>template</td>
-      <td>intrusion-free</td>
+      <td>Virtual(IoC-less)</td>
+      <td>Normal</td>
+      <td>Static</td>
+      <td>Global</td>
+      <td>Variadic</td>
+      <td>Template</td>
+      <td>Intrusion-free</td>
    </tr>
    <tr>
       <td><a href="https://github.com/ez8-co/emock">emock</a></td>
@@ -125,26 +125,30 @@
   - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
   - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
-### comparison of libraries those use api hook tech
+### comparison of libraries those using api hook tech
 
 <table>
    <tr>
-      <td></td>
+      <td>Library</td>
       <td>jump-safe</td>
+      <td>visible this pointer[Windows]</td>
       <td>comment</td>
    </tr>
    <tr>
       <td><a href="https://github.com/ez8-co/emock">emock</a></td>
+      <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>use trampoline</td>
    </tr>
    <tr>
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:x:</td>
+      <td>:x:</td>
       <td>long jump only</td>
    </tr>
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
+      <td>:x:</td>
       <td>:x:</td>
       <td>long jump only</td>
    </tr>
