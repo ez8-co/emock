@@ -43,7 +43,7 @@ public:
 	{
 		MOCKER(foo)
 		   .expects(exactly(3))
-		   .with(eq(1), eq((unsigned long)4))
+		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, 4, 5));
 
 		int i = 1;
@@ -59,7 +59,7 @@ public:
 	{
 		MOCKER(foo)
 		   .expects(exactly(3))
-		   .with(eq(1), eq((unsigned long)4))
+		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, true, 5));
 
 		int i = 1;
@@ -76,7 +76,7 @@ public:
 	{
 		MOCKER(foo)
 		   .stubs()
-		   .with(eq(1), eq((unsigned long)4))
+		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, 4, 5));
 
 		int i = 1;
