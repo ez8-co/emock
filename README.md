@@ -4,23 +4,24 @@
 
 ## Why use `emock`?
 
-- **[Easy to Use]** only one MACRO, designed to be used without extra studies.
+- **[Easy to Use]** only one MACRO, without extra studies.
 - **[No Dependencies]** unless STL and std C libraries.
 - **[Cross Platform]** support popular OS both x86 & x64.
-- **[Fully]** support all kinds of functions.
+- **[Fully support]** support all kinds of functions.
 - **[No Intrusions]** no need to modify any source code.
 
 ## Feature sheet
 
-- some of the conclusion below may be not exactly, contact me to change if error occurs.
+- some of the conclusion below may be not exactly, contact me to fix if there were mistakes
 
 <table>
-   <th>
+   <tr>
+      <td></td>
       <td colspan="2">platform</td>
       <td colspan="3">member function</td>
       <td colspan="3">normal function</td>
-      <td colspan="2">misc</td>
-   </th>
+      <td></td>
+   </tr>
    <tr>
       <td>Library</td>
       <td>Linux</td>
@@ -31,7 +32,7 @@
       <td>global</td>
       <td>variadic</td>
       <td>template</td>
-      <td>reflection-like</td>
+      <td>intrusion-free</td>
    </tr>
    <tr>
       <td><a href="https://github.com/ez8-co/emock">emock</a></td>
@@ -43,7 +44,7 @@
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>[WIP]</td>
+      <td>:heavy_check_mark:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
@@ -55,7 +56,7 @@
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
-      <td>:heavy_check_mark:</td>
+      <td>:grey_exclamation:<sup>[0]</sup></td>
    </tr>
    <tr>
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
@@ -67,7 +68,7 @@
       <td>:heavy_check_mark:</td>
       <td>:x:</td>
       <td>:heavy_check_mark:</td>
-      <td>:x:</td>
+      <td>:grey_exclamation:<sup>[1]</sup></td>
    </tr>
    <tr>
       <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
@@ -79,7 +80,7 @@
       <td>:x:</td>
       <td>:x:</td>
       <td>:x:</td>
-      <td>:x:</td>
+      <td>:grey_exclamation:<sup>[2]</sup></td>
    </tr>
    <tr>
       <td><a href="https://github.com/tpounds/mockitopp">mockitopp</a></td>
@@ -91,7 +92,7 @@
       <td>:x:</td>
       <td>:x:</td>
       <td>:x:</td>
-      <td>:x:</td>
+      <td>:grey_exclamation:<sup>[1]</sup></td>
    </tr>
    <tr>
       <td><a href="https://github.com/hjagodzinski/C-Mock">C-Mock</a></td>
@@ -103,7 +104,7 @@
       <td>:heavy_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
-      <td>:x:</td>
+      <td>:grey_exclamation:<sup>[1]</sup></td>
    </tr>
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
@@ -115,7 +116,32 @@
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
       <td>:heavy_check_mark:</td>
+      <td>:grey_exclamation:<sup>[1]</sup></td>
+   </tr>
+</table>
+
+- comparison of libraries those use api hook tech
+
+<table>
+   <tr>
+      <td>Library</td>
+      <td>longjump-safe</td>
+      <td>comment</td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/ez8-co/emock">emock</a></td>
+      <td>:heavy_check_mark:</td>
+      <td>use trampoline</td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:x:</td>
+      <td></td>
+   </tr>
+   <tr>
+      <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
+      <td>:x:</td>
+      <td></td>
    </tr>
 </table>
 
@@ -124,7 +150,7 @@
   - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
   - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
-`emock` should also work under UNIX, Android, MacOS and iOS, or maybe need minor adaptation.
+- `emock` should also work under UNIX, Android, MacOS and iOS, or maybe need minor adaptation.
 
 ## Recently supported
 
