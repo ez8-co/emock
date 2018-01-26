@@ -58,7 +58,6 @@ SET(EMOCK_SRCS
     ChainableMockMethodCore.cpp
     ChainableMockMethodNameKey.cpp
     ChainableMockObjectBase.cpp
-    ChainableMockObject.cpp
     ChainingMockHelper.cpp
     ConstraintSet.cpp
     DecoratedConstraint.cpp

@@ -77,4 +77,3 @@ private:
 EMOCK_NS_END
 
 #endif
-

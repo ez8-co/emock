@@ -27,7 +27,17 @@
 
 #include <emock/emock.h>
 #include <emock/ChainingMockHelper.h>
-#include <emock/mokc.h>
+
+#ifdef __cplusplus
+
+   #include <emock/ProcStub.h>
+   #include <emock/ApiHookMocker.h>
+
+   #define MOCKER(api) EMOCK_NS::mockAPI(#api, api)
+
+   USING_EMOCK_NS
+
+#endif
 
 #endif
 

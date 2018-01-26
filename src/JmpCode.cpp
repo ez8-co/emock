@@ -24,7 +24,23 @@
 #include <string.h>
 
 #include <emock/JmpCode.h>
-#include "JmpCodeArch.h"
+
+#ifdef _MSC_VER // [
+   #ifdef _WIN64 // [
+      typedef unsigned __int64  uintptr_t;
+   #else // _WIN64 ][
+      typedef _W64 unsigned int uintptr_t;
+   #endif // _WIN64 ]
+#else
+   #include <inttypes.h>
+#endif // _MSC_VER ]
+
+const unsigned char jmpCodeTemplate[]  = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
+
+inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
+{
+  *(unsigned int*)&base[1] = (unsigned int)((unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate));
+}
 
 EMOCK_NS_START
 

@@ -21,13 +21,12 @@
    limitations under the License.
 ***/
 
-#include <emock/Functor.h>
 #include <emock/GlobalMockObject.h>
 #include <emock/utils.h>
 
 EMOCK_NS_START
 
-MockObjectType GlobalMockObject::instance("");
+HookMockObject GlobalMockObject::instance("");
 
 void GlobalMockObject::verify()
 {

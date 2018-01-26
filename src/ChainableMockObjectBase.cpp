@@ -50,7 +50,7 @@ ChainableMockObjectBaseImpl(const std::string& name)
 //////////////////////////////////////////////////////////////
 ChainableMockObjectBase::
 ChainableMockObjectBase(const std::string& name)
-	: shared(false), This(new ChainableMockObjectBaseImpl(name))
+    : shared(false), This(new ChainableMockObjectBaseImpl(name))
 {
 }
 
@@ -66,7 +66,7 @@ ChainableMockObjectBase::~ChainableMockObjectBase()
 {
     if(!shared)
     {
-	    delete This;
+        delete This;
     }
 }
 
@@ -108,5 +108,4 @@ ChainableMockObjectBase::getMethodContainer() const
 //////////////////////////////////////////////////////////////
 
 EMOCK_NS_END
-
 

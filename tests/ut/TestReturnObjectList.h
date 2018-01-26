@@ -23,25 +23,13 @@
 ***/
 
 #include <testcpp/testcpp.hpp>
-#include <emock/types/Any.h>
-#include <emock/ChainableMockObject.h>
-#include <emock/InvocationMockBuilder.h>
-#include <emock/ChainingMockHelper.h>
+#include <emock/emock.hpp>
 
 USING_EMOCK_NS
 
-class Foo : public ChainableMockObject
-{
-public:
-	Foo()
-		: ChainableMockObject("Foo")
-	{}
-
-	int foo(int& i, unsigned long j)
-	{
-		return invoke<int>("foo")("foo",i, j);
-	}
-};
+int foo(int, int) {
+	return 0;
+}
 
 class TestReturnObjectList : public TESTCPP_NS::TestFixture
 {
@@ -53,59 +41,53 @@ public:
 	/////////////////////////////////////////////////////////
 	void testShouldSupportReturnObjectList()
 	{
-		Foo foo;
-
-		foo.method("foo")
+		MOCKER(foo)
 		   .expects(exactly(3))
 		   .with(eq(1), eq((unsigned long)4))
 		   .will(returnObjectList(3, 4, 5));
 
 		int i = 1;
 
-		TS_ASSERT_EQUALS(3, foo.foo(i, 4));
-		TS_ASSERT_EQUALS(4, foo.foo(i, 4));
-		TS_ASSERT_EQUALS(5, foo.foo(i, 4));
+		TS_ASSERT_EQUALS(3, foo(i, 4));
+		TS_ASSERT_EQUALS(4, foo(i, 4));
+		TS_ASSERT_EQUALS(5, foo(i, 4));
 
-		foo.verify();
+		GlobalMockObject::verify();
 	}
 
 	void testShouldThrowExceptionIfTheTypeOfAReturnObjectMismatch()
 	{
-		Foo foo;
-
-		foo.method("foo")
+		MOCKER(foo)
 		   .expects(exactly(3))
 		   .with(eq(1), eq((unsigned long)4))
 		   .will(returnObjectList(3, true, 5));
 
 		int i = 1;
 
-		TS_ASSERT_EQUALS(3, foo.foo(i, 4));
-		TS_ASSERT_THROWS(foo.foo(i,4), Exception);
+		TS_ASSERT_EQUALS(3, foo(i, 4));
+		TS_ASSERT_THROWS(foo(i,4), Exception);
 		//TS_ASSERT_EQUALS(4, foo.foo(i, 4));
-		TS_ASSERT_EQUALS(5, foo.foo(i, 4));
+		TS_ASSERT_EQUALS(5, foo(i, 4));
 
-		foo.verify();
+		GlobalMockObject::verify();
 	}
 
 	void testShouldThrowExceptionIfThereIsNoAvailableObjectsToReturn()
 	{
-		Foo foo;
-
-		foo.method("foo")
+		MOCKER(foo)
 		   .stubs()
 		   .with(eq(1), eq((unsigned long)4))
 		   .will(returnObjectList(3, 4, 5));
 
 		int i = 1;
 
-		TS_ASSERT_EQUALS(3, foo.foo(i, 4));
-		TS_ASSERT_EQUALS(4, foo.foo(i, 4));
-		TS_ASSERT_EQUALS(5, foo.foo(i, 4));
+		TS_ASSERT_EQUALS(3, foo(i, 4));
+		TS_ASSERT_EQUALS(4, foo(i, 4));
+		TS_ASSERT_EQUALS(5, foo(i, 4));
 
-		TS_ASSERT_THROWS(foo.foo(i,4), Exception);
+		TS_ASSERT_THROWS(foo(i,4), Exception);
 
-		foo.verify();
+		GlobalMockObject::verify();
 	}
 
 };

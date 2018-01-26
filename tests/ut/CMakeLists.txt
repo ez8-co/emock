@@ -22,7 +22,6 @@ SET(UT_CASES
   TestChainableMockMethod.h
   TestChainableMockMethodContainer.h
   TestChainableMockMethodNameKey.h
-  TestChainableObject.h
   TestConstraintSet.h
   TestFormatter.h
   TestHolder.h

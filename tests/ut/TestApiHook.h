@@ -24,7 +24,7 @@
 ***/
 
 #include <testngpp/testngpp.hpp>
-#include <emock/mokc.h>
+#include <emock/emock.hpp>
 #include <stdarg.h>
 
 

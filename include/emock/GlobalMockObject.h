@@ -25,27 +25,16 @@
 #define __EMOCK_GLOBAL_MOCK_OBJECT_H
 
 #include <emock/emock.h>
-
-#if defined(EMOCK_USE_MOCKABLE) 
-#  include <emock/ChainableMockObject.h>
-#else
-#  include <emock/HookMockObject.h>
-#endif
+#include <emock/HookMockObject.h>
 
 EMOCK_NS_START
-
-#if defined(EMOCK_USE_MOCKABLE) 
-typedef ChainableMockObject MockObjectType;
-#else
-typedef HookMockObject MockObjectType;
-#endif
 
 struct GlobalMockObject
 {
    static void verify();
    static void reset();
 
-   static MockObjectType instance;
+   static HookMockObject instance;
 };
 
 EMOCK_NS_END

@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include <emock/ChainingMockHelper.h>
-#include <emock/mokc.h>
+#include <emock/emock.hpp>
 
 USING_EMOCK_NS
 

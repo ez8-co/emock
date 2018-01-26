@@ -23,7 +23,7 @@
 ***/
 
 #include <testngpp/testngpp.hpp>
-#include <emock/mokc.h>
+#include <emock/emock.hpp>
 
 USING_TESTNGPP_NS
 USING_EMOCK_NS
