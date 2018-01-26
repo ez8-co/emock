@@ -1,12 +1,12 @@
-# [简体中文](./README.md)
+- [简体中文](./README.md)
 
 ## What is `emock`?
 
 - `emock` is a generic easy-to-use C++ Mock Framework based on mockcpp.
 
-## Work-in-process features
+#### Work-in-process features
 
-- **[UNIQUE]** reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
+- :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
 - support mocking functions with `throw` specifications
 - provide best practice of `malloc` mocking
 
@@ -131,9 +131,9 @@
 </table>
 
 - NOTES:
-  - [0]: need IoC setter and override virtual functions of base class
-  - [1]: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
-  - [2]: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
+  - <sup>[0]</sup>: need IoC setter and override virtual functions of base class
+  - <sup>[1]</sup>: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
+  - <sup>[2]</sup>: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
 
 ### comparison with libraries those using api hook tech
 
