@@ -1,51 +1,15 @@
 
-INCLUDE(FindPythonInterp)
-
-IF(PYTHONINTERP_FOUND)
-    SET(PYTHON ${PYTHON_EXECUTABLE})
-ELSE()
-    MESSAGE(FATAL_ERROR "No Python interpreter found")
-ENDIF(PYTHONINTERP_FOUND)
-
-IF(NOT DEFINED EMOCK_ALLOW_MI)
-  SET(EMOCK_ALLOW_MI TRUE)
-ENDIF(NOT DEFINED EMOCK_ALLOW_MI)
-
 SET(EMOCK_SRC_ROOT ${CMAKE_SOURCE_DIR})
 
 IF(NOT DEFINED EMOCK_XUNIT)
    SET(EMOCK_XUNIT STDEXCEPT)
 ENDIF()
 
-
-   
-# Set EMOCK_MAX_INHERITANCE
-#
-IF(EMOCK_ALLOW_MI)
-    SET(EMOCK_ALLOW_MULTI_INHERITANCE 1)
-    IF(NOT DEFINED EMOCK_MAX_INHERITANCE)
-        SET(EMOCK_MAX_INHERITANCE 2)
-    ENDIF(NOT DEFINED EMOCK_MAX_INHERITANCE)
-ELSE(EMOCK_ALLOW_MI)
-    SET(EMOCK_ALLOW_MULTI_INHERITANCE 0)
-    SET(EMOCK_MAX_INHERITANCE 1)
-ENDIF(EMOCK_ALLOW_MI)
-
 IF(EMOCK_NO_NAMESPACE)
    SET(EMOCK_NO_NAMESPACE 1)
 ELSE(EMOCK_NO_NAMESPACE)
    SET(EMOCK_NO_NAMESPACE 0)
 ENDIF(EMOCK_NO_NAMESPACE)
-#
-# Set EMOCK_MAX_VTBL_SIZE
-#
-IF(NOT EMOCK_MAX_VTBL_SIZE)
-    SET(EMOCK_MAX_VTBL_SIZE 20)
-ENDIF(NOT EMOCK_MAX_VTBL_SIZE)
-
-IF(NOT EMOCK_MAX_PARAMETERS)
-    SET(EMOCK_MAX_PARAMETERS 12)
-ENDIF(NOT EMOCK_MAX_PARAMETERS)
 
 ADD_DEFINITIONS(
     -DPACKAGE_NAME=${PACKAGE_NAME}
@@ -55,10 +19,6 @@ ADD_DEFINITIONS(
     -DPACKAGE=${PACKAGE}
     -DVERSION=${VERSION}
     -DEMOCK_NO_NAMESPACE=${EMOCK_NO_NAMESPACE}
-    -DEMOCK_ALLOW_MULTI_INHERITANCE=${EMOCK_ALLOW_MULTI_INHERITANCE}
-    -DEMOCK_MAX_INHERITANCE=${EMOCK_MAX_INHERITANCE}
-    -DEMOCK_MAX_VTBL_SIZE=${EMOCK_MAX_VTBL_SIZE}
-    -DEMOCK_MAX_PARAMETERS=${EMOCK_MAX_PARAMETERS}
 )
 
 IF(MSVC)
@@ -96,7 +56,6 @@ SET(EMOCK_SRCS
     CallerMatcher.cpp
     ChainableMockMethodContainer.cpp
     ChainableMockMethodCore.cpp
-    ChainableMockMethodIndexKey.cpp
     ChainableMockMethodNameKey.cpp
     ChainableMockObjectBase.cpp
     ChainableMockObject.cpp
@@ -105,8 +64,6 @@ SET(EMOCK_SRCS
     DecoratedConstraint.cpp
     DefaultMatcher.cpp
     DefaultStub.cpp
-    DelegatedMethodGetter.cpp
-    MethodIndiceChecker.cpp
     DieStub.cpp
     Exception.cpp
     ExpectsMatcher.cpp
@@ -134,7 +91,6 @@ SET(EMOCK_SRCS
     IsStringStartWith.cpp
     MismatchResultHandler.cpp
     MismatchResultHandlerFactory.cpp
-    MockObjectBase.cpp
     NormalResultHandler.cpp
     NormalResultHandlerFactory.cpp
     OutBoundPointer.cpp
@@ -156,8 +112,6 @@ SET(EMOCK_SRCS
     TypelessConstraintAdapter.cpp
     TypelessStubAdapter.cpp
     TypeString.cpp
-    VirtualTable.cpp
-    VirtualTableUtils.cpp
     VoidResultHandler.cpp
     VoidResultHandlerFactory.cpp
     WillStub.cpp
@@ -242,66 +196,12 @@ ENDIF(MSVC)
 ######################################################
 SET(EMOCK_HEADERS_PATH ${EMOCK_SRC_ROOT}/include/emock)
 
-SET(EMOCK_VTBL_RELATED_HEADERS 
-    ${EMOCK_HEADERS_PATH}/DelegatedMethodGetDef.h 
-    ${EMOCK_HEADERS_PATH}/DelegatedMethodGetByVptrDef.h 
-    ${EMOCK_HEADERS_PATH}/DestructorAddrGetterDef.h 
-    ${EMOCK_HEADERS_PATH}/MethodIndiceCheckerDef.h
-    ${EMOCK_HEADERS_PATH}/DefaultMethodAddrGetterDef.h
-)
-
-SET(EMOCK_ARG_RELATED_HEADER_FILES
-    ${EMOCK_HEADERS_PATH}/DelegatedMethodDef.h 
-    ${EMOCK_HEADERS_PATH}/MethodTypeTraitsDef.h
-)
-
-IF(EMOCK_ALLOW_MI)
-    SET(ALLOW_MI yes)
-ELSE(EMOCK_ALLOW_MI)
-    SET(ALLOW_MI no)
-ENDIF(EMOCK_ALLOW_MI)
-
-######################################################
-SET(VTBL_GENERATOR ${EMOCK_SRC_ROOT}/src/generate_vtbl_related_files.py)
-SET(EXTRA_VTBL_HEADERS_DEFS
-    --allow-mi=${ALLOW_MI}
-    --max-inheritance=${EMOCK_MAX_INHERITANCE}
-    --max-vtbl-size=${EMOCK_MAX_VTBL_SIZE}
-    --include-path=${EMOCK_HEADERS_PATH}
-)
-FOREACH(HEADER ${EMOCK_VTBL_RELATED_HEADERS})
-    GET_FILENAME_COMPONENT(HEADER_NAME ${HEADER} NAME)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${HEADER}
-        COMMAND ${PYTHON} ${VTBL_GENERATOR} ${EXTRA_VTBL_HEADERS_DEFS} ${HEADER_NAME}
-    )
-ENDFOREACH()
-
-######################################################
-SET(ARG_GENERATOR ${EMOCK_SRC_ROOT}/src/generate_arg_related_files.py)
-SET(EXTRA_ARG_HEADERS_DEFS
-    --max-parameters=${EMOCK_MAX_PARAMETERS}
-    --include-path=${EMOCK_HEADERS_PATH}
-)
-FOREACH(HEADER ${EMOCK_ARG_RELATED_HEADER_FILES})
-    GET_FILENAME_COMPONENT(HEADER_NAME ${HEADER} NAME)
-    ADD_CUSTOM_COMMAND(
-        OUTPUT ${HEADER}
-        COMMAND ${PYTHON} ${ARG_GENERATOR} ${EXTRA_ARG_HEADERS_DEFS} ${HEADER_NAME}
-    )
-ENDFOREACH()
-
 ######################################################
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/testngpp/src)
 
 ADD_LIBRARY(emock STATIC ${EMOCK_SRCS})
 
 INCLUDE_DIRECTORIES(BEFORE ${EMOCK_SRC_ROOT}/include)
-
-ADD_CUSTOM_TARGET(vtbl_related_headers DEPENDS ${EMOCK_VTBL_RELATED_HEADERS})
-ADD_CUSTOM_TARGET(arg_related_headers DEPENDS ${EMOCK_ARG_RELATED_HEADER_FILES})
-
-ADD_DEPENDENCIES(emock vtbl_related_headers arg_related_headers)
 
 INSTALL(
    TARGETS emock

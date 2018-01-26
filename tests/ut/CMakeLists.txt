@@ -24,8 +24,6 @@ SET(UT_CASES
   TestChainableMockMethodNameKey.h
   TestChainableObject.h
   TestConstraintSet.h
-  TestDelegatedMethod.h
-  TestDestructorChecker.h
   TestFormatter.h
   TestHolder.h
   TestIncrementStub.h
@@ -37,7 +35,6 @@ SET(UT_CASES
   TestIsStringEndWith.h
   TestIsStringStartWith.h
   TestMockObject.h
-  TestMockObject2.h
   TestReturnObjectList.h
   TestStringConstraint.h
   TestStubContainter.h
@@ -45,19 +42,11 @@ SET(UT_CASES
   TestApiHook.h
   TestStaticMethodMocker.h
   TestNonvirtualMethodMocker.h
-  TestMockcppSample.h
+  TestEmockSample.h
   TestApiHookBase.h
   TestOverloadMethodMocker.h
   TestIgnoreReturnValue.h
 )
-
-IF(UNIX)
-  SET(UT_CASES
-  ${UT_CASES}
-  TestMethodInfoReader.h
-  TestVirtualTable.h
-  )
-ENDIF(UNIX)
 
 IF(MSVC)
   SET(UT_CASES

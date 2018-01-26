@@ -27,7 +27,6 @@
 
 #include <emock/emock.h>
 #include <emock/ChainingMockHelper.h>
-#include <emock/MockObjectHelper.h>
 #include <emock/mokc.h>
 
 #endif

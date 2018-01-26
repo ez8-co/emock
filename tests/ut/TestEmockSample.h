@@ -22,35 +22,39 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ***/
 
-#include <testcpp/testcpp.hpp>
+#include <testngpp/testngpp.hpp>
+#include <emock/mokc.h>
+#include <emock/emock.hpp>
 
-#include <emock/DestructorChecker.h>
-
-USING_EMOCK_NS
-USING_TESTCPP_NS
-
-class TestDestructorChecker: public TESTCPP_NS::TestFixture
+struct Interface
 {
-   struct Interface { virtual void foo() = 0; virtual ~Interface() {} };
+    virtual int method() = 0;
+    static int func() { return 0; }
+    virtual ~Interface(){}
+};
 
-private:
+int func_stub()
+{
+    return 1000;
+}
 
-   TESTCPP_RCP checkpoint;
-
-public:
-
-   void setUp()
-   {
-      checkpoint = TESTCPP_SET_RESOURCE_CHECK_POINT();
-   }
-   void tearDown()
-   {
-      TESTCPP_VERIFY_RESOURCE_CHECK_POINT(checkpoint);
-   }
-
-   void testShouldBeAbleToGetDestructorIndexWithoutMemoryLeaking()
-   {
-      std::pair<unsigned int, unsigned int> indices = \
-         getIndexOfDestructor<Interface, Interface>();
-   }   
+FIXTURE(emock_sample, emock samples)
+{
+    TEST(test_func_mocker)
+    {
+        MOCKER(Interface::func)
+            .expects(once())
+            .will(returnValue(10));
+        ASSERT_EQ(10, Interface::func());
+        GlobalMockObject::verify();
+    }
+	
+    TEST(test will invoke)
+    {
+        MOCKER(Interface::func)
+            .expects(once())
+            .will(invoke(func_stub));
+        ASSERT_EQ(1000, Interface::func());
+        GlobalMockObject::verify();
+    }	
 };

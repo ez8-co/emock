@@ -77,14 +77,4 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         ASSERT_EQ(100, func(0));
         GlobalMockObject::verify();
     }
-
-    TEST(overload virtual method mocker test)
-    {
-        MockObject<CUT> mocker;
-        MOCK_OVERLOAD_METHOD(mocker, int (CUT::*) (int), CUT::bar)
-            .stubs()
-            .will(returnValue(100));
-        ASSERT_EQ(100, static_cast<CUT*>(mocker)->bar(0));
-        mocker.verify();
-    }
 };
