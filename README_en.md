@@ -3,19 +3,17 @@
 ## What is EMOCK?
 
 - EMOCK is a generic easy-to-use C++ Mock Library based on mockcpp.
-
-- Work-in-process features
-  - :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
-  - support mocking functions with `throw` specifications
-  - provide best practice of `malloc` mocking
-
-## Why use EMOCK?
-
 - **[Easy to Use]** only one MACRO, without extra studies.
 - **[No Dependencies]** unless STL and std C libraries.
 - **[Cross Platform]** support popular OS (both x86 & x64).
 - **[Fully Support]** support all kinds of functions.
 - **[No Intrusions]** no need to modify any source code.
+
+## Work-in-process features
+
+- :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
+- support mocking functions with `throw` specifications
+- provide best practice of `malloc` mocking
 
 ## Feature matrix
 
@@ -59,7 +57,7 @@
       <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
-      <td>:white_check_mark:(:x:<sup>[0]</sup>)</td>
+      <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
