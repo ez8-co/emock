@@ -2,7 +2,7 @@
 
 ## EMOCK 自述
 
-- EMOCK是基于mockcpp核心改进的下一代跨平台C++打桩库
+- EMOCK是基于mockcpp核心改进的下一代C/C++跨平台mock库
   - **【使用简单】** 学习成本低，仅一个宏
   - **【没有依赖】** 除了STL和系统库函数
   - **【跨平台】**   支持主流32/64位系统（\*nix、Windows）
@@ -174,18 +174,68 @@
 
   ```cpp
       // 待测函数
-      int target_func(int x) {
-          return 0;
+      int foobar(int x) {
+          return x;
       }
 
-      // 测试时，像下面这样就可以打桩
-      EMOCK(target_func)
-        .stubs()
-        .with(any()) // 约束匹配任意输入
-        .will(returnValue(1)); // 调用时返回1
+      // 测试时，像下面这样就可以mock
+      EMOCK(foobar)
+          .stubs()
+          .with(any()) // 约束匹配任意输入
+          .will(returnValue(1)); // 调用时返回1
 
       // 调用会返回1
-      ASSERT_EQ(target_func(0), 1);
+      ASSERT_EQ(foobar(0), 1);
+
+      int foobar1(int x) {
+          return x;
+      }
+      double foobar1(double x) {
+          return x;
+      }
+      // 重载函数，像下面这样就可以mock
+      EMOCK((int (*)(int))foobar1)
+          /* 约束 */;
+      EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
+          /* 约束 */;
+  ```
+
+  ```cpp
+      // 待测成员函数
+      class Foo
+      {
+      public:
+          void bar1(int);
+          virtual void bar2(double);
+          static void bar3();
+
+          void bar4(int);
+          void bar4(double);
+      };
+
+      // 实际调用的函数
+      void mock_bar1(Foo* obj, int) {
+          // ...
+      }
+      void mock_bar2(Foo* obj, double) {
+          // ...
+      }
+
+      // 测试时，像下面这样就可以mock
+      EMOCK(&Foo::bar1)
+          /* 约束 */
+          .will(invoke(mock_bar1));
+      EMOCK(&Foo::bar2) // 虚成员函数和普通成员函数一样
+          /* 约束 */
+          .will(invoke(mock_bar2));
+      EMOCK(Foo::bar3) // 静态函数类似全局函数，不需要&
+          /* 约束 */;
+
+      // 重载的成员函数，像下面这样就可以mock
+      EMOCK((void (Foo::*)(int))&Foo::bar4)
+          /* 约束 */;
+      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
+          /* 约束 */;
   ```
 
 ## 使用手册
