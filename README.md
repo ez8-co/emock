@@ -186,7 +186,10 @@
 
       // 调用会返回1
       ASSERT_EQ(foobar(0), 1);
+  ```
 
+  ```cpp
+      // 待测重载函数
       int foobar1(int x) {
           return x;
       }
@@ -214,6 +217,8 @@
           void bar4(int);
           void bar4(double);
       };
+
+      ////////////////////////////////////
 
       // 指定调用的mock函数
       void mock_bar1(Foo* obj, int) {
