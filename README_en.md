@@ -2,12 +2,12 @@
 
 ## What is EMOCK?
 
-- EMOCK is a generic easy-to-use C++ Mock Library based on mockcpp.
-- **[Easy to Use]** only one MACRO, without extra studies.
-- **[No Dependencies]** unless STL and std C libraries.
-- **[Cross Platform]** support popular OS (both x86 & x64).
-- **[Fully Support]** support all kinds of functions.
-- **[No Intrusions]** no need to modify any source code.
+- EMOCK is next generation easy-to-use C++ Mock Library based on mockcpp.
+  - **[Easy to Use]** only one MACRO, without extra studies.
+  - **[No Dependencies]** unless STL and std C libraries.
+  - **[Cross Platform]** support popular OS (both x86 & x64).
+  - **[Fully Support]** support all kinds of functions.
+  - **[No Intrusions]** no need to modify any source code.
 
 ## Work-in-process features
 
@@ -42,7 +42,7 @@
       <td>Intrusion-free</td>
    </tr>
    <tr>
-      <td><a href="https://github.com/ez8-co/emock"><strong>emock</strong></a></td>
+      <td><a href="https://github.com/ez8-co/emock"><strong>EMOCK</strong></a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
@@ -130,7 +130,8 @@
 - NOTES:
   - <sup>[0]</sup>: need IoC setter and override virtual functions of base class
   - <sup>[1]</sup>: need declarartion of interface(with pure virtual funtions), not support hybrid class (virtual & normal mem_fun at same time)
-  - <sup>[2]</sup>: need IoC setter(cannot test embedded object or reference) and declaration of mock interface contains mem_fun with same arg list and return type that to be tested
+  - <sup>[2]</sup>: need IoC setter and declaration of mock interface contains mem_fun with same arg list and return type that to be tested 
+  - <sup>[0]</sup><sup>[1]</sup><sup>[2]</sup>: cannot test embedded object or reference
 
 ### comparison with libraries those using api hook tech
 
@@ -142,7 +143,7 @@
       <td>Comment</td>
    </tr>
    <tr>
-      <td><a href="https://github.com/ez8-co/emock"><strong>emock</strong></a></td>
+      <td><a href="https://github.com/ez8-co/emock"><strong>EMOCK</strong></a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>Use trampoline (5 bytes)</td>
@@ -165,7 +166,7 @@
 
 ## Recently supported
 
-- all-in-one `MOCKER` macro (no-need to do IoC for virtual member functions)
+- all-in-one `EMOCK` macro (no-need to do IoC for virtual member functions)
 - support mocking variadic function, e.g. `int test(int a, ...)`
 - support mocking overloaded member functions under Windows
 - reduce warning of getting address of virtual method under Linux
@@ -179,10 +180,13 @@
       int target_func(int x);
 
       // how to mock
-      MOCKER(target_func)
+      EMOCK(target_func)
         .stubs()
         .with(any())
         .will(returnValue(1));
+
+      // assert return 1
+      ASSERT_EQ(target_func(0), 1);
   ```
 
 ## Manual
