@@ -195,9 +195,11 @@
       }
       // 重载函数，像下面这样就可以mock
       EMOCK((int (*)(int))foobar1)
-          /* 约束 */;
+          .stubs()
+          .will(returnValue(1));
       EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
-          /* 约束 */;
+          .stubs()
+          .will(returnValue(1.0));
   ```
 
   ```cpp
@@ -207,13 +209,13 @@
       public:
           void bar1(int);
           virtual void bar2(double);
-          static void bar3();
+          static int bar3();
 
           void bar4(int);
           void bar4(double);
       };
 
-      // 实际调用的函数
+      // 指定调用的mock函数
       void mock_bar1(Foo* obj, int) {
           // ...
       }
@@ -223,19 +225,20 @@
 
       // 测试时，像下面这样就可以mock
       EMOCK(&Foo::bar1)
-          /* 约束 */
-          .will(invoke(mock_bar1));
-      EMOCK(&Foo::bar2) // 虚成员函数和普通成员函数一样
-          /* 约束 */
+          .stubs()
+          .will(invoke(mock_bar1)); // 指定调用自定义的函数而不是指定返回值
+      EMOCK(&Foo::bar2) // 虚成员函数并不特别
+          .stubs()
           .will(invoke(mock_bar2));
       EMOCK(Foo::bar3) // 静态函数类似全局函数，不需要&
-          /* 约束 */;
+          .stubs()
+          .will(returnValue(1));
 
       // 重载的成员函数，像下面这样就可以mock
       EMOCK((void (Foo::*)(int))&Foo::bar4)
-          /* 约束 */;
+          .expects(once()); // 只会调用一次
       EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
-          /* 约束 */;
+          .expects(never()); // 不会被调用
   ```
 
 ## 使用手册
