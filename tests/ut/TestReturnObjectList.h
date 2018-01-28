@@ -41,7 +41,7 @@ public:
 	/////////////////////////////////////////////////////////
 	void testShouldSupportReturnObjectList()
 	{
-		MOCKER(foo)
+		EMOCK(foo)
 		   .expects(exactly(3))
 		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, 4, 5));
@@ -57,7 +57,7 @@ public:
 
 	void testShouldThrowExceptionIfTheTypeOfAReturnObjectMismatch()
 	{
-		MOCKER(foo)
+		EMOCK(foo)
 		   .expects(exactly(3))
 		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, true, 5));
@@ -74,7 +74,7 @@ public:
 
 	void testShouldThrowExceptionIfThereIsNoAvailableObjectsToReturn()
 	{
-		MOCKER(foo)
+		EMOCK(foo)
 		   .stubs()
 		   .with(eq(1), eq(4))
 		   .will(returnObjectList(3, 4, 5));

@@ -33,7 +33,7 @@
    #include <emock/ProcStub.h>
    #include <emock/ApiHookMocker.h>
 
-   #define MOCKER(api) EMOCK_NS::mockAPI(#api, api)
+   #define EMOCK(api) EMOCK_NS::mockAPI(#api, api)
 
    USING_EMOCK_NS
 

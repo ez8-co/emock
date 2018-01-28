@@ -91,7 +91,7 @@ public:
    void testShouldBeAbleToSupportMocker()
    {
       Dervied o;
-      MOCKER(&Dervied::base00)
+      EMOCK(&Dervied::base00)
            .stubs()
            .will(returnValue(20))
            .then(returnValue(10))
@@ -105,19 +105,19 @@ public:
       TS_ASSERT_EQUALS(5, o.base00());
       GlobalMockObject::verify();
 
-      MOCKER((int (Base0::*)())&Base0::base20)
+      EMOCK((int (Base0::*)())&Base0::base20)
            .stubs()
            .will(returnValue(20));
       TS_ASSERT_EQUALS(20, o.base20());
       GlobalMockObject::verify();
 
-      MOCKER(static_cast<int (Base0::*)(int)>(&Base0::base20))
+      EMOCK(static_cast<int (Base0::*)(int)>(&Base0::base20))
            .stubs()
            .will(returnValue(10));
       TS_ASSERT_EQUALS(10, o.base20(0));
       GlobalMockObject::verify();
 
-      MOCKER(static_cast<int (Base0::*)(double)>(&Base0::base20))
+      EMOCK(static_cast<int (Base0::*)(double)>(&Base0::base20))
            .stubs()
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));

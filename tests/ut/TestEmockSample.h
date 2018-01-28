@@ -41,7 +41,7 @@ FIXTURE(emock_sample, emock samples)
 {
     TEST(test_func_mocker)
     {
-        MOCKER(Interface::func)
+        EMOCK(Interface::func)
             .expects(once())
             .will(returnValue(10));
         ASSERT_EQ(10, Interface::func());
@@ -50,7 +50,7 @@ FIXTURE(emock_sample, emock samples)
 	
     TEST(test will invoke)
     {
-        MOCKER(Interface::func)
+        EMOCK(Interface::func)
             .expects(once())
             .will(invoke(func_stub));
         ASSERT_EQ(1000, Interface::func());

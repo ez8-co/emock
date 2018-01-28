@@ -51,7 +51,7 @@ FIXTURE(ApiHookStdcall)
 		a = 3;
 		b = 5;
 		ret = 10;
-		MOCKER(func)
+		EMOCK(func)
 			.expects(once())
 			.with(eq(a), eq(b))
 			.will(returnValue(ret));
@@ -76,7 +76,7 @@ FIXTURE(ApiHookStdcall)
 
 	TEST(can mock two stdcall functions at the same time)
 	{
-		MOCKER(func2)
+		EMOCK(func2)
 			.expects(once())
 			.with(eq(500))
 			.will(returnValue(20));

@@ -47,7 +47,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(test_ignore_return_int_value)
     {
-        MOCKER(func_int)
+        EMOCK(func_int)
             .stubs()
             .will(ignoreReturnValue());
 
@@ -56,7 +56,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(testreturn_int_value)
     {
-        MOCKER(func_int)
+        EMOCK(func_int)
             .stubs()
             .will(returnValue(1));
 
@@ -70,7 +70,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(test_ignore_return_double_value)
     {
-        MOCKER(func_double)
+        EMOCK(func_double)
             .stubs()
             .will(ignoreReturnValue());
 
@@ -79,7 +79,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(testreturn_double_value)
     {
-        MOCKER(func_double)
+        EMOCK(func_double)
             .stubs()
             .will(returnValue(1.0));
 
@@ -93,7 +93,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(test_ignore_return_char_value)
     {
-        MOCKER(func_char)
+        EMOCK(func_char)
             .stubs()
             .will(ignoreReturnValue());
 
@@ -102,7 +102,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(testreturn_char_value)
     {
-        MOCKER(func_char)
+        EMOCK(func_char)
             .stubs()
             .will(returnValue(1));
 
@@ -140,7 +140,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(test_ignore_return_obj_value)
     {
-        MOCKER(func_obj)
+        EMOCK(func_obj)
             .stubs()
             .will(ignoreReturnValue());
 
@@ -151,7 +151,7 @@ FIXTURE(TestIgnoreReturnValue)
     TEST(testreturn_obj_value)
     {
         Obj obj(20);
-        MOCKER(func_obj)
+        EMOCK(func_obj)
             .stubs()
             .will(returnValue(obj));
 
@@ -164,7 +164,7 @@ FIXTURE(TestIgnoreReturnValue)
 
     TEST(test_ignore_return_void_value)
     {
-        MOCKER(func_void)
+        EMOCK(func_void)
             .stubs()
             .will(ignoreReturnValue());
 

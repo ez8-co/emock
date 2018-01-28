@@ -153,7 +153,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with no return and no parameter)
     {
-        MOCKER(vfunc0)
+        EMOCK(vfunc0)
             .expects(once());
 
         vfunc0();
@@ -161,7 +161,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and no parameter)
     {
-        MOCKER(func0)
+        EMOCK(func0)
             .expects(once())
             .will(returnValue(ret));
 
@@ -170,7 +170,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with no return and one parameter)
     {
-        MOCKER(vfunc1)
+        EMOCK(vfunc1)
             .expects(once())
             .with(eq(a));
 
@@ -179,7 +179,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with 1 parameter (int) & return (int))
     {
-        MOCKER(func1)
+        EMOCK(func1)
             .expects(once())
             .with(eq(a))
             .will(returnValue(ret));
@@ -189,7 +189,7 @@ FIXTURE(ApiHookBase)
 
 	TEST(can mock c function with 1 parameter (double) & return (double))
 	{
-        MOCKER(ffunc1)
+        EMOCK(ffunc1)
             .expects(once())
             .with(eq((double)1.0))
             .will(returnValue((double)1.0));
@@ -199,7 +199,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and two parameters)
     {
-        MOCKER(func2)
+        EMOCK(func2)
             .expects(once())
             .with(eq(a), eq(b))
             .will(returnValue(ret));
@@ -209,7 +209,7 @@ FIXTURE(ApiHookBase)
 
 	TEST(can mock c function with 2 parameter2 (double) & return (double))
 	{
-        MOCKER(ffunc2)
+        EMOCK(ffunc2)
             .expects(once())
             .with(eq((int)2), eq((double)1.1))
             .will(returnValue((double)1.9));
@@ -219,7 +219,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 3 parameters)
     {
-        MOCKER(func3)
+        EMOCK(func3)
             .expects(once())
             .with(eq(a), eq(b), eq(c))
             .will(returnValue(ret));
@@ -229,7 +229,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 4 parameters)
     {
-        MOCKER(func4)
+        EMOCK(func4)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d))
             .will(returnValue(ret));
@@ -239,7 +239,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 5 parameters)
     {
-        MOCKER(func5)
+        EMOCK(func5)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e))
             .will(returnValue(ret));
@@ -250,7 +250,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 6 parameters)
     {
-        MOCKER(func6)
+        EMOCK(func6)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f))
             .will(returnValue(ret));
@@ -260,7 +260,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 7 parameters)
     {
-        MOCKER(func7)
+        EMOCK(func7)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g))
             .will(returnValue(ret));
@@ -270,7 +270,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 8 parameters)
     {
-        MOCKER(func8)
+        EMOCK(func8)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g), eq(h))
             .will(returnValue(ret));
@@ -280,7 +280,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 9 parameters)
     {
-        MOCKER(func9)
+        EMOCK(func9)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g), eq(h), eq(i))
             .will(returnValue(ret));
@@ -290,7 +290,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 10 parameters)
     {
-        MOCKER(func10)
+        EMOCK(func10)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g), eq(h), eq(i), eq(j))
             .will(returnValue(ret));
@@ -301,7 +301,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 11 parameters)
     {
-        MOCKER(func11)
+        EMOCK(func11)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g), eq(h), eq(i), eq(j), eq(k))
             .will(returnValue(ret));
@@ -311,7 +311,7 @@ FIXTURE(ApiHookBase)
 
     TEST(can mock C function with return and 12 parameters)
     {
-        MOCKER(func12)
+        EMOCK(func12)
             .expects(once())
             .with(eq(a), eq(b), eq(c), eq(d), eq(e), eq(f), eq(g), eq(h), eq(i), eq(j), eq(k), eq(l))
             .will(returnValue(ret));

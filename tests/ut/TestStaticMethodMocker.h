@@ -40,7 +40,7 @@ FIXTURE(TestStaticMemberMocker, mock static member function)
 
     TEST(static member function mocker test)
     {
-        MOCKER(CUT::func)
+        EMOCK(CUT::func)
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, CUT::func());

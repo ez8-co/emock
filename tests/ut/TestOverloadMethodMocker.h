@@ -62,7 +62,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
 
     TEST(overload static method mocker test)
     {
-        MOCKER((int (*) (int)) CUT::func)
+        EMOCK((int (*) (int)) CUT::func)
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, CUT::func(0));
@@ -71,7 +71,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
 
     TEST(overload free function mocker test)
     {
-        MOCKER((int (*) (int)) func)
+        EMOCK((int (*) (int)) func)
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, func(0));

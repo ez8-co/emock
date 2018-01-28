@@ -77,7 +77,7 @@ FIXTURE(ApiHook)
 		a = 3;
 		b = 5;
 		ret = 10;
-		MOCKER(func)
+		EMOCK(func)
 			.expects(once())
 			.with(eq(a), eq(b))
 			.will(returnValue(ret));
@@ -108,7 +108,7 @@ FIXTURE(ApiHook)
 
 	TEST(can mock two functions at the same time)
 	{
-		MOCKER(func2)
+		EMOCK(func2)
 			.expects(once())
 			.with(eq(500))
 			.will(returnValue(20));
@@ -119,21 +119,21 @@ FIXTURE(ApiHook)
 
     TEST(can mock 2 functions which has same prototype)
     {
-       MOCKER(foo).stubs().will(returnValue(20));
+       EMOCK(foo).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20,  foo(a, b));
     }
 
     TEST(can mock varadic functions)
     {
-       MOCKER(var_func).stubs().will(returnValue(20));
+       EMOCK(var_func).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, var_func(a, b));
     }
 
     TEST(can mock varadic functions with 2 arg)
     {
-       MOCKER(var_func2).stubs().will(returnValue(20));
+       EMOCK(var_func2).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, var_func2(a, b, ret));
     }
@@ -144,7 +144,7 @@ FIXTURE(ApiHook)
 #ifdef _MSC_VER
        va_start(arg, a);
 #endif
-       MOCKER(va_list_func).stubs().will(returnValue(20));
+       EMOCK(va_list_func).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func(a, arg));
     }
@@ -155,7 +155,7 @@ FIXTURE(ApiHook)
 #ifdef _MSC_VER
        va_start(arg, a);
 #endif
-       MOCKER(va_list_func2).stubs().will(returnValue(20));
+       EMOCK(va_list_func2).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func2(a, b, arg));
     }
