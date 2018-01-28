@@ -187,13 +187,17 @@
 
       // assert return 1
       ASSERT_EQ(target_func(0), 1);
+  ```
 
+  ```cpp
+      // overloaded function to be tested
       int foobar1(int x) {
           return x;
       }
       double foobar1(double x) {
           return x;
       }
+
       // how to mock overloaded functions
       EMOCK((int (*)(int))foobar1)
           .stubs()
@@ -216,6 +220,8 @@
           void bar4(double);
       };
 
+      ////////////////////////////////////
+
       // mock functions specified to be called
       void mock_bar1(Foo* obj, int) {
           // ...
@@ -228,7 +234,7 @@
       EMOCK(&Foo::bar1)
           .stubs()
           .will(invoke(mock_bar1)); // invoke user denfined mocker instead of return value
-      EMOCK(&Foo::bar2) // virtual mem_fun is same as normal mem_fun
+      EMOCK(&Foo::bar2) // virtual mem_fun isn't special
           .stubs()
           .will(invoke(mock_bar2));
       EMOCK(Foo::bar3) // static mem_fun is like global function
