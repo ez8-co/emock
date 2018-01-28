@@ -196,9 +196,11 @@
       }
       // how to mock overloaded functions
       EMOCK((int (*)(int))foobar1)
-          /* conventions */;
+          .stubs()
+          .will(returnValue(1));
       EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
-          /* conventions */;
+          .stubs()
+          .will(returnValue(1.0));
   ```
 
   ```cpp
@@ -208,13 +210,13 @@
       public:
           void bar1(int);
           virtual void bar2(double);
-          static void bar3();
+          static int bar3();
 
           void bar4(int);
           void bar4(double);
       };
 
-      // 实际调用的函数
+      // mock functions specified to be called
       void mock_bar1(Foo* obj, int) {
           // ...
       }
@@ -224,19 +226,20 @@
 
       // how to mock kinds of member functions
       EMOCK(&Foo::bar1)
-          /* conventions */
-          .will(invoke(mock_bar1));
-      EMOCK(&Foo::bar2) // virtual member function is same as normal member function
-          /* conventions */
+          .stubs()
+          .will(invoke(mock_bar1)); // invoke user denfined mocker instead of return value
+      EMOCK(&Foo::bar2) // virtual mem_fun is same as normal mem_fun
+          .stubs()
           .will(invoke(mock_bar2));
-      EMOCK(Foo::bar3) // static member function is like global function
-          /* conventions */;
+      EMOCK(Foo::bar3) // static mem_fun is like global function
+          .stubs()
+          .will(returnValue(1));
 
       // how to mock overloaded member functions
       EMOCK((void (Foo::*)(int))&Foo::bar4)
-          /* conventions */;
+          .expects(once()); // call only once
       EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
-          /* conventions */;
+          .expects(never()); // won't be called
   ```
 
 ## Manual
