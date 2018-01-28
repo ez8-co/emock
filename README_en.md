@@ -181,12 +181,62 @@
 
       // how to mock
       EMOCK(target_func)
-        .stubs()
-        .with(any())
-        .will(returnValue(1));
+          .stubs()
+          .with(any())
+          .will(returnValue(1));
 
       // assert return 1
       ASSERT_EQ(target_func(0), 1);
+
+      int foobar1(int x) {
+          return x;
+      }
+      double foobar1(double x) {
+          return x;
+      }
+      // how to mock overloaded functions
+      EMOCK((int (*)(int))foobar1)
+          /* conventions */;
+      EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
+          /* conventions */;
+  ```
+
+  ```cpp
+      // member functions to be tested
+      class Foo
+      {
+      public:
+          void bar1(int);
+          virtual void bar2(double);
+          static void bar3();
+
+          void bar4(int);
+          void bar4(double);
+      };
+
+      // 实际调用的函数
+      void mock_bar1(Foo* obj, int) {
+          // ...
+      }
+      void mock_bar2(Foo* obj, double) {
+          // ...
+      }
+
+      // how to mock kinds of member functions
+      EMOCK(&Foo::bar1)
+          /* conventions */
+          .will(invoke(mock_bar1));
+      EMOCK(&Foo::bar2) // virtual member function is same as normal member function
+          /* conventions */
+          .will(invoke(mock_bar2));
+      EMOCK(Foo::bar3) // static member function is like global function
+          /* conventions */;
+
+      // how to mock overloaded member functions
+      EMOCK((void (Foo::*)(int))&Foo::bar4)
+          /* conventions */;
+      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
+          /* conventions */;
   ```
 
 ## Manual
