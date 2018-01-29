@@ -26,7 +26,6 @@ SET(UT_CASES
   TestFormatter.h
   TestHolder.h
   TestIncrementStub.h
-  TestInterfaceInfo.h
   TestInvocation.h
   TestInvocationMocker.h
   TestIsEqual.h

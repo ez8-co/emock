@@ -72,7 +72,6 @@ SET(EMOCK_SRCS
     IgnoreResultHandlerFactory.cpp
     IgnoreReturnStub.cpp
     Ignore.cpp
-    InterfaceInfo.cpp
     Invocation.cpp
     InvocationId.cpp
     InvocationMockBuilderGetter.cpp
