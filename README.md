@@ -172,6 +172,8 @@
 
 ## 快速概览
 
+#### 全局函数
+
   ```cpp
       // 待测函数
       int foobar(int x) {
@@ -188,22 +190,7 @@
       ASSERT_EQ(foobar(0), 1);
   ```
 
-  ```cpp
-      // 待测重载函数
-      int foobar1(int x) {
-          return x;
-      }
-      double foobar1(double x) {
-          return x;
-      }
-      // 重载函数，像下面这样就可以mock
-      EMOCK((int (*)(int))foobar1)
-          .stubs()
-          .will(returnValue(1));
-      EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
-          .stubs()
-          .will(returnValue(1.0));
-  ```
+#### 成员函数
 
   ```cpp
       // 待测成员函数
@@ -213,18 +200,15 @@
           void bar1(int);
           virtual void bar2(double);
           static int bar3();
-
-          void bar4(int);
-          void bar4(double);
       };
 
       ////////////////////////////////////
 
       // 指定调用的mock函数
-      void mock_bar1(Foo* obj, int) {
+      void EMOCK_API mock_bar1(Foo* obj, int) {
           // ...
       }
-      void mock_bar2(Foo* obj, double) {
+      void EMOCK_API mock_bar2(Foo* obj, double) {
           // ...
       }
 
@@ -238,11 +222,39 @@
       EMOCK(Foo::bar3) // 静态函数类似全局函数，不需要&
           .stubs()
           .will(returnValue(1));
+  ```
+
+#### 重载函数
+
+  ```cpp
+      // 待测重载函数
+      int foobar(int x) {
+          return x;
+      }
+      double foobar(double x) {
+          return x;
+      }
+
+      // 重载函数，像下面这样就可以mock
+      EMOCK((int (*)(int))foobar)
+          .stubs()
+          .will(returnValue(1));
+      EMOCK(reinterpret_cast<double (*)(double)>(foobar))
+          .stubs()
+          .will(returnValue(1.0));
+
+      // 待测重载成员函数
+      class Foo
+      {
+      public:
+          void bar(int);
+          void bar(double);
+      };
 
       // 重载的成员函数，像下面这样就可以mock
-      EMOCK((void (Foo::*)(int))&Foo::bar4)
+      EMOCK((void (Foo::*)(int))&Foo::bar)
           .expects(once()); // 只会调用一次
-      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
+      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar))
           .expects(never()); // 不会被调用
   ```
 
