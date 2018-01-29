@@ -186,11 +186,13 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
 
 }
 
-// FF 25 : JMP /4   jmp absolute indirect
-// bytes 2 ~ 5 : operand of jmp, relative to the memory that recorded the thunk addr. it should be zero.
-// bytes 6 ~ 13 : the absolute addr of thunk.
-static const unsigned char longJmpCodeTemplate[]  =
-   { 0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+#if BUILD_FOR_X64
+    // FF 25 : JMP /4   jmp absolute indirect
+    // bytes 2 ~ 5 : operand of jmp, relative to the memory that recorded the thunk addr. it should be zero.
+    // bytes 6 ~ 13 : the absolute addr of thunk.
+    static const unsigned char longJmpCodeTemplate[]  =
+       { 0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+#endif
 
     void* Trampoline::get(const void* src, void* dst) {
 #if BUILD_FOR_X64
@@ -210,7 +212,7 @@ static const unsigned char longJmpCodeTemplate[]  =
     void* Trampoline::get4MemFunc(const void* src, void* dst) {
 #ifdef _MSC_VER
         static const unsigned char ecxToArgList[] = { 0x58, 0x51, 0x50 };
-        // 申请蹦床，写入ecx
+        // apply trampoline and push ecx
     #if BUILD_FOR_X64
         unsigned char* trampoline = getTrampoline(src, sizeof(ecxToArgList) + sizeof(longJmpCodeTemplate));
         ::memcpy(trampoline, ecxToArgList, sizeof(ecxToArgList));
@@ -221,7 +223,7 @@ static const unsigned char longJmpCodeTemplate[]  =
         unsigned char* trampoline = getTrampoline(src, sizeof(ecxToArgList) + sizeof(x86JmpCodeTemplate));
         ::memcpy(trampoline, ecxToArgList, sizeof(ecxToArgList));
         ::memcpy(trampoline + sizeof(ecxToArgList), x86JmpCodeTemplate, sizeof(x86JmpCodeTemplate));
-        *(unsigned int*)&trampoline[1 + sizeof(ecxToArgList)] = (unsigned int)((unsigned long)dst - (unsigned long)trampoline - sizeof(x86JmpCodeTemplate) - sizeof(ecxToArgList));
+        *(unsigned int*)&trampoline[sizeof(ecxToArgList) + 1] = (unsigned int)((unsigned long)dst - (unsigned long)trampoline - sizeof(x86JmpCodeTemplate) - sizeof(ecxToArgList));
     #endif
         return trampoline;
 
