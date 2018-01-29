@@ -175,6 +175,8 @@
 
 ## Quick view
 
+#### Global function
+
   ```cpp
       // function to be tested
       int target_func(int x);
@@ -189,23 +191,7 @@
       ASSERT_EQ(target_func(0), 1);
   ```
 
-  ```cpp
-      // overloaded function to be tested
-      int foobar1(int x) {
-          return x;
-      }
-      double foobar1(double x) {
-          return x;
-      }
-
-      // how to mock overloaded functions
-      EMOCK((int (*)(int))foobar1)
-          .stubs()
-          .will(returnValue(1));
-      EMOCK(reinterpret_cast<double (*)(double)>(foobar1))
-          .stubs()
-          .will(returnValue(1.0));
-  ```
+#### Member functions
 
   ```cpp
       // member functions to be tested
@@ -215,18 +201,15 @@
           void bar1(int);
           virtual void bar2(double);
           static int bar3();
-
-          void bar4(int);
-          void bar4(double);
       };
 
       ////////////////////////////////////
 
       // mock functions specified to be called
-      void mock_bar1(Foo* obj, int) {
+      void EMOCK_API mock_bar1(Foo* obj, int) {
           // ...
       }
-      void mock_bar2(Foo* obj, double) {
+      void EMOCK_API mock_bar2(Foo* obj, double) {
           // ...
       }
 
@@ -240,11 +223,39 @@
       EMOCK(Foo::bar3) // static mem_fun is like global function
           .stubs()
           .will(returnValue(1));
+  ```
+
+#### Overloaded member functions
+
+  ```cpp
+      // overloaded function to be tested
+      int foobar(int x) {
+          return x;
+      }
+      double foobar(double x) {
+          return x;
+      }
+
+      // how to mock overloaded functions
+      EMOCK((int (*)(int))foobar)
+          .stubs()
+          .will(returnValue(1));
+      EMOCK(reinterpret_cast<double (*)(double)>(foobar))
+          .stubs()
+          .will(returnValue(1.0));
+
+      // overloaded member functions to be tested
+      class Foo
+      {
+      public:
+          void bar(int);
+          void bar(double);
+      };
 
       // how to mock overloaded member functions
-      EMOCK((void (Foo::*)(int))&Foo::bar4)
+      EMOCK((void (Foo::*)(int))&Foo::bar)
           .expects(once()); // call only once
-      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar4))
+      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar))
           .expects(never()); // won't be called
   ```
 
