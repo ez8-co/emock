@@ -1,4 +1,6 @@
-- [简体中文](./README.md)
+[简体中文](./README.md)
+
+[![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)
 
 ## What is EMOCK?
 
