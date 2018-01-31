@@ -1,6 +1,6 @@
 [简体中文](./README.md)
 
-## What is EMOCK?  [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://travis-ci.org/ez8-co/emock.svg?branch=master)](https://travis-ci.org/ez8-co/emock)
+## What is EMOCK?      [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://semaphoreci.com/api/v1/orca-zhang-91/emock/branches/master/shields_badge.svg)](https://semaphoreci.com/orca-zhang-91/emock)
 
 - EMOCK is next generation easy-to-use C++ Mock Library based on mockcpp.
   - **[Easy to Use]** only one MACRO, without extra studies.
