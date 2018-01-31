@@ -1,6 +1,6 @@
 [English README](./README_en.md)
 
-## EMOCK [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://travis-ci.org/ez8-co/emock.svg?branch=master)](https://travis-ci.org/ez8-co/emock)
+## EMOCK     [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://semaphoreci.com/api/v1/orca-zhang-91/emock/branches/master/shields_badge.svg)](https://semaphoreci.com/orca-zhang-91/emock)
 
 - EMOCK是基于mockcpp核心改进的下一代C/C++跨平台mock库
   - **【使用简单】** 学习成本低，仅一个宏
