@@ -282,14 +282,14 @@
 - Please feel free to use EMOCK.
 - Looking forward to your feeback.[create new issues](https://github.com/ez8-co/emock/issues/new).
 
-## support EMOCK
+## Support EMOCK
 
 <table style="text-align: center">
    <tr>
-      <td width="25%"><a href="https://qr.alipay.com/fkx02095iunlwm3pspwd5a"><img src="https://img.shields.io/badge/donate-alipay-blue.svg" /></a></td>
+      <td width="25%"><a href="HTTPS://QR.ALIPAY.COM/FKX02095IUNLWM3PSPWD5A"><img src="https://img.shields.io/badge/donate-alipay-blue.svg" /></a></td>
       <td width="25%"><img src="https://img.shields.io/badge/donate-wechat_pay-brightgreen.svg" /></td>
       <td width="25%"><a href="http://ez8.co/red_packet"><img src="https://img.shields.io/badge/donate-red_packet-red.svg" /></a></td>
-      <td width="25%"><a href="http://paypal.me/orcazhang"><img src="https://img.shields.io/badge/donate-paypal-yellow.svg" /></a></td>
+      <td width="25%"><a href="http://www.paypal.me/orcazhang"><img src="https://img.shields.io/badge/donate-paypal-yellow.svg" /></a></td>
    </tr>
    <tr>
       <td><img src="http://ez8.co/alipay.jpg" alt="alipay qrcode" align=center /></td>
