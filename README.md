@@ -291,14 +291,14 @@
    </tr>
    <tr>
       <td><a href="HTTPS://QR.ALIPAY.COM/FKX02095IUNLWM3PSPWD5A"><img src="https://img.shields.io/badge/donate-alipay-blue.svg" /></a></td>
-      <td><img src="https://img.shields.io/badge/donate-wechat_pay-brightgreen.svg" /></td>
+      <td><a href="http://ez8.co/wxpay.jpg"><img src="https://img.shields.io/badge/donate-wechat_pay-brightgreen.svg" /></a></td>
       <td><a href="http://ez8.co/red_packet"><img src="https://img.shields.io/badge/donate-red_packet-red.svg" /></a></td>
       <td><a href="http://www.paypal.me/orcazhang"><img src="https://img.shields.io/badge/donate-paypal-yellow.svg" /></a></td>
    </tr>
    <tr>
-      <td><img src="http://ez8.co/alipay.jpg" alt="支付宝二维码" align=center /></td>
-      <td><img src="http://ez8.co/wxpay.jpg" alt="微信二维码" align=center /></td>
-      <td><img src="http://ez8.co/redpack.jpg" alt="红包二维码" align=center /></td>
-      <td><img src="http://ez8.co/paypal.png" alt="PayPal二维码" align=center /></td>
+      <td><a href="http://ez8.co/alipay.jpg"><img src="http://ez8.co/alipay.jpg" alt="支付宝二维码" align=center /></a></td>
+      <td><a href="http://ez8.co/wxpay.jpg"><img src="http://ez8.co/wxpay.jpg" alt="微信二维码" align=center /></td>
+      <td><a href="http://ez8.co/redpack.jpg"><img src="http://ez8.co/redpack.jpg" alt="红包二维码" align=center /></a></td>
+      <td><a href="http://ez8.co/paypal.png"><img src="http://ez8.co/paypal.png" alt="PayPal二维码" align=center /></a></td>
    </tr>
 </table>
