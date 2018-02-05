@@ -13,7 +13,16 @@
 
 - :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
 - support mocking functions with `throw` specifications
-- provide best practice of `malloc` mocking
+- print hint infomation for virtual functions that haven't been overwritten
+
+## Recently supported
+
+- all-in-one `EMOCK` macro (no-need to do IoC for virtual member functions)
+- support mocking variadic function, e.g. `int test(int a, ...)`
+- support mocking overloaded member functions under Windows
+- reduce warning of getting address of virtual method under Linux
+- trampoline that extend `this` pointer as first argument for member functions under Windows
+- :clap: `near jump + trampoline` under x64 avoid unexcepted coverage by long jump
 
 ## Feature matrix
 
@@ -163,15 +172,6 @@
 </table>
 
 - EMOCK should also work under \*nix(UNIX, Android, MacOS and iOS), or maybe need minor adaptation.
-
-## Recently supported
-
-- all-in-one `EMOCK` macro (no-need to do IoC for virtual member functions)
-- support mocking variadic function, e.g. `int test(int a, ...)`
-- support mocking overloaded member functions under Windows
-- reduce warning of getting address of virtual method under Linux
-- trampoline that extend `this` pointer as first argument for member functions under Windows
-- :clap: `near jump + trampoline` under x64 avoid unexcepted coverage by long jump
 
 ## Quick view
 
