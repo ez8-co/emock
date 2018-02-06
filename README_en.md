@@ -14,6 +14,7 @@
 - :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
 - support mocking functions with `throw` specifications
 - print hint infomation for virtual functions that haven't been overwritten
+- change default testing framework to gtest
 
 ## Recently supported
 
