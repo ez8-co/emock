@@ -32,6 +32,7 @@
 	#include <cassert>
 	#include <stdio.h>
     #include <linux/limits.h>
+    #include <stack>
 
 #endif
 
@@ -81,6 +82,8 @@ EMOCK_NS_START
     }
 
 #ifdef _MSC_VER
+
+    #define MatchString SymMatchString
 
     std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > g_symbolCache;
     void SymbolRetriever::reset() {
@@ -228,6 +231,7 @@ EMOCK_NS_START
     }
 
 #else
+
     void SymbolRetriever::reset() {}
 
     namespace {
@@ -279,6 +283,39 @@ EMOCK_NS_START
                 close(fd);
             }
             return ret;
+        }
+
+        #define case_sens_eq(x, y, cs) (x == y || (!cs && (unsigned)((x & -33) - 0x41) < 26 && (x ^ y) == 0x20))
+
+        bool MatchString(const char* src, const char* matcher, bool case_sens = true)
+        {
+            std::stack<std::pair<const char*, const char*> > s;
+            // match from start
+            while(*src) {
+                // match asterisk
+                if(*matcher == '*') {
+                    // skip continuous asterisks
+                    while(*matcher == '*' && ++matcher);
+                    // forward to first match char of src
+                    while(*src && !case_sens_eq(*src, *matcher, case_sens) && ++src);
+                    // record current position for back-track
+                    s.push(std::make_pair(src + 1, matcher - 1));
+                }
+                // eat one character
+                else if(*matcher == '?' || case_sens_eq(*src, *matcher, case_sens)) {
+                    ++src, ++matcher;
+                }
+                // hit mismatch, then back-track
+                else {
+                    if(s.empty())
+                        return false;
+                    src = s.top().first, matcher = s.top().second;
+                    s.pop();
+                }
+            }
+            // ignore ending asterisks
+            while(*matcher == '*' && ++matcher);
+            return (!*src && !*matcher);
         }
     }
 
