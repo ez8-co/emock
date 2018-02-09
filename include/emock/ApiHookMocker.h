@@ -57,7 +57,7 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_
       void* p;\
     } u;\
     u.pmf = api;\
-    u.p = SymbolRetriever::getAddress(u.p, typeid(api), name);\
+    u.p = SymbolRetriever::getMethodAddress(u.p, typeid(api), name);\
     return EMOCK_NS::GlobalMockObject::instance.method\
                  ( name\
                  , u.p\
