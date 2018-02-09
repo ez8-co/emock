@@ -1,6 +1,18 @@
-# mockcpp - Changelog
+# emock - Changelog
 
 ## Current Release
+
+### [2018/01/30] emock 0.9 @ [orca.zhang](https://github.com/orca-zhang)
+
+- upgrade `mockcpp` to `emock`
+- add README & assemble online CI
+
+## Previous Releases
+
+### [2018/01/26] mockcpp 2.8 @ [orca.zhang](https://github.com/orca-zhang)
+
+- all-in-one MOCKER macro (no-need to do IoC for virtual member functions)
+- variadic arguments list support for APIHOOK mode
 
 ### [2017/12/30] mockcpp 2.7 @ [orca.zhang](https://github.com/orca-zhang)
 
@@ -9,8 +21,6 @@
   2. solved `BOOST_TYPE_OF` cannot recognize user-defined type at default problem.
 - Support for mocking non-virtual method using `MOCKER`.
 - Fix `TestNG++` generator's compatibility for python 3.
-
-## Previous Releases
 
 ### [2011/10/02] mockcpp 2.6 @ sinojelly
 
