@@ -40,6 +40,17 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
                  , ApiHookHolderFactory::create(api));
 }
 
+template <typename API>
+InvocationMockBuilderGetter mockAPI(const std::string& matcher, const char*)
+{
+    std::string name;
+    void* api = SymbolRetriever::getAddress(name, matcher);
+    return EMOCK_NS::GlobalMockObject::instance.method
+                 ( name
+                 , reinterpret_cast<const void*>(api)
+                 , ApiHookHolderFactory::create(api));
+}
+
 // MSVC use ecx register to transfer `this` pointer
 // In Windows: `__thiscall` is left-to-right 
 //             and almost equal to `__stdcall` by `ret 8` when return

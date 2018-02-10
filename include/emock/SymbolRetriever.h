@@ -19,6 +19,7 @@ EMOCK_NS_START
 class SymbolRetriever
 {
 public:
+   static void* getAddress(std::string& name, const std::string& matcher);
    static void* getMethodAddress(void* p, const std::type_info& info, const std::string& stringify);
    static void reset();
 };

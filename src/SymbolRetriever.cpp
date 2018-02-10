@@ -152,6 +152,11 @@ EMOCK_NS_START
             return TRUE;
         }
 
+        static BOOL CALLBACK symbolsCallbackEx(PSYMBOL_INFO pSymInfo, ULONG, PVOID UserContext) {
+            ((std::map<ULONG64, std::string>*)UserContext)->insert(std::make_pair(pSymInfo->Address. pSymInfo->Name));
+            return TRUE;
+        }
+
         void methodOffset(const std::string& pdbPath, const std::string& mangledPrefix, std::map<int, std::string>& offsets) {
             FILE* fp = fopen(pdbPath.c_str(), "rb");
             if (!fp)
@@ -231,6 +236,32 @@ EMOCK_NS_START
                 return (void*)*itRet;
         }
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        return NULL;
+    }
+
+    void* getAddress(std::string& name, const std::string& matcher) {
+        // TODO: deal with arg list for overloaded functions
+        std::map<int, std::string> m;
+        SymEnumSymbols(GetCurrentProcess(), 0,
+            matcher.find('!') != std::string::npos ? matcher.c_str() : std::string("*!").append(matcher).c_str(),
+            symbolsCallbackEx, &m);
+        if(m.size() == 1) {
+            name = m.begin()->second;
+            return m.begin()->first;
+        }
+        if(!m.empty()) {
+            std::string info("Failed to get address of [");
+            info.append(matcher).append("]. candidates:\n");
+            for(std::map<int, std::string>::const_iterator it = m.begin();
+                it != m.end();
+                ++it) {
+                info.append("\t").append(it->second).append("\n");
+            }
+            EMOCK_REPORT_FAILURE(info.c_str());
+        }
+        else {
+            EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(matcher).append("], maybe inlined or not impleted in derived class.").c_str());
+        }
         return NULL;
     }
 
@@ -355,6 +386,11 @@ EMOCK_NS_START
         fclose(fp);
         // TODO: show hints
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        return NULL;
+    }
+
+    void* getAddress(std::string& name, const std::string& matcher) {
+        // TODO
         return NULL;
     }
 
