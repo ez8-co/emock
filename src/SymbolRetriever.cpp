@@ -210,8 +210,7 @@ EMOCK_NS_START
 		ULONG64 modBase = getModBase((DWORD64)p);
         SymEnumSymbols(GetCurrentProcess(), modBase, modBase > 0 ? symbolName.c_str() : std::string("*!").append(symbolName).c_str(), symbolsCallback, &v);
         if(v.empty()) {
-            // TODO: show hints
-            EMOCK_REPORT_FAILURE(std::string("Failed to find symbol of [").append(stringify).append("]").c_str());
+            EMOCK_REPORT_FAILURE(std::string("Failed to find symbol of [").append(stringify).append("], maybe inlined or not impleted in derived class.").c_str());
             return NULL;
         }
 		std::set<ULONG64>::const_iterator itRet = v.begin();
@@ -260,7 +259,7 @@ EMOCK_NS_START
             EMOCK_REPORT_FAILURE(info.c_str());
         }
         else {
-            EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(matcher).append("], maybe inlined or not impleted in derived class.").c_str());
+            EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(matcher).append("], maybe inlined or haven't been overridden in derived class.").c_str());
         }
         return NULL;
     }
@@ -384,8 +383,7 @@ EMOCK_NS_START
             }
         }
         fclose(fp);
-        // TODO: show hints
-        EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
+        EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("], maybe inlined or haven't been overridden in derived class.").c_str());
         return NULL;
     }
 
