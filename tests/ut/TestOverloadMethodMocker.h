@@ -49,7 +49,6 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         {
             return 11;
         }
-        virtual ~CUT() {}  // virtual destructor must be defined when mock an interface
         virtual int bar(int)
         {
             return 11;
@@ -67,14 +66,51 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .will(returnValue(100));
         ASSERT_EQ(100, CUT::func(0));
         GlobalMockObject::verify();
+
+        EMOCK((int (*) (double)) CUT::func)
+            .stubs()
+            .will(returnValue(101));
+        ASSERT_EQ(101, CUT::func(0.0));
+        GlobalMockObject::verify();
+/*
+        EMOCK("CUT::func(int)")
+            .stubs()
+            .will(returnValue(100));
+        ASSERT_EQ(100, CUT::func(0));
+        GlobalMockObject::verify();
+
+        EMOCK("CUT::func(double)")
+            .stubs()
+            .will(returnValue(101));
+        ASSERT_EQ(101, CUT::func(0));
+        GlobalMockObject::verify();*/
     }
 
     TEST(overload free function mocker test)
     {
-        EMOCK((int (*) (int)) func)
+        CUT cut;
+        EMOCK(static_cast<int (CUT::*) (int)>(&CUT::bar))
             .stubs()
             .will(returnValue(100));
-        ASSERT_EQ(100, func(0));
+        ASSERT_EQ(100, cut.bar(0));
         GlobalMockObject::verify();
+
+        EMOCK(static_cast<int (CUT::*) (double)>(&CUT::bar))
+            .stubs()
+            .will(returnValue(101));
+        ASSERT_EQ(101, cut.bar(0.0));
+        GlobalMockObject::verify();
+/*
+        EMOCK("CUT::bar(int)")
+            .stubs()
+            .will(returnValue(100));
+        ASSERT_EQ(100, cut.bar(0));
+        GlobalMockObject::verify();
+
+        EMOCK("CUT::bar(double)")
+            .stubs()
+            .will(returnValue(101));
+        ASSERT_EQ(101, cut.bar(0.0));
+        GlobalMockObject::verify();*/
     }
 };

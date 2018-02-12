@@ -8,6 +8,7 @@
 
 #include <typeinfo>
 #include <set>
+#include <map>
 
 #include <emock/SymbolRetriever.h>
 #include <emock/TypeString.h>
@@ -18,7 +19,6 @@
 	#include <windows.h>
 	#include <dbghelp.h>
     #include <vector>
-    #include <map>
 	#pragma comment(lib, "Dbghelp.lib")
 
 #else
@@ -42,11 +42,6 @@ EMOCK_NS_START
         static std::string extractMethodName(const std::string& stringify) {
             size_t start = stringify.find_last_of(':') + 1;
             return stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
-        }
-
-        static std::string getHintString(const std::string& stringify) {
-            size_t start = stringify.find_last_of(':', stringify.find_first_of('('));
-            return std::string("*::") + stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
         }
 
 #ifdef _MSC_VER
@@ -238,20 +233,20 @@ EMOCK_NS_START
         return NULL;
     }
 
-    void* getAddress(std::string& name, const std::string& matcher) {
+    void* SymbolRetriever::getAddress(std::string& name, const std::string& matcher) {
         // TODO: deal with arg list for overloaded functions
-        std::map<int, std::string> m;
+        std::map<ULONG64, std::string> m;
         SymEnumSymbols(GetCurrentProcess(), 0,
             matcher.find('!') != std::string::npos ? matcher.c_str() : std::string("*!").append(matcher).c_str(),
             symbolsCallbackEx, &m);
-        if(m.size() == 1) {
-            name = m.begin()->second;
-            return m.begin()->first;
-        }
         if(!m.empty()) {
+            if(m.size() == 1) {
+                name = m.begin()->second;
+                return (void*)m.begin()->first;
+            }
             std::string info("Failed to get address of [");
             info.append(matcher).append("]. candidates:\n");
-            for(std::map<int, std::string>::const_iterator it = m.begin();
+            for(std::map<ULONG64, std::string>::const_iterator it = m.begin();
                 it != m.end();
                 ++it) {
                 info.append("\t").append(it->second).append("\n");
@@ -300,34 +295,116 @@ EMOCK_NS_START
             return (!*src && !*matcher);
         }
 
+        struct ISymbolCheckor
+        {
+            virtual void setDlBase(unsigned long long dlBase) = 0;
+            virtual bool libCheck(const char* name) const = 0;
+            virtual bool libContinue() const = 0;
+            virtual bool symContinue(const char* name, unsigned long long addr) = 0;
+        };
+
+        struct SymbolEqual : public ISymbolCheckor
+        {
+            SymbolEqual(const std::string& signature)
+                : _signature(signature)
+                , _addr(0)
+                , _dlBase(0) {
+            }
+            void setDlBase(unsigned long long dlBase) {
+                _dlBase = dlBase;
+            }
+            inline bool libCheck(const char* name) const {
+                return true;
+            }
+            inline bool libContinue() const {
+                return !_addr;
+            }
+            inline bool symContinue(const char* name, unsigned long long addr) {
+                if(name == _signature) {
+                    _addr = _dlBase + addr;
+                    return false;
+                }
+                return true;
+            }
+            unsigned long long getAddr() const {
+                return _addr;
+            }
+
+        private:
+            std::string _signature;
+            unsigned long long _addr;
+            unsigned long long _dlBase;
+        };
+
+        struct SymbolMatcher : public ISymbolCheckor
+        {
+            SymbolMatcher(const std::string& libMatcher,
+                          const std::string& symMatcher,
+                          std::map<unsigned long long, std::string>& symMap)
+                : _libMatcher(libMatcher)
+                , _symMatcher(symMatcher)
+                , _dlBase(0)
+                , _symMap(symMap) {
+            }
+            void setDlBase(unsigned long long dlBase) {
+                _dlBase = dlBase;
+            }
+            inline bool libCheck(const char* name) const {
+                return MatchString(name, _libMatcher.c_str());
+            }
+            inline bool libContinue() const {
+                return true;
+            }
+            bool symContinue(const char* name, unsigned long long addr) {
+                if(MatchString(name, _symMatcher.c_str())) {
+                    _symMap.insert(std::make_pair(_dlBase + addr, name));
+                }
+                return true;
+            }
+
+        private:
+            std::string _libMatcher;
+            std::string _symMatcher;
+            unsigned long long _dlBase;
+            std::map<unsigned long long, std::string>& _symMap;
+        };
+
         template<typename Elf_Ehdr, typename Elf_Shdr, typename Elf_Sym>
-        unsigned long long _findAddr(const char* base, const std::string& signature)
+        bool _findAddr(const char* base, ISymbolCheckor* checkor)
         {
             const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
             const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
-            const char* symTable = base + elf_section[elf_header->e_shnum - 1].sh_offset;
+            const char* shstrTab = base + elf_section[elf_header->e_shstrndx].sh_offset;
+            const char* strTab = NULL;
             for(int i = 1; i < elf_header->e_shnum; ++i) {
-                if(strstr(base + elf_section[elf_header->e_shstrndx].sh_offset + elf_section[i].sh_name, "sym")) {
+                if(!strcmp(shstrTab + elf_section[i].sh_name, ".strtab")) {
+                    strTab = base + elf_section[i].sh_offset;
+                    break;
+                }
+            }
+            if(!strTab)
+                return true;
+            for(int i = 1; i < elf_header->e_shnum; ++i) {
+                if(strstr(shstrTab + elf_section[i].sh_name, "sym")) {
                     int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
-                    const Elf_Sym* symAddr = (const Elf_Sym*)(base + elf_section[i].sh_offset);
+                    const Elf_Sym* symTable = (const Elf_Sym*)(base + elf_section[i].sh_offset);
                     for(int j = 0; j < symEntries; ++j) {
-                        if(ELF32_ST_TYPE(symAddr[j].st_info) != 2 || !symAddr[j].st_value)
+                        if(ELF32_ST_TYPE(symTable[j].st_info) != 2 || !symTable[j].st_value)
                             continue;
-                        const char* symClsName = symTable + symAddr[j].st_name;
+                        const char* symClsName = strTab + symTable[j].st_name;
                         const char* outterLib = strchr(symClsName, '@');
-                        if(MatchString(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
-                                       signature.c_str())) {
-                            return symAddr[j].st_value;
-                        }
+                        if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
+                                                 symTable[j].st_value))
+                            return true;
                     }
                 }
             }
-            return 0;
+            return true;
         }
 
 
-        unsigned long long findAddrInElf(const char* file_name, const std::string& signature) {
-            unsigned long long ret = 0;
+        bool findAddrInElf(const char* file_name, ISymbolCheckor* checkor) {
+            bool ret = false;
             int fd = -1;
             if((fd = open(file_name, O_RDONLY)) > 0) {
                 struct stat sb;
@@ -336,10 +413,10 @@ EMOCK_NS_START
                     if(base != MAP_FAILED) {
                         switch(base[EI_CLASS]) {
                             case 1:
-                              ret = _findAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, signature);
+                              ret = _findAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, checkor);
                               break;
                             case 2:
-                              ret = _findAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, signature);
+                              ret = _findAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, checkor);
                               break;
                         }
                         munmap(base, sb.st_size);
@@ -351,19 +428,21 @@ EMOCK_NS_START
         }
     }
 
-    void* SymbolRetriever::getMethodAddress(void*, const std::type_info& info, const std::string& stringify) {
-        std::string signature = extractMethodSignatureName(getDemangledName(info.name()).c_str(), stringify);
+    void symbolRetrieve(ISymbolCheckor* checkor) {
         std::set<std::string> aux_set;
-        unsigned long long ret = 0;
         char file_name[PATH_MAX] = {0};
-        if(readlink("/proc/self/exe", file_name, PATH_MAX) > 0 && ((ret = findAddrInElf(file_name, signature)) > 0))
-            return (void*)ret;
+        if(readlink("/proc/self/exe", file_name, PATH_MAX) > 0) {
+            if(findAddrInElf(file_name, checkor)) {
+                if(checkor->libContinue() == false)
+                    return;
+            }
+        }
 
         aux_set.insert(file_name);
         FILE* fp = fopen("/proc/self/maps", "r");
         if(!fp) {
-            EMOCK_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(stringify).append("]").c_str());
-            return NULL;
+            EMOCK_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(file_name).append("]").c_str());
+            return;
         }
 
         char buf[PATH_MAX + 100] = {0};
@@ -375,20 +454,57 @@ EMOCK_NS_START
             sscanf(buf, "%lx-%*[^ ] %*[^ ] %*[^ ] %*[^ ] %*[^ ] %s", &begin, file_name);
             if(aux_set.count(file_name) == 0) {
                 Dl_info dlinfo;
-                if(dladdr((void*)begin, &dlinfo) && ((ret = findAddrInElf(dlinfo.dli_fname, signature)) > 0)) {
-                    fclose(fp);
-                    return (void*)((long)dlinfo.dli_fbase + ret);
+                if(dladdr((void*)begin, &dlinfo)) {
+                    checkor->setDlBase((unsigned long long)dlinfo.dli_fbase);
+                    if(checkor->libCheck(dlinfo.dli_fname)) {
+                        if(findAddrInElf(dlinfo.dli_fname, checkor)) {
+                            if(checkor->libContinue() == false)
+                                break;
+                        }
+                    }
                 }
                 aux_set.insert(file_name);
             }
         }
         fclose(fp);
+    }
+
+    void* SymbolRetriever::getMethodAddress(void*, const std::type_info& info, const std::string& stringify) {
+        std::string signature = extractMethodSignatureName(getDemangledName(info.name()).c_str(), stringify);
+        SymbolEqual se(signature);
+        symbolRetrieve(&se);
+        if(se.getAddr()) {
+            return (void*)se.getAddr();
+        }
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("], maybe inlined or haven't been overridden in derived class.").c_str());
         return NULL;
     }
 
-    void* getAddress(std::string& name, const std::string& matcher) {
-        // TODO
+    void* SymbolRetriever::getAddress(std::string& name, const std::string& matcher) {
+        size_t pos = matcher.find('!');
+        std::string libMatcher((pos == std::string::npos) ? "*" : matcher.substr(0, pos));
+        std::string symMatcherRemoveLib((pos == std::string::npos) ? matcher : matcher.substr(pos + 1, matcher.length() - pos - 1));
+        std::string symMatcher(symMatcherRemoveLib.find('(') == std::string::npos ? symMatcherRemoveLib + "(*)" : symMatcherRemoveLib);
+        std::map<unsigned long long, std::string> symMap;
+        SymbolMatcher sm(libMatcher, symMatcher, symMap);
+        symbolRetrieve(&sm);
+        if(!symMap.empty()) {
+            if(symMap.size() == 1) {
+                name = symMap.begin()->second;
+                return (void*)symMap.begin()->first;
+            }
+            std::string info("Failed to get address of [");
+            info.append(matcher).append("]. candidates:\n");
+            for(std::map<unsigned long long, std::string>::const_iterator it = symMap.begin();
+                it != symMap.end();
+                ++it) {
+                info.append("\t").append(it->second).append("\n");
+            }
+            EMOCK_REPORT_FAILURE(info.c_str());
+        }
+        else {
+            EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(matcher).append("], maybe inlined or haven't been overridden in derived class.").c_str());
+        }
         return NULL;
     }
 
