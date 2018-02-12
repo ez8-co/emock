@@ -240,7 +240,7 @@
       EMOCK((int (*)(int))foobar)
           .stubs()
           .will(returnValue(1));
-      EMOCK(reinterpret_cast<double (*)(double)>(foobar))
+      EMOCK(static_cast<double (*)(double)>(foobar))
           .stubs()
           .will(returnValue(1.0));
 
@@ -255,7 +255,7 @@
       // 重载的成员函数，像下面这样就可以mock
       EMOCK((void (Foo::*)(int))&Foo::bar)
           .expects(once()); // 只会调用一次
-      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar))
+      EMOCK(static_cast<void (Foo::*)(double)>(&Foo::bar))
           .expects(never()); // 不会被调用
   ```
 
