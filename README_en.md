@@ -241,7 +241,7 @@
       EMOCK((int (*)(int))foobar)
           .stubs()
           .will(returnValue(1));
-      EMOCK(reinterpret_cast<double (*)(double)>(foobar))
+      EMOCK(static_cast<double (*)(double)>(foobar))
           .stubs()
           .will(returnValue(1.0));
 
@@ -256,7 +256,7 @@
       // how to mock overloaded member functions
       EMOCK((void (Foo::*)(int))&Foo::bar)
           .expects(once()); // call only once
-      EMOCK(reinterpret_cast<void (Foo::*)(double)>(&Foo::bar))
+      EMOCK(static_cast<void (Foo::*)(double)>(&Foo::bar))
           .expects(never()); // won't be called
   ```
 
