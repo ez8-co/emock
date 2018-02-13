@@ -48,7 +48,7 @@ InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* 
     return EMOCK_NS::GlobalMockObject::instance.method
                  ( name
                  , reinterpret_cast<const void*>(api)
-                 , ApiHookHolderFactory::create(reinterpret_cast<void(*)(void)>(api)));
+                 , ApiHookHolderFactory::create(reinterpret_cast<int(*)(...)>(api)));
 }
 
 // MSVC use ecx register to transfer `this` pointer
