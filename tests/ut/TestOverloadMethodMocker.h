@@ -100,7 +100,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .will(returnValue(101));
         ASSERT_EQ(101, cut.bar(0.0));
         GlobalMockObject::verify();
-
+/*
         EMOCK("CUT::bar(int)")
             .stubs()
             .will(returnValue(100));
@@ -111,6 +111,6 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .stubs()
             .will(returnValue(101));
         ASSERT_EQ(101, cut.bar(0.0));
-        GlobalMockObject::verify();
+        GlobalMockObject::verify();*/
     }
 };
