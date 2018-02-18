@@ -120,7 +120,7 @@ public:
       TS_ASSERT_EQUALS(5, o.base20(0.0));
       GlobalMockObject::verify();
 
-      EMOCK("*::Dervied::base00")
+      EMOCK("TestMockObject::Dervied::base00")
            .stubs()
            .will(returnValue(20))
            .then(returnValue(10))
@@ -134,19 +134,19 @@ public:
       TS_ASSERT_EQUALS(5, o.base00());
       GlobalMockObject::verify();
 
-      EMOCK("*::Base0::base20()")
+      EMOCK("TestMockObject::Base0::base20()")
            .stubs()
            .will(returnValue(20));
       TS_ASSERT_EQUALS(20, o.base20());
       GlobalMockObject::verify();
 
-      EMOCK("*::Base0::base20(int)")
+      EMOCK("TestMockObject::Base0::base20(int)")
            .stubs()
            .will(returnValue(10));
       TS_ASSERT_EQUALS(10, o.base20(0));
       GlobalMockObject::verify();
 
-      EMOCK("*::Base0::base20(double)")
+      EMOCK("TestMockObject::Base0::base20(double)")
            .stubs()
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));
