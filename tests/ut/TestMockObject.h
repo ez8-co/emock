@@ -72,14 +72,11 @@ class TestMockObject : public TESTCPP_NS::TestFixture
 private:
 
 	TESTCPP_RCP checkpoint;
-   std::string str;
 
 public:
 
 	void setUp()
    {
-      str = "abcdefg";
-
 		checkpoint = TESTCPP_SET_RESOURCE_CHECK_POINT();
    }
 
@@ -122,8 +119,8 @@ public:
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));
       GlobalMockObject::verify();
-/*
-      EMOCK("*::Dervied::base00()")
+
+      EMOCK("*::Dervied::base00")
            .stubs()
            .will(returnValue(20))
            .then(returnValue(10))
@@ -135,7 +132,7 @@ public:
       TS_ASSERT_EQUALS(1, o.base00());
       TS_ASSERT_EQUALS(5, o.base00());
       TS_ASSERT_EQUALS(5, o.base00());
-      GlobalMockObject::verify();*/
+      GlobalMockObject::verify();
 
       EMOCK("*::Base0::base20()")
            .stubs()
