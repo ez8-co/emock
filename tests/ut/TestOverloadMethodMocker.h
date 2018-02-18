@@ -32,7 +32,7 @@ int func(int)
 {
     return 11;
 }
-int func(double)
+double func(double)
 {
     return 11;
 }
@@ -45,7 +45,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         {
             return 11;
         }
-        static int func(double)
+        static double func(double)
         {
             return 11;
         }
@@ -53,7 +53,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         {
             return 11;
         }
-        virtual int bar(double)
+        virtual double bar(double)
         {
             return 11;
         }
@@ -67,23 +67,23 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         ASSERT_EQ(100, CUT::func(0));
         GlobalMockObject::verify();
 
-        EMOCK((int (*) (double)) CUT::func)
+        EMOCK((double (*) (double)) CUT::func)
             .stubs()
-            .will(returnValue(101));
-        ASSERT_EQ(101, CUT::func(0.0));
+            .will(returnValue(101.0));
+        ASSERT_EQ(101.0, CUT::func(0.0));
         GlobalMockObject::verify();
-/*
-        EMOCK("CUT::func(int)")
+
+        EMOCK("*::CUT::func(int)")
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, CUT::func(0));
         GlobalMockObject::verify();
 
-        EMOCK("CUT::func(double)")
+        EMOCKX(double, "*::CUT::func(double)")
             .stubs()
-            .will(returnValue(101));
-        ASSERT_EQ(101, CUT::func(0));
-        GlobalMockObject::verify();*/
+            .will(returnValue(101.0));
+        ASSERT_EQ(101.0, CUT::func(0.0));
+        GlobalMockObject::verify();
     }
 
     TEST(overload free function mocker test)
@@ -95,22 +95,22 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         ASSERT_EQ(100, cut.bar(0));
         GlobalMockObject::verify();
 
-        EMOCK(static_cast<int (CUT::*) (double)>(&CUT::bar))
+        EMOCK(static_cast<double (CUT::*) (double)>(&CUT::bar))
             .stubs()
-            .will(returnValue(101));
-        ASSERT_EQ(101, cut.bar(0.0));
+            .will(returnValue(101.0));
+        ASSERT_EQ(101.0, cut.bar(0.0));
         GlobalMockObject::verify();
-/*
-        EMOCK("CUT::bar(int)")
+
+        EMOCK("*::CUT::bar(int)")
             .stubs()
             .will(returnValue(100));
         ASSERT_EQ(100, cut.bar(0));
         GlobalMockObject::verify();
 
-        EMOCK("CUT::bar(double)")
+        EMOCKX(double, "*::CUT::bar(double)")
             .stubs()
-            .will(returnValue(101));
-        ASSERT_EQ(101, cut.bar(0.0));
-        GlobalMockObject::verify();*/
+            .will(returnValue(101.0));
+        ASSERT_EQ(101.0, cut.bar(0.0));
+        GlobalMockObject::verify();
     }
 };

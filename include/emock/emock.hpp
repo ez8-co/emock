@@ -34,6 +34,7 @@
    #include <emock/ApiHookMocker.h>
 
    #define EMOCK(api) EMOCK_NS::mockAPI(#api, api)
+   #define EMOCKX(ReturnType, matcher) EMOCK_NS::mockAPI<ReturnType>(matcher)
 
    USING_EMOCK_NS
 

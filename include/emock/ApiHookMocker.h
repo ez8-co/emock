@@ -31,6 +31,17 @@
 
 EMOCK_NS_START
 
+template <typename ReturnType>
+InvocationMockBuilderGetter mockAPI(const char* matcher)
+{
+    std::string name;
+    void* api = SymbolRetriever::getAddress(name, matcher);
+    return EMOCK_NS::GlobalMockObject::instance.method
+                 ( name
+                 , reinterpret_cast<const void*>(api)
+                 , ApiHookHolderFactory::create(reinterpret_cast<ReturnType(*)(...)>(api)));
+}
+
 template <typename API>
 InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 {
@@ -43,12 +54,7 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 template <>
 InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* matcher)
 {
-    std::string name;
-    void* api = SymbolRetriever::getAddress(name, matcher);
-    return EMOCK_NS::GlobalMockObject::instance.method
-                 ( name
-                 , reinterpret_cast<const void*>(api)
-                 , ApiHookHolderFactory::create(reinterpret_cast<int(*)(...)>(api)));
+    return mockAPI<int>(matcher);
 }
 
 // MSVC use ecx register to transfer `this` pointer
