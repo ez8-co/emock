@@ -474,7 +474,6 @@ EMOCK_NS_START
         SymbolEqual se(signature);
         symbolRetrieve(&se);
         if(se.getAddr()) {
-            printf("%s %p\n", signature.c_str(), (void*)se.getAddr());
             return (void*)se.getAddr();
         }
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("], maybe inlined or haven't been overridden in derived class.").c_str());
