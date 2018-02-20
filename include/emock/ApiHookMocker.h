@@ -54,7 +54,60 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 template <>
 InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* matcher)
 {
-    return mockAPI<int>(matcher);
+    std::string m(matcher);
+    std::string::size_type from = m.find('{');
+    if(from == std::string::npos)
+      return mockAPI<void>(matcher);
+    std::string::size_type to = m.find('}', from);
+    std::string returnType = m.substr(from + 1, to - from - 1);
+    m = m.replace(from, to - from + 1, "");
+    if(returnType == "void") {
+      return mockAPI<void>(m.c_str());
+    }
+    else if(returnType == "void*") {
+      return mockAPI<void*>(m.c_str());
+    }
+    else if(returnType == "char") {
+      return mockAPI<char>(m.c_str());
+    }
+    else if(returnType == "char*") {
+      return mockAPI<char*>(m.c_str());
+    }
+    else if(returnType == "unsigned char") {
+      return mockAPI<unsigned char>(m.c_str());
+    }
+    else if(returnType == "short") {
+      return mockAPI<short>(m.c_str());
+    }
+    else if(returnType == "unsigned short") {
+      return mockAPI<unsigned short>(m.c_str());
+    }
+    else if(returnType == "int") {
+      return mockAPI<int>(m.c_str());
+    }
+    else if(returnType == "unsigned int") {
+      return mockAPI<unsigned int>(m.c_str());
+    }
+    else if(returnType == "long") {
+      return mockAPI<long>(m.c_str());
+    }
+    else if(returnType == "unsigned long") {
+      return mockAPI<unsigned long>(m.c_str());
+    }
+    else if(returnType == "long long") {
+      return mockAPI<long long>(m.c_str());
+    }
+    else if(returnType == "unsigned long long") {
+      return mockAPI<unsigned long long>(m.c_str());
+    }
+    else if(returnType == "float") {
+      return mockAPI<float>(m.c_str());
+    }
+    else if(returnType == "double") {
+      return mockAPI<double>(m.c_str());
+    }
+    EMOCK_REPORT_FAILURE(std::string("Unsupported return type {").append(returnType.c_str()).append("}, use EMOCKX(")
+      .append(returnType.c_str()).append(", ").append(m.c_str()).append(") instead.").c_str());
 }
 
 // MSVC use ecx register to transfer `this` pointer
