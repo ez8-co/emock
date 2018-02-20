@@ -107,7 +107,7 @@ InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* 
       return mockAPI<double>(m.c_str());
     }
     EMOCK_REPORT_FAILURE(std::string("Unsupported return type {").append(returnType.c_str()).append("}, use EMOCKX(")
-      .append(returnType.c_str()).append(", ").append(m.c_str()).append(") instead.").c_str());
+      .append(returnType.c_str()).append(", \"").append(m.c_str()).append("\") instead.").c_str());
 }
 
 // MSVC use ecx register to transfer `this` pointer
