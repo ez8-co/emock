@@ -60,7 +60,7 @@ InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* 
       return mockAPI<void>(matcher);
     std::string::size_type to = m.find('}', from);
     std::string returnType = m.substr(from + 1, to - from - 1);
-    m.replace(from, to - from + 1, "");
+    m = m.replace(from, to - from + 1, "");
     if(returnType == "void") {
       return mockAPI<void>(m.c_str());
     }
