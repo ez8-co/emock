@@ -9,6 +9,7 @@
 #include <typeinfo>
 #include <set>
 #include <map>
+#include <stack>
 
 #include <emock/SymbolRetriever.h>
 #include <emock/TypeString.h>
@@ -32,13 +33,46 @@
 	#include <cassert>
 	#include <stdio.h>
     #include <linux/limits.h>
-    #include <stack>
 
 #endif
 
 EMOCK_NS_START
 
     namespace {
+        // MIT License
+        // Copyright (c) 2010-2017 <http://ez8.co> <orca.zhang@yahoo.com>
+        // https://gist.github.com/orca-zhang/fe6610c3d47299439a0fa118c925e29c
+        bool MatchString(const char* src, const char* matcher)
+        {
+            std::stack<std::pair<const char*, const char*> > s;
+            // scan from start
+            while(*src) {
+                // match asterisk
+                if(*matcher == '*') {
+                    // skip continuous asterisks
+                    while(*matcher == '*' && ++matcher);
+                    // forward to first match char of src
+                    while(*src && *src != *matcher && ++src);
+                    // record current position for back-track
+                    s.push(std::make_pair(src + 1, matcher - 1));
+                }
+                // eat one character
+                else if(*matcher == '?' || *src == *matcher) {
+                    ++src, ++matcher;
+                }
+                // hit mismatch, then back-track
+                else {
+                    if(s.empty())
+                        return false;
+                    src = s.top().first, matcher = s.top().second;
+                    s.pop();
+                }
+            }
+            // ignore ending asterisks
+            while(*matcher == '*' && ++matcher);
+            return (!*src && !*matcher);
+        }
+
         static std::string extractMethodName(const std::string& stringify) {
             size_t start = stringify.find_last_of(':') + 1;
             return stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
@@ -148,7 +182,7 @@ EMOCK_NS_START
         }
 
         static BOOL CALLBACK symbolsCallbackEx(PSYMBOL_INFO pSymInfo, ULONG, PVOID UserContext) {
-            ((std::map<ULONG64, std::string>*)UserContext)->insert(std::make_pair(pSymInfo->Address. pSymInfo->Name));
+            ((std::map<ULONG64, std::string>*)UserContext)->insert(std::make_pair(pSymInfo->Address, pSymInfo->Name));
             return TRUE;
         }
 
@@ -176,7 +210,7 @@ EMOCK_NS_START
                         bufLen = fread(buffer + remain, 1, BUFFER_SIZE - remain, fp) + remain;
                         p = buffer;
                     }
-                    if(memcmp(&mangledPrefix[1], p, mangledPrefix.size() - 1) == 0) {
+                    if(MatchString(&mangledPrefix[1], p)) {
                         if(UnDecorateSymbolName(p - 1, undecoratedName, MAX_PATH,
                                            UNDNAME_NO_MEMBER_TYPE | 
                                            UNDNAME_NO_ACCESS_SPECIFIERS | 
@@ -184,11 +218,10 @@ EMOCK_NS_START
                                            UNDNAME_NO_THISTYPE)) {
                             offsets.insert(std::make_pair(offset, undecoratedName));
                         }
-                        p += mangledPrefix.size() - 1;
                         p += strlen(p);
                     }
                     else
-                        p += mangledPrefix.size() - 1;
+                        ++p;
                 }
             }
 
@@ -226,7 +259,7 @@ EMOCK_NS_START
             return NULL;
         }
         for(it = offsets.begin(); it != offsets.end(); ++it, ++itRet) {
-            if(SymMatchString(it->second.c_str(), signature.c_str(), FALSE))
+            if(MatchString(it->second.c_str(), signature.c_str()))
                 return (void*)*itRet;
         }
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
@@ -234,22 +267,58 @@ EMOCK_NS_START
     }
 
     void* SymbolRetriever::getAddress(std::string& name, const std::string& matcher) {
-        // TODO: deal with arg list for overloaded functions
+        DbgHelper dbgHelper;
+        size_t pos = matcher.find('@');
+        std::string libMatcher((pos == std::string::npos) ? "*" : matcher.substr(pos + 1));
+        std::string symMatcherWithoutLib((pos == std::string::npos) ? matcher : matcher.substr(0, pos));
+        size_t argPos = symMatcherWithoutLib.find('(');
+        std::string symMatcher(argPos == std::string::npos ? symMatcherWithoutLib : symMatcherWithoutLib.substr(0, argPos));
+        std::string enumMask(std::string(libMatcher).append("!").append(symMatcher));
         std::map<ULONG64, std::string> m;
-        SymEnumSymbols(GetCurrentProcess(), 0,
-            matcher.find('!') != std::string::npos ? matcher.c_str() : std::string("*!").append(matcher).c_str(),
-            symbolsCallbackEx, &m);
+        SymEnumSymbols(GetCurrentProcess(), 0, enumMask.c_str(), symbolsCallbackEx, &m);
         if(!m.empty()) {
+            std::map<ULONG64, std::string>::const_iterator itRet = m.begin();
             if(m.size() == 1) {
-                name = m.begin()->second;
-                return (void*)m.begin()->first;
+                name = itRet->second;
+                return (void*)itRet->first;
+            }
+            if(argPos != std::string::npos) {
+                std::map<int, std::string>& offsets = g_symbolCache[std::make_pair(0, enumMask)];
+                std::map<int, std::string>::const_iterator it;
+                if(offsets.empty()) {
+                    std::string pdbPath = getPdbPath((DWORD64)itRet->first);
+                    if(pdbPath.empty()) {
+                        EMOCK_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(enumMask).append("]").c_str());
+                        return NULL;
+                    }
+                    methodOffset(pdbPath, toMangledPrefix(symMatcher.c_str()), offsets);
+                }
+                if(offsets.size() != m.size()) {
+                    EMOCK_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(enumMask).append("]").c_str());
+                    return NULL;
+                }
+                // arglist: () -> (void)
+                if(symMatcherWithoutLib[argPos + 1] == ')') {
+                    symMatcherWithoutLib.insert(argPos + 1, "void");
+                }
+                for(it = offsets.begin(); it != offsets.end(); ++it) {
+                    // remove mismatch ones
+                    if(!MatchString(it->second.c_str(), std::string("__thiscall ").append(symMatcherWithoutLib).c_str())) {
+                        m.erase(itRet++);
+                    }
+                    else {
+                        ++itRet;
+                    }
+                }
+                if(m.size() == 1) {
+                    name = itRet->second;
+                    return (void*)itRet->first;
+                }
             }
             std::string info("Failed to get address of [");
             info.append(matcher).append("]. candidates:\n");
-            for(std::map<ULONG64, std::string>::const_iterator it = m.begin();
-                it != m.end();
-                ++it) {
-                info.append("\t").append(it->second).append("\n");
+            for(itRet = m.begin(); itRet != m.end(); ++itRet) {
+                info.append("\t").append(itRet->second).append("\n");
             }
             EMOCK_REPORT_FAILURE(info.c_str());
         }
@@ -264,37 +333,6 @@ EMOCK_NS_START
     void SymbolRetriever::reset() {}
 
     namespace {
-        bool MatchString(const char* src, const char* matcher)
-        {
-            std::stack<std::pair<const char*, const char*> > s;
-            // match from start
-            while(*src) {
-                // match asterisk
-                if(*matcher == '*') {
-                    // skip continuous asterisks
-                    while(*matcher == '*' && ++matcher);
-                    // forward to first match char of src
-                    while(*src && *src != *matcher && ++src);
-                    // record current position for back-track
-                    s.push(std::make_pair(src + 1, matcher - 1));
-                }
-                // eat one character
-                else if(*matcher == '?' || *src == *matcher) {
-                    ++src, ++matcher;
-                }
-                // hit mismatch, then back-track
-                else {
-                    if(s.empty())
-                        return false;
-                    src = s.top().first, matcher = s.top().second;
-                    s.pop();
-                }
-            }
-            // ignore ending asterisks
-            while(*matcher == '*' && ++matcher);
-            return (!*src && !*matcher);
-        }
-
         struct ISymbolCheckor
         {
             virtual void setDlBase(unsigned long long dlBase) = 0;
@@ -383,7 +421,7 @@ EMOCK_NS_START
                 }
             }
             if(!strTab)
-                return true;
+                return false;
             for(int i = 1; i < elf_header->e_shnum; ++i) {
                 if(strstr(shstrTab + elf_section[i].sh_name, "sym")) {
                     int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
@@ -399,9 +437,8 @@ EMOCK_NS_START
                     }
                 }
             }
-            return true;
+            return false;
         }
-
 
         bool findAddrInElf(const char* file_name, ISymbolCheckor* checkor) {
             bool ret = false;
@@ -481,10 +518,10 @@ EMOCK_NS_START
     }
 
     void* SymbolRetriever::getAddress(std::string& name, const std::string& matcher) {
-        size_t pos = matcher.find('!');
-        std::string libMatcher((pos == std::string::npos) ? "*" : matcher.substr(0, pos));
-        std::string symMatcherRemoveLib((pos == std::string::npos) ? matcher : matcher.substr(pos + 1, matcher.length() - pos - 1));
-        std::string symMatcher(symMatcherRemoveLib.find('(') == std::string::npos ? symMatcherRemoveLib + "(*)" : symMatcherRemoveLib);
+        size_t pos = matcher.find('@');
+        std::string libMatcher((pos == std::string::npos) ? "*" : matcher.substr(pos + 1));
+        std::string symMatcherWithoutLib((pos == std::string::npos) ? matcher : matcher.substr(0, pos));
+        std::string symMatcher(symMatcherWithoutLib.find('(') == std::string::npos ? symMatcherWithoutLib + "(*)" : symMatcherWithoutLib);
         std::map<unsigned long long, std::string> symMap;
         SymbolMatcher sm(libMatcher, symMatcher, symMap);
         symbolRetrieve(&sm);
