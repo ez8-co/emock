@@ -10,7 +10,7 @@
 #include <cmath>
 #include <string.h>
 
-#include <emock/Trampoline.h>
+#include "Trampoline.h"
 #include <emock/ReportFailure.h>
 #include <emock/ArgumentsMacroHelpers.h>
 

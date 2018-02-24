@@ -22,7 +22,7 @@
 ***/
 
 #include <emock/GlobalMockObject.h>
-#include <emock/utils.h>
+#include "utils.h"
 
 EMOCK_NS_START
 

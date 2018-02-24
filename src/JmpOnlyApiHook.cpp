@@ -24,8 +24,8 @@
 #include <string.h>
 
 #include "JmpOnlyApiHook.h"
-#include <emock/JmpCode.h>
-#include <emock/CodeModifier.h>
+#include "JmpCode.h"
+#include "CodeModifier.h"
 
 EMOCK_NS_START
 

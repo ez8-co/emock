@@ -30,7 +30,6 @@
 
 #include <emock/types/Holder.h>
 
-#include <emock/EqualityUtil.h>
 #include <emock/Formatter.h>
 #include <emock/IsEqual.h>
 #include <emock/Void.h>

@@ -25,7 +25,7 @@
 #include <inttypes.h>
 #include <sys/mman.h>
 
-#include <emock/CodeModifier.h>
+#include "CodeModifier.h"
 
 #define PAGE_ALIGN_BITS  12
 

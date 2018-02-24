@@ -28,7 +28,6 @@
 
 #include <emock/types/PlaceHolder.h>
 
-#include <emock/EqualityUtil.h>
 #include <emock/Formatter.h>
 #include <emock/Void.h>
 

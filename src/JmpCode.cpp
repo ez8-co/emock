@@ -23,7 +23,7 @@
 
 #include <string.h>
 
-#include <emock/JmpCode.h>
+#include "JmpCode.h"
 
 #ifdef _MSC_VER // [
    #ifdef _WIN64 // [

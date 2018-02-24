@@ -23,7 +23,6 @@
 
 #include "JmpOnlyApiHook.h"
 #include <emock/ApiHook.h>
-#include <emock/JmpCode.h>
 #include <emock/Asserter.h>
 
 EMOCK_NS_START

@@ -24,7 +24,7 @@
 #include <emock/ApiHookKey.h>
 #include <emock/ApiHook.h>
 #include <emock/ApiHookHolder.h>
-#include <emock/Trampoline.h>
+#include "Trampoline.h"
 
 EMOCK_NS_START
 

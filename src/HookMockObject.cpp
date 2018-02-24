@@ -31,7 +31,7 @@
 #include <emock/ReportFailure.h>
 #include <emock/ApiHookHolder.h>
 #include <emock/SymbolRetriever.h>
-#include <emock/Trampoline.h>
+#include "Trampoline.h"
 
 EMOCK_NS_START
 
