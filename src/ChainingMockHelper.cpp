@@ -21,8 +21,6 @@
    limitations under the License.
 ***/
 
-#include <string.h>
-
 #include <emock/emock.h>
 
 #include <emock/Matcher.h>

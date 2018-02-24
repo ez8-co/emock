@@ -24,6 +24,8 @@
 #ifndef __MOCKPP_HOLDER_H
 #define __MOCKPP_HOLDER_H
 
+#include <string.h>
+
 #include <emock/emock.h>
 
 #include <emock/types/PlaceHolder.h>
