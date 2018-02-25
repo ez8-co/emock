@@ -148,7 +148,7 @@ EMOCK_NS_START
                 ret += ns[i - 1];
                 ret += '@';
             }
-            ret += "@";
+            ret += "@*";
             return ret;
         }
 
@@ -186,7 +186,7 @@ EMOCK_NS_START
             return TRUE;
         }
 
-        void methodOffset(const std::string& pdbPath, const std::string& mangledPrefix, std::map<int, std::string>& offsets) {
+        void methodOffset(const std::string& pdbPath, const std::string& mangledPrefix, std::map<std::string, int>& offsets) {
             FILE* fp = fopen(pdbPath.c_str(), "rb");
             if (!fp)
                 return;
@@ -210,13 +210,13 @@ EMOCK_NS_START
                         bufLen = fread(buffer + remain, 1, BUFFER_SIZE - remain, fp) + remain;
                         p = buffer;
                     }
-                    if(MatchString(&mangledPrefix[1], p)) {
+                    if(MatchString(p, &mangledPrefix[1])) {
                         if(UnDecorateSymbolName(p - 1, undecoratedName, MAX_PATH,
                                            UNDNAME_NO_MEMBER_TYPE | 
                                            UNDNAME_NO_ACCESS_SPECIFIERS | 
                                            UNDNAME_NO_FUNCTION_RETURNS | 
                                            UNDNAME_NO_THISTYPE)) {
-                            offsets.insert(std::make_pair(offset, undecoratedName));
+                            offsets[undecoratedName] = offset;
                         }
                         p += strlen(p);
                     }
@@ -252,14 +252,17 @@ EMOCK_NS_START
                 EMOCK_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(stringify).append("]").c_str());
                 return NULL;
             }
-            methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), offsets);
+            std::map<std::string, int> offsetsAux;
+            methodOffset(pdbPath, toMangledPrefix(symbolName.c_str()), offsetsAux);
+            for(std::map<std::string, int>::const_iterator i = offsetsAux.begin(); i != offsetsAux.end(); ++i)
+                offsets[i->second] = i->first;
         }
         if(offsets.size() != v.size()) {
             EMOCK_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(stringify).append("]").c_str());
             return NULL;
         }
         for(it = offsets.begin(); it != offsets.end(); ++it, ++itRet) {
-            if(MatchString(it->second.c_str(), signature.c_str()))
+            if(it->second == signature)
                 return (void*)*itRet;
         }
         EMOCK_REPORT_FAILURE(std::string("Failed to get address of [").append(stringify).append("]").c_str());
@@ -277,43 +280,45 @@ EMOCK_NS_START
         std::map<ULONG64, std::string> m;
         SymEnumSymbols(GetCurrentProcess(), 0, enumMask.c_str(), symbolsCallbackEx, &m);
         if(!m.empty()) {
-            std::map<ULONG64, std::string>::const_iterator itRet = m.begin();
-            if(m.size() == 1) {
-                name = itRet->second;
-                return (void*)itRet->first;
-            }
-            if(argPos != std::string::npos) {
-                std::map<int, std::string>& offsets = g_symbolCache[std::make_pair(0, enumMask)];
-                std::map<int, std::string>::const_iterator it;
-                if(offsets.empty()) {
-                    std::string pdbPath = getPdbPath((DWORD64)itRet->first);
-                    if(pdbPath.empty()) {
-                        EMOCK_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(enumMask).append("]").c_str());
-                        return NULL;
-                    }
-                    methodOffset(pdbPath, toMangledPrefix(symMatcher.c_str()), offsets);
-                }
-                if(offsets.size() != m.size()) {
-                    EMOCK_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(enumMask).append("]").c_str());
+            std::map<ULONG64, std::string>::iterator itRet = m.begin();
+            std::map<int, std::string>& offsets = g_symbolCache[std::make_pair(0, enumMask)];
+            std::map<int, std::string>::const_iterator it;
+            if(offsets.empty()) {
+                std::string pdbPath = getPdbPath((DWORD64)itRet->first);
+                if(pdbPath.empty()) {
+                    EMOCK_REPORT_FAILURE(std::string("Failed to find pdbfile of [").append(enumMask).append("]").c_str());
                     return NULL;
                 }
-                // arglist: () -> (void)
-                if(symMatcherWithoutLib[argPos + 1] == ')') {
-                    symMatcherWithoutLib.insert(argPos + 1, "void");
+                std::map<std::string, int> offsetsAux;
+                methodOffset(pdbPath, toMangledPrefix(symMatcher.c_str()), offsetsAux);
+                for(std::map<std::string, int>::const_iterator i = offsetsAux.begin(); i != offsetsAux.end(); ++i)
+                    offsets[i->second] = i->first;
+            }
+			if (offsets.size() != m.size()) {
+				EMOCK_REPORT_FAILURE(std::string("Symbol size that from 'pdbfile' and 'SymEnumSymbols' API not equal of [").append(enumMask).append("]").c_str());
+				return NULL;
+			}
+            // arglist: () -> (void)
+            if(symMatcherWithoutLib[argPos + 1] == ')') {
+                symMatcherWithoutLib.insert(argPos + 1, "void");
+            }
+            for(it = offsets.begin(); it != offsets.end(); ++it) {
+                // remove mismatch ones
+                if(!MatchString(it->second.c_str(), std::string("__thiscall ")
+													.append(symMatcherWithoutLib)
+													.append(argPos == std::string::npos ? "(*)" : "")
+													.c_str())) {
+                    m.erase(itRet++);
                 }
-                for(it = offsets.begin(); it != offsets.end(); ++it) {
-                    // remove mismatch ones
-                    if(!MatchString(it->second.c_str(), std::string("__thiscall ").append(symMatcherWithoutLib).c_str())) {
-                        m.erase(itRet++);
-                    }
-                    else {
-                        ++itRet;
-                    }
+                else {
+                    itRet->second = it->second;
+                    ++itRet;
                 }
-                if(m.size() == 1) {
-                    name = itRet->second;
-                    return (void*)itRet->first;
-                }
+            }
+            if(m.size() == 1) {
+				itRet = m.begin();
+                name = itRet->second;
+                return (void*)itRet->first;
             }
             std::string info("Failed to get address of [");
             info.append(matcher).append("]. candidates:\n");
