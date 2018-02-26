@@ -50,8 +50,7 @@ private: \
  \
    static R CallingConvention hook(DECL_PARAMS_LIST(n) VariadicList) \
    { \
-      return GlobalMockObject::instance.invoke<R>(apiAddress) \
-                                ("" DECL_REST_PARAMS(n)); \
+      return GlobalMockObject::instance.invoke<R>(apiAddress)("" DECL_REST_PARAMS(n)); \
    } \
  \
    static bool appliedBy(F* api) \
