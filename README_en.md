@@ -12,6 +12,7 @@
 ## Work-in-process features
 
 - :cow: reflection-like support: declaration free, support mocking invisible static global function & functions inside dynamic libraries.
+  - using dwarf technology under linux
 - support mocking functions with `throw` specifications
 - change default testing framework to gtest
 - incomplete caller matcher feature
