@@ -31,7 +31,7 @@
 
 EMOCK_NS_START
 
-template <typename ReturnType>
+template <typename MockerType>
 InvocationMockBuilderGetter mockAPI(const char* matcher)
 {
     std::string name;
@@ -39,7 +39,7 @@ InvocationMockBuilderGetter mockAPI(const char* matcher)
     return EMOCK_NS::GlobalMockObject::instance.method
                  ( name
                  , reinterpret_cast<const void*>(api)
-                 , ApiHookHolderFactory::create(reinterpret_cast<ReturnType(*)(...)>(api)));
+                 , ApiHookHolderFactory::create(reinterpret_cast<MockerType>(api)));
 }
 
 template <typename API>
@@ -51,64 +51,62 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
                  , ApiHookHolderFactory::create(api));
 }
 
+#ifdef __GNUC__
+  #define __cdecl /*__attribute__((cdecl))*/
+  #define __stdcall /*__attribute__((stdcall))*/
+#endif
+
+#define _CC_BRANCH(type, cc) if(callingConv == #cc) {\
+      return mockAPI<type(cc *)()>(m.c_str());\
+    }
+#define _RT_BRANCH(type) if(returnType == #type) {\
+      _CC_BRANCH(type, ) else _CC_BRANCH(type, __cdecl) /*else _CC_BRANCH(type, __thiscall)*/ else _CC_BRANCH(type, __stdcall) else _CC_BRANCH(type, EMOCK_API)\
+    }
+#define RT_BRANCH(type) _RT_BRANCH(type) else _RT_BRANCH(type*)
+#define INTERGRAL_RT_BRANCH(type) RT_BRANCH(type) else RT_BRANCH(unsigned type)
+
 template <>
 InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* matcher)
 {
     std::string m(matcher);
+    std::string returnType("void");
     std::string::size_type from = m.find('{');
-    if(from == std::string::npos)
-      return mockAPI<void>(matcher);
-    std::string::size_type to = m.find('}', from);
-    std::string returnType = m.substr(from + 1, to - from - 1);
-    m = m.replace(from, to - from + 1, "");
-    if(returnType == "void") {
-      return mockAPI<void>(m.c_str());
+    if(from != std::string::npos) {
+      std::string::size_type to = m.find('}', from);
+      returnType = m.substr(from + 1, to - from - 1);
+      m = m.replace(from, to - from + 1, "");
     }
-    else if(returnType == "void*") {
-      return mockAPI<void*>(m.c_str());
+    from = m.find('#');
+    std::string callingConv;
+    if(from != std::string::npos) {
+      std::string::size_type to = m.find('#', from);
+      callingConv = m.substr(from + 1, to - from - 1);
+      m = m.replace(from, to - from + 1, "");
     }
-    else if(returnType == "char") {
-      return mockAPI<char>(m.c_str());
+    else {
+      from = m.find('!');
+      if(from != std::string::npos) {
+        callingConv = "EMOCK_API";
+        m = m.erase(from, 1);
+      }
     }
-    else if(returnType == "char*") {
-      return mockAPI<char*>(m.c_str());
-    }
-    else if(returnType == "unsigned char") {
-      return mockAPI<unsigned char>(m.c_str());
-    }
-    else if(returnType == "short") {
-      return mockAPI<short>(m.c_str());
-    }
-    else if(returnType == "unsigned short") {
-      return mockAPI<unsigned short>(m.c_str());
-    }
-    else if(returnType == "int") {
-      return mockAPI<int>(m.c_str());
-    }
-    else if(returnType == "unsigned int") {
-      return mockAPI<unsigned int>(m.c_str());
-    }
-    else if(returnType == "long") {
-      return mockAPI<long>(m.c_str());
-    }
-    else if(returnType == "unsigned long") {
-      return mockAPI<unsigned long>(m.c_str());
-    }
-    else if(returnType == "long long") {
-      return mockAPI<long long>(m.c_str());
-    }
-    else if(returnType == "unsigned long long") {
-      return mockAPI<unsigned long long>(m.c_str());
-    }
-    else if(returnType == "float") {
-      return mockAPI<float>(m.c_str());
-    }
-    else if(returnType == "double") {
-      return mockAPI<double>(m.c_str());
-    }
+    RT_BRANCH(void)
+    else INTERGRAL_RT_BRANCH(char)
+    else INTERGRAL_RT_BRANCH(short)
+    else INTERGRAL_RT_BRANCH(int)
+    else INTERGRAL_RT_BRANCH(long)
+    else INTERGRAL_RT_BRANCH(long long)
+    else RT_BRANCH(float)
+    else RT_BRANCH(double)
+    else RT_BRANCH(long double)
     EMOCK_REPORT_FAILURE(std::string("Unsupported return type {").append(returnType.c_str()).append("}, use EMOCKX(")
       .append(returnType.c_str()).append(", \"").append(m.c_str()).append("\") instead.").c_str());
 }
+
+#undef INTERGRAL_RT_BRANCH
+#undef RT_BRANCH
+#undef _RT_BRANCH
+#undef _CC_BRANCH
 
 // MSVC use ecx register to transfer `this` pointer
 // In Windows: `__thiscall` is left-to-right 
