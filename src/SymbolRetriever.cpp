@@ -365,7 +365,6 @@ EMOCK_NS_START
             inline bool symContinue(const char* name, unsigned long long addr) {
                 if(name == _signature) {
                     _addr = _dlBase + addr;
-                    printf("%s %p\n", name, _addr);
                     return false;
                 }
                 return true;
