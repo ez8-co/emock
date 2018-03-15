@@ -97,7 +97,7 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .will(invoke(normal_method));
         ASSERT_EQ(100, cut.normal_method());
         GlobalMockObject::verify();
-
+/*
         EMOCK("!{int}CUT::normal_method")
             .stubs()
             .will(returnValue(100));
@@ -108,7 +108,7 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .stubs()
             .will(invoke(normal_method));
         ASSERT_EQ(100, cut.normal_method());
-        GlobalMockObject::verify();
+        GlobalMockObject::verify();*/
     }
 
     TEST(normal member method with one param mocked as global function)
@@ -129,7 +129,7 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .will(invoke(normal_method_1));
         ASSERT_EQ(101, cut.normal_method_1(2));
         GlobalMockObject::verify();
-
+/*
         EMOCK("!{int}CUT::normal_method_1")
             .stubs()
             .will(returnValue(102));
@@ -140,7 +140,7 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .stubs()
             .will(invoke(normal_method_1));
         ASSERT_EQ(101, cut.normal_method_1(2));
-        GlobalMockObject::verify();
+        GlobalMockObject::verify();*/
     }
 
     TEST(static member method mocked as global function)
@@ -156,13 +156,13 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .will(invoke(static_method));
         ASSERT_EQ(102, CUT::static_method());
         GlobalMockObject::verify();
-
+/*
         EMOCK("{int}CUT::static_method")
             .stubs()
             .will(returnValue(102));
         ASSERT_EQ(102, CUT::static_method());
         GlobalMockObject::verify();
-/*
+
         EMOCK("CUT::static_method")
             .stubs()
             .will(invoke(static_method));
@@ -183,13 +183,13 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
             .will(invoke(static_method_1));
         ASSERT_EQ(103, CUT::static_method_1(1));
         GlobalMockObject::verify();
-
+/*
         EMOCK("{int}CUT::static_method_1")
             .stubs()
             .will(returnValue(104));
         ASSERT_EQ(104, CUT::static_method_1(1));
         GlobalMockObject::verify();
-/*
+
         EMOCK("CUT::static_method_1")
             .stubs()
             .will(invoke(static_method_1));

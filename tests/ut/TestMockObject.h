@@ -119,7 +119,7 @@ public:
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));
       GlobalMockObject::verify();
-
+/*
       EMOCK("{int}TestMockObject::Dervied::base00")
            .stubs()
            .will(returnValue(20))
@@ -150,7 +150,7 @@ public:
            .stubs()
            .will(returnValue(5));
       TS_ASSERT_EQUALS(5, o.base20(0.0));
-      GlobalMockObject::verify();
+      GlobalMockObject::verify();*/
    }
 
 };

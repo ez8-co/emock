@@ -72,7 +72,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .will(returnValue(101.0));
         ASSERT_EQ(101.0, CUT::func(0.0));
         GlobalMockObject::verify();
-
+/*
         EMOCK("{int}*::CUT::func(int)")
             .stubs()
             .will(returnValue(100));
@@ -83,7 +83,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .stubs()
             .will(returnValue(101.0));
         ASSERT_EQ(101.0, CUT::func(0.0));
-        GlobalMockObject::verify();
+        GlobalMockObject::verify();*/
     }
 
     TEST(overload free function mocker test)
@@ -100,7 +100,7 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .will(returnValue(101.0));
         ASSERT_EQ(101.0, cut.bar(0.0));
         GlobalMockObject::verify();
-
+/*
         EMOCK("!{int}*::CUT::bar(int)")
             .stubs()
             .will(returnValue(100));
@@ -111,6 +111,6 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
             .stubs()
             .will(returnValue(101.0));
         ASSERT_EQ(101.0, cut.bar(0.0));
-        GlobalMockObject::verify();
+        GlobalMockObject::verify();*/
     }
 };
