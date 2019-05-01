@@ -283,25 +283,22 @@
 
 - 欢迎使用EMOCK，并期待您的反馈！[创建issues](https://github.com/ez8-co/emock/issues/new)
 
-## 支持EMOCK
+## 请我喝一杯咖啡
 
 <table style="text-align: center">
    <tr>
-      <td width="25%">支付宝</td>
-      <td width="25%">微信</td>
-      <td width="25%">领红包</td>
-      <td width="25%">PayPal</td>
+      <td width="33%">支付宝</td>
+      <td width="33%">微信</td>
+      <td width="33%">PayPal</td>
    </tr>
    <tr>
       <td><a href="HTTPS://QR.ALIPAY.COM/FKX02095IUNLWM3PSPWD5A"><img src="https://img.shields.io/badge/donate-alipay-blue.svg" /></a></td>
       <td><a href="http://ez8.co/wxpay.jpg"><img src="https://img.shields.io/badge/donate-wechat_pay-brightgreen.svg" /></a></td>
-      <td><a href="http://ez8.co/red_packet"><img src="https://img.shields.io/badge/donate-red_packet-red.svg" /></a></td>
       <td><a href="http://www.paypal.me/orcazhang"><img src="https://img.shields.io/badge/donate-paypal-yellow.svg" /></a></td>
    </tr>
    <tr>
       <td><a href="HTTPS://QR.ALIPAY.COM/FKX02095IUNLWM3PSPWD5A"><img src="http://ez8.co/alipay.jpg" alt="支付宝二维码" align=center /></a></td>
       <td><a href="http://ez8.co/wxpay.jpg"><img src="http://ez8.co/wxpay.jpg" alt="微信二维码" align=center /></td>
-      <td><a href="http://ez8.co/red_packet"><img src="http://ez8.co/redpacket.jpg" alt="红包二维码" align=center /></a></td>
       <td><a href="http://www.paypal.me/orcazhang"><img src="http://ez8.co/paypal.png" alt="PayPal二维码" align=center /></a></td>
    </tr>
 </table>
