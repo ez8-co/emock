@@ -23,7 +23,7 @@
 
 #include <Windows.h>
 
-#include <emock/CodeModifier.h>
+#include "CodeModifier.h"
 
 EMOCK_NS_START
 
