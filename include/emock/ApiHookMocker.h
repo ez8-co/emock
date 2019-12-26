@@ -66,7 +66,7 @@ InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 #define INTERGRAL_RT_BRANCH(type) RT_BRANCH(type) else RT_BRANCH(unsigned type)
 
 template <>
-InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* matcher)
+inline InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* matcher)
 {
     std::string m(matcher);
     std::string returnType("void");
@@ -99,7 +99,7 @@ InvocationMockBuilderGetter mockAPI<const char>(const std::string&, const char* 
     else RT_BRANCH(float)
     else RT_BRANCH(double)
     else RT_BRANCH(long double)
-    EMOCK_REPORT_FAILURE(std::string("Unsupported return type {").append(returnType.c_str()).append("}, use EMOCKX(")
+    else EMOCK_REPORT_FAILURE(std::string("Unsupported return type {").append(returnType.c_str()).append("}, use EMOCKX(")
       .append(returnType.c_str()).append(", \"").append(m.c_str()).append("\") instead.").c_str());
 }
 
