@@ -127,12 +127,13 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
             return NULL;
         }
 
+        unsigned long last_end = 0;
         while(!feof(fp)) {
             char buf[PATH_MAX + 100] = {0};
             if(fgets(buf, sizeof(buf), fp) == 0)
                 break;
 
-            unsigned long begin, end, last_end = 0;
+            unsigned long begin, end = 0;
             sscanf(buf, "%lx-%lx %*[^\n]", &begin, &end);
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
