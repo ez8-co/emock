@@ -93,7 +93,7 @@ void* ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VariadicList), Seq>::apiA
 template <typename R DECL_TEMPLATE_ARGS(n), unsigned int Seq> \
 unsigned int ApiHookFunctor<R CallingConvention (DECL_ARGS(n) VariadicList), Seq>::refCount = 0 
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_WIN64)
 #define EMOCK_API_HOOK_FUNCTOR_DEF(n) \
 __EMOCK_API_HOOK_FUNCTOR_DEF(n, , ); \
 __EMOCK_API_HOOK_FUNCTOR_DEF(n, __stdcall, ); \

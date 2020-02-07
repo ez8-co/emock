@@ -26,6 +26,8 @@
 
 #include <emock/emock.h>
 #include <string>
+#include <typeinfo>
+
 
 EMOCK_NS_START
 

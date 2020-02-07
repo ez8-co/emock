@@ -117,7 +117,7 @@ private: \
     Func func; \
 }
 
-#if defined(_MSC_VER)
+#if defined(_MSC_VER) && !defined(_WIN64)
 #define PROC_STUB_DEF(n) \
 __PROC_STUB_DEF(n, ); \
 __PROC_STUB_DEF(n, __stdcall)
