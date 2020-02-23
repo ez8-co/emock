@@ -138,14 +138,14 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
-                    if(void* allocated = TrampolineAllocateImpl(dst, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(last_end, alloc_size)) {
                         fclose(fp);
                         return allocated;
                     }
                 }
                 // alloc at begin of current
                 if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
-                    if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(begin - alloc_size, alloc_size)) {
                         fclose(fp);
                         return allocated;
                     }
