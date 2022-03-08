@@ -63,6 +63,12 @@ LINK_DIRECTORIES(
     ${PROJECT_HOME}/build_emock/src
     ${PROJECT_HOME}/build_testngpp/src)
 
+IF(WIN32)
+ELSE(WIN32)
+LINK_DIRECTORIES(
+	/usr/local/lib)
+ENDIF(WIN32)
+
 INCLUDE_DIRECTORIES(BEFORE 
   .
   ${PROJECT_HOME}/include

@@ -32,8 +32,9 @@ struct ApiHookImpl
 {
    /////////////////////////////////////////////////////
    ApiHookImpl( const void* api
+              , const void* trampoline
               , const void* stub )
-       : stubHook(api, stub)
+       : stubHook(api, trampoline, stub)
    {
    }
 
@@ -44,8 +45,9 @@ struct ApiHookImpl
 /////////////////////////////////////////////////////////////////
 ApiHook::ApiHook 
               ( const void* api 
+              , const void* trampoline
               , const void* stub )
-	: This(new ApiHookImpl(api, stub))
+	: This(new ApiHookImpl(api, trampoline, stub))
 {
 }
 

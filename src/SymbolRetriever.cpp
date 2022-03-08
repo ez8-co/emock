@@ -27,12 +27,22 @@
 	#include <sys/mman.h>
 	#include <sys/stat.h>
 	#include <fcntl.h>
-	#include <link.h>
 	#include <string.h>
 	#include <unistd.h>
 	#include <cassert>
 	#include <stdio.h>
-    #include <linux/limits.h>
+    #if __APPLE__
+        #include <mach-o/dyld.h>
+        #include <mach-o/dyld_images.h>
+        #include <mach-o/fat.h>
+        #include <mach-o/nlist.h>
+        #include <dlfcn.h>
+        #include <ar.h>
+        #include <limits.h>
+    #else
+	    #include <link.h>
+        #include <linux/limits.h>
+    #endif
 
 #endif
 
@@ -453,6 +463,68 @@ EMOCK_NS_START
                 if(!fstat(fd, &sb)) {
                     char* base = (char*)mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
                     if(base != MAP_FAILED) {
+    #if __APPLE__
+                        switch (*(uint32_t*)base) {
+                        case FAT_MAGIC:
+                        case FAT_CIGAM:
+                        case FAT_MAGIC_64:
+                        case FAT_CIGAM_64:
+                            break;
+
+                        case MH_MAGIC:
+                        case MH_CIGAM:
+                            {
+                                mach_header *header = (mach_header *)base;
+                                load_command * lc = (load_command *)(base + sizeof(*header));
+                                for (int i=0; i<header->ncmds; ++i) {
+                                    if (lc->cmd == LC_SYMTAB) {
+                                        symtab_command * symc = (struct symtab_command *)lc;
+                                        char * strtab = (char *)base + symc->stroff;
+                                        struct nlist * symtab = (struct nlist *)((char*)base + symc->symoff);
+                                        for (int j=0; j < symc->nsyms; ++j) {
+                                            const char* symClsName = strtab + ((struct nlist*)&symtab[j])->n_un.n_strx;
+                                            const char* outterLib = strchr(symClsName, '@');
+                                            if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
+                                                                    (uint64_t)((struct nlist*)&symtab[j])->n_value))
+                                                return true;
+                                        }
+                                    }
+                                    lc = (struct load_command *)((uint8_t *)lc + lc->cmdsize);
+                                }
+                            }
+                            break;
+
+                        case MH_MAGIC_64:
+                        case MH_CIGAM_64:
+                            {
+                                mach_header_64 *header = (mach_header_64 *)base;
+                                load_command * lc = (load_command *)(base + sizeof(*header));
+                                for (int i=0; i<header->ncmds; ++i) {
+                                    if (lc->cmd == LC_SYMTAB) {
+                                        symtab_command * symc = (struct symtab_command *)lc;
+                                        char * strtab = (char *)base + symc->stroff;
+                                        struct nlist_64 * symtab = (struct nlist_64 *)((char*)base + symc->symoff);
+                                        for (int j=0; j < symc->nsyms; ++j) {
+                                            const char* symClsName = strtab + ((struct nlist_64*)&symtab[j])->n_un.n_strx;
+                                            const char* outterLib = strchr(symClsName, '@');
+                                            if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
+                                                                    (uint64_t)((struct nlist_64*)&symtab[j])->n_value))
+                                                return true;
+                                        }
+                                    }
+                                    lc = (struct load_command *)((uint8_t *)lc + lc->cmdsize);
+                                }
+                            }
+                            break;
+
+                        //case FT_ARMAG:
+                        //    break;
+
+                        default:
+                            break;
+                        }
+
+    #else
                         switch(base[EI_CLASS]) {
                             case 1:
                               ret = _findAddr<Elf32_Ehdr, Elf32_Shdr, Elf32_Sym>(base, checkor);
@@ -461,6 +533,7 @@ EMOCK_NS_START
                               ret = _findAddr<Elf64_Ehdr, Elf64_Shdr, Elf64_Sym>(base, checkor);
                               break;
                         }
+    #endif
                         munmap(base, sb.st_size);
                     }
                 }
@@ -471,24 +544,49 @@ EMOCK_NS_START
     }
 
     void symbolRetrieve(ISymbolCheckor* checkor) {
-        std::set<std::string> aux_set;
         char file_name[PATH_MAX] = {0};
+    #if __APPLE__
+        uint32_t size = PATH_MAX;
+        if(_NSGetExecutablePath(&file_name[0], &size) != -1) {
+    #else
         if(readlink("/proc/self/exe", file_name, PATH_MAX) > 0) {
+    #endif
             if(findAddrInElf(file_name, checkor)) {
                 if(checkor->libContinue() == false)
                     return;
             }
         }
 
-        aux_set.insert(file_name);
+    #if __APPLE__
+        task_dyld_info dyld_info;
+        mach_msg_type_number_t count = TASK_DYLD_INFO_COUNT;
+        if (task_info(mach_task_self(), TASK_DYLD_INFO, (task_info_t)&dyld_info, &count)) {
+            return;
+        }
+
+        // Get image array's size and address
+        dyld_all_image_infos *infos = (dyld_all_image_infos *)dyld_info.all_image_info_addr;
+        for (int i = 0; i < infos->infoArrayCount; ++i) {
+            const dyld_image_info *image = infos->infoArray + i;
+            if(checkor->libCheck(image->imageFilePath)) {
+                if(findAddrInElf(image->imageFilePath, checkor)) {
+                    if(checkor->libContinue() == false) {
+                        checkor->setDlBase((unsigned long long)image->imageLoadAddress);
+                        break;
+                    }
+                }
+            }
+        }
+    #else
         FILE* fp = fopen("/proc/self/maps", "r");
         if(!fp) {
             EMOCK_REPORT_FAILURE(std::string("Failed to fetch current proc maps of [").append(file_name).append("]").c_str());
             return;
         }
-
-        char buf[PATH_MAX + 100] = {0};
+        std::set<std::string> aux_set;
+        aux_set.insert(file_name);
         while(!feof(fp)) {
+            char buf[PATH_MAX + 100] = {0};
             if(fgets(buf, sizeof(buf), fp) == 0)
                 break;
 
@@ -497,11 +595,12 @@ EMOCK_NS_START
             if(aux_set.count(file_name) == 0) {
                 Dl_info dlinfo;
                 if(dladdr((void*)begin, &dlinfo)) {
-                    checkor->setDlBase((unsigned long long)dlinfo.dli_fbase);
                     if(checkor->libCheck(dlinfo.dli_fname)) {
                         if(findAddrInElf(dlinfo.dli_fname, checkor)) {
-                            if(checkor->libContinue() == false)
+                            if(checkor->libContinue() == false) {
+                                checkor->setDlBase((unsigned long long)dlinfo.dli_fbase);
                                 break;
+                            }
                         }
                     }
                 }
@@ -509,6 +608,7 @@ EMOCK_NS_START
             }
         }
         fclose(fp);
+    #endif
     }
 
     void* SymbolRetriever::getMethodAddress(void*, const std::type_info& info, const std::string& stringify) {

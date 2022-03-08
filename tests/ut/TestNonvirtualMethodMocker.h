@@ -80,6 +80,8 @@ struct CUT
     }
 };
 
+#if __APPLE__
+#else
 FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
 {
 
@@ -197,3 +199,5 @@ FIXTURE(TestNonvirtualMemberMocker, mock nonvirtual nonstatic member method)
         GlobalMockObject::verify();*/
     }
 };
+
+#endif

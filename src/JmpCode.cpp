@@ -42,17 +42,43 @@ inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
   *(unsigned int*)&base[1] = (unsigned int)((unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate));
 }
 
+// FF 25 : JMP /4   jmp absolute indirect
+// bytes 2 ~ 5 : operand of jmp, relative to the memory that recorded the thunk addr. it should be zero.
+// bytes 6 ~ 13 : the absolute addr of thunk.
+const unsigned char jmpCodeTemplateLong[]  =
+   { 0xFF, 0x25, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+inline void set_jmp_code_long(unsigned char base[], const void* from, const void* to)
+{
+ *(uintptr_t *)&base[6] = (uintptr_t)to;
+}
+
+static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
+
 EMOCK_NS_START
 
+#if BUILD_FOR_X64
+#define JMP_CODE_SIZE sizeof(jmpCodeTemplateLong)
+#elif BUILD_FOR_X86
 #define JMP_CODE_SIZE sizeof(jmpCodeTemplate)
+#endif
 
 struct JmpCodeImpl
 {
    ////////////////////////////////////////////////
-   JmpCodeImpl(const void* from, const void* to)
+   JmpCodeImpl(const void* from, const void* trampoline, const void* to)
    {
-      ::memcpy(m_code, jmpCodeTemplate, JMP_CODE_SIZE);
-      set_jmp_code(m_code, from, to);
+      if(trampoline) {
+         ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
+         set_jmp_code(m_code, from, trampoline);
+      }
+      else if((unsigned long)to - (unsigned long)from <= kMaxAllocationDelta) {
+         ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
+         set_jmp_code(m_code, from, to);
+      } else {
+         ::memcpy(m_code, jmpCodeTemplateLong, sizeof(jmpCodeTemplateLong));
+         set_jmp_code(m_code, from, to);
+      }
    }
 
    ////////////////////////////////////////////////
@@ -73,8 +99,8 @@ struct JmpCodeImpl
 };
 
 ///////////////////////////////////////////////////
-JmpCode::JmpCode(const void* from, const void* to)
-   : This(new JmpCodeImpl(from, to))
+JmpCode::JmpCode(const void* from, const void* trampoline, const void* to)
+   : This(new JmpCodeImpl(from, trampoline, to))
 {
 }
 

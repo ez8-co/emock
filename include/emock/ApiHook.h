@@ -33,6 +33,7 @@ struct ApiHookImpl;
 struct ApiHook
 {
     ApiHook ( const void* api
+            , const void* trampoline
             , const void* stub );
 
     ~ApiHook();

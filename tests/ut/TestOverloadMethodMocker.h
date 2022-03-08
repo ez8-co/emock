@@ -37,6 +37,8 @@ double func(double)
     return 11;
 }
 
+#if __APPLE__
+#else
 FIXTURE(TestOverloadMethodMocker, mock overload function)
 {
     struct CUT
@@ -114,3 +116,4 @@ FIXTURE(TestOverloadMethodMocker, mock overload function)
         GlobalMockObject::verify();*/
     }
 };
+#endif

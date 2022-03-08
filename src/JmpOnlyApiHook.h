@@ -34,6 +34,7 @@ struct JmpOnlyApiHook
 {
     JmpOnlyApiHook
        ( const void* api
+       , const void* trampoline
        , const void* stub );
 
     ~JmpOnlyApiHook();
