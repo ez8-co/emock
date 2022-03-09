@@ -53,6 +53,7 @@ namespace {
 
 static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
 static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
+static const size_t kAlignmentSize      = 64;         // 64
 
 #ifdef _MSC_VER
 
@@ -142,17 +143,32 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
                 break;
             }
 
+            // first block is too far
+            if(address - (unsigned long)dst > kMaxAllocationDelta) {
+                for (size_t i = 0; i < 10000; i++) {
+                    unsigned long begin = floor((kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
+                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
+                        return allocated;
+                    }
+                }
+                break;
+            }
+
             unsigned long begin = address;
             unsigned long end = address + size;
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
+                    // last_end align forward
+                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
                         return allocated;
                     }
                 }
                 // alloc at begin of current
                 if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
+                    // begin align backward
+                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
                         return allocated;
                     }
@@ -178,6 +194,8 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
+                    // last_end align forward
+                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
                         fclose(fp);
                         return allocated;
@@ -185,6 +203,8 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
                 }
                 // alloc at begin of current
                 if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
+                    // begin align backward
+                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
                         fclose(fp);
                         return allocated;
@@ -212,20 +232,19 @@ static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
         for(std::list<TrampolineInfo>::iterator it = g_trampolines.begin();
             it != g_trampolines.end();
             ++it) {
-            if(it->size - it->used > alloc_size) {
+            if(it->size - it->used > ceil(alloc_size / kAlignmentSize) * kAlignmentSize) {
                 trampoline = it->base + it->used;
-                it->used += alloc_size;
+                it->used += ceil(alloc_size / kAlignmentSize) * kAlignmentSize;
                 break;
             }
         }
         if(!trampoline) {
-            TrampolineInfo info = {NULL, kAllocationSize, alloc_size};
+            TrampolineInfo info = {NULL, kAllocationSize, ceil(alloc_size / kAlignmentSize) * kAlignmentSize};
             trampoline = info.base = (unsigned char*)TrampolineAllocate((const unsigned char*)src, info.size);
             g_trampolines.push_back(info);
         }
         return trampoline;
     }
-
 }
 
 #if BUILD_FOR_X64
