@@ -77,7 +77,7 @@ struct JmpCodeImpl
          set_jmp_code(m_code, from, to);
       } else {
          ::memcpy(m_code, jmpCodeTemplateLong, sizeof(jmpCodeTemplateLong));
-         set_jmp_code(m_code, from, to);
+         set_jmp_code_long(m_code, from, to);
       }
    }
 
