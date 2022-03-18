@@ -144,7 +144,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             }
 
             // first block is too far
-            if(address - (unsigned long)dst > kMaxAllocationDelta) {
+            if(std::abs((long long)(address - (unsigned long)dst)) > kMaxAllocationDelta) {
                 for (size_t i = 0; i < 10000; i++) {
                     unsigned long begin = floor((kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
@@ -158,7 +158,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             unsigned long end = address + size;
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
-                if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
+                if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
                     // last_end align forward
                     last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
@@ -166,7 +166,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                     }
                 }
                 // alloc at begin of current
-                if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
+                if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
                     // begin align backward
                     begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
@@ -193,7 +193,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             sscanf(buf, "%lx-%lx %*[^\n]", &begin, &end);
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
-                if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
+                if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
                     // last_end align forward
                     last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
@@ -202,7 +202,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                     }
                 }
                 // alloc at begin of current
-                if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
+                if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
                     // begin align backward
                     begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
