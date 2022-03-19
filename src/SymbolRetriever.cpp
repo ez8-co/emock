@@ -596,11 +596,10 @@ EMOCK_NS_START
                 Dl_info dlinfo;
                 if(dladdr((void*)begin, &dlinfo)) {
                     if(checkor->libCheck(dlinfo.dli_fname)) {
+                        checkor->setDlBase((unsigned long long)dlinfo.dli_fbase);
                         if(findAddrInElf(dlinfo.dli_fname, checkor)) {
-                            if(checkor->libContinue() == false) {
-                                checkor->setDlBase((unsigned long long)dlinfo.dli_fbase);
+                            if(checkor->libContinue() == false)
                                 break;
-                            }
                         }
                     }
                 }

@@ -147,14 +147,14 @@ static const size_t kAlignmentSize      = 64;         // 64
             unsigned long end = address + size;
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
-                if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
+                if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
                     // last_end align forward
                     if(void* allocated = TrampolineAllocateImpl(dst, alloc_size)) {
                         return allocated;
                     }
                 }
                 // alloc at begin of current
-                if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
+                if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
                     // begin align backward
                     if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
                         return allocated;
@@ -162,6 +162,9 @@ static const size_t kAlignmentSize      = 64;         // 64
                 }
             }
             last_end = end;
+        }
+        if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
+            return allocated;
         }
     #else
         FILE* fp = fopen("/proc/self/maps", "r");
@@ -180,7 +183,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             sscanf(buf, "%lx-%lx %*[^\n]", &begin, &end);
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
-                if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
+                if((size_t)(dst - (unsigned char*)last_end) < kMaxAllocationDelta) {
                     // last_end align forward
                     if(void* allocated = TrampolineAllocateImpl(dst, alloc_size)) {
                         fclose(fp);
@@ -188,7 +191,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                     }
                 }
                 // alloc at begin of current
-                if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
+                if((size_t)((unsigned char*)begin - dst) < kMaxAllocationDelta) {
                     // begin align backward
                     if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
                         fclose(fp);
@@ -198,7 +201,10 @@ static const size_t kAlignmentSize      = 64;         // 64
             }
             last_end = end;
         }
-
+        if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
+            fclose(fp);
+            return allocated;
+        }
         fclose(fp);
     #endif
         return NULL;
