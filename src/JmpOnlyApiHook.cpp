@@ -35,9 +35,8 @@ struct JmpOnlyApiHookImpl
    /////////////////////////////////////////////////////
    JmpOnlyApiHookImpl
               ( const void* api
-              , const void* trampoline
               , const void* stub)
-		: m_jmpCode(api, trampoline, stub)
+		: m_jmpCode(api, stub)
         , m_originalData(0)
         , m_api(api)
    {
@@ -86,9 +85,8 @@ struct JmpOnlyApiHookImpl
 /////////////////////////////////////////////////////////////////
 JmpOnlyApiHook::JmpOnlyApiHook 
               ( const void* api
-              , const void* trampoline
               , const void* stub )
-	: This(new JmpOnlyApiHookImpl(api, trampoline, stub))
+	: This(new JmpOnlyApiHookImpl(api, stub))
 {
 }
 

@@ -143,33 +143,20 @@ static const size_t kAlignmentSize      = 64;         // 64
                 break;
             }
 
-            // first block is too far
-            if(std::abs((long long)(address - (unsigned long)dst)) > kMaxAllocationDelta) {
-                for (size_t i = 0; i < 10000; i++) {
-                    unsigned long begin = floor((kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
-                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
-                        return allocated;
-                    }
-                }
-                break;
-            }
-
             unsigned long begin = address;
             unsigned long end = address + size;
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
                     // last_end align forward
-                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
-                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(dst, alloc_size)) {
                         return allocated;
                     }
                 }
                 // alloc at begin of current
                 if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
                     // begin align backward
-                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
-                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
                         return allocated;
                     }
                 }
@@ -195,8 +182,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at end of last
                 if(std::abs((long long)(dst - (unsigned char*)last_end)) < kMaxAllocationDelta) {
                     // last_end align forward
-                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
-                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(dst, alloc_size)) {
                         fclose(fp);
                         return allocated;
                     }
@@ -204,8 +190,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at begin of current
                 if(std::abs((long long)((unsigned char*)begin - dst)) < kMaxAllocationDelta) {
                     // begin align backward
-                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
-                    if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
+                    if(void* allocated = TrampolineAllocateImpl(dst - alloc_size, alloc_size)) {
                         fclose(fp);
                         return allocated;
                     }
@@ -259,9 +244,6 @@ static const size_t kAlignmentSize      = 64;         // 64
 #if BUILD_FOR_X64
         if(std::abs((long)src - (long)dst) > kMaxAllocationDelta) {
             unsigned char* trampoline = getTrampoline(src, sizeof(longJmpCodeTemplate));
-            if(!trampoline) {
-                return NULL;
-            }
             ::memcpy(trampoline, longJmpCodeTemplate, sizeof(longJmpCodeTemplate));
             *(uintptr_t *)&trampoline[6] = (uintptr_t)dst;
             return trampoline;
@@ -279,9 +261,6 @@ static const size_t kAlignmentSize      = 64;         // 64
         // apply trampoline and push ecx
     #if BUILD_FOR_X64
         unsigned char* trampoline = getTrampoline(src, sizeof(ecxToArgList) + sizeof(longJmpCodeTemplate));
-        if(!trampoline) {
-            return NULL;
-        }
         ::memcpy(trampoline, ecxToArgList, sizeof(ecxToArgList));
         ::memcpy(trampoline + sizeof(ecxToArgList), longJmpCodeTemplate, sizeof(longJmpCodeTemplate));
         *(uintptr_t *)&trampoline[sizeof(ecxToArgList) + 6] = (uintptr_t)dst;
