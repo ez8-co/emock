@@ -34,7 +34,7 @@ struct JmpCodeImpl;
 
 struct JmpCode
 {
-    JmpCode(const void* from, const void* to);
+    JmpCode(const void* from, const void* trampoline, const void* to);
     ~JmpCode();
     
     void*  getCodeData() const;
