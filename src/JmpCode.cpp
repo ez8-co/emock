@@ -72,7 +72,7 @@ struct JmpCodeImpl
          ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
          set_jmp_code(m_code, from, trampoline);
       }
-      else if((unsigned long)to - (unsigned long)from <= kMaxAllocationDelta) {
+      else if((uint64_t)to - (uint64_t)from <= kMaxAllocationDelta) {
          ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
          set_jmp_code(m_code, from, to);
       } else {
