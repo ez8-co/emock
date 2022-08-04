@@ -193,7 +193,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 break;
 
             uint64_t begin, end = 0;
-            sscanf(buf, "%llx-%llx %*[^\n]", &begin, &end);
+            sscanf(buf, "%lx-%lx %*[^\n]", &begin, &end);
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if(std::abs((int64_t)dst - (int64_t)last_end) < kMaxAllocationDelta) {
