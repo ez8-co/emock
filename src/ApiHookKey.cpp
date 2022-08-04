@@ -33,9 +33,10 @@ ApiHookKey::ApiHookKey(const void* api, ApiHookHolder* holder, bool isMemFun)
    : apiAddress(api)
    , hookHolder(holder)
 {
+   void* apiHook = holder->getApiHook();
    hook = new ApiHook(api, isMemFun
-    ? Trampoline::get4MemFunc(api, holder->getApiHook())
-    : Trampoline::get(api, holder->getApiHook()), holder->getApiHook());
+    ? Trampoline::get4MemFunc(api, apiHook)
+    : Trampoline::get(api, apiHook), apiHook);
 }
 
 ///////////////////////////////////////////////////////////
