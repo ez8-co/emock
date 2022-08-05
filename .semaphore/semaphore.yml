@@ -20,17 +20,17 @@ blocks:
             - cmake .
             - make -j8
             - sudo make install
-            - cd tests/3rdparty/testngpp
-            - cmake .
-            - make -j8
-            - sudo make install
-            - cd ../../
-            - cmake .
-            - make -j8
 after_pipeline:
   task:
     jobs:
       - name: ut
         commands:
+          - cd /home/semaphore/$SEMAPHORE_GIT_DIR/tests/3rdparty/testngpp
+          - cmake .
+          - make -j8
+          - sudo make install
+          - cd ../../
+          - cmake .
+          - make -j8
           - cd /home/semaphore/$SEMAPHORE_GIT_DIR/ut
           - sudo sh emock-ut.sh
