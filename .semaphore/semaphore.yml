@@ -16,6 +16,7 @@ blocks:
       jobs:
         - name: compile
           commands:
+            - cd $SEMAPHORE_GIT_DIR
             - cmake .
             - make -j8
             - sudo make install
@@ -31,5 +32,5 @@ after_pipeline:
     jobs:
       - name: ut
         commands:
-          - cd ut
+          - cd $SEMAPHORE_GIT_DIR/ut
           - sudo sh emock-ut.sh
