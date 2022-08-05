@@ -11,8 +11,6 @@ blocks:
         - name: init
           commands:
             - checkout
-        - name: compile
-          commands:
             - cd $SEMAPHORE_GIT_DIR
             - cmake .
             - make -j8
@@ -24,7 +22,5 @@ blocks:
             - cd ../../
             - cmake .
             - make -j8
-        - name: ut
-          commands:
             - cd ut
             - sudo sh emock-ut.sh
