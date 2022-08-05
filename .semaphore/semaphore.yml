@@ -5,20 +5,15 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: init
+  - name: Job
     task:
       jobs:
-        - name: get code
+        - name: init
           commands:
             - checkout
-            - pwd
-            - ls -la
-  - name: compile
-    task:
-      jobs:
-        - name: misc
+        - name: compile
           commands:
-            - cd /home/semaphore/$SEMAPHORE_GIT_DIR
+            - cd $SEMAPHORE_GIT_DIR
             - cmake .
             - make -j8
             - sudo make install
@@ -29,10 +24,7 @@ blocks:
             - cd ../../
             - cmake .
             - make -j8
-after_pipeline:
-  task:
-    jobs:
-      - name: ut
-        commands:
-          - cd /home/semaphore/$SEMAPHORE_GIT_DIR/ut
-          - sudo sh emock-ut.sh
+        - name: ut
+          commands:
+            - cd ut
+            - sudo sh emock-ut.sh
