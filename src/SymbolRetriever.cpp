@@ -427,30 +427,27 @@ EMOCK_NS_START
         {
             const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
             const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
-            const char* shstrTab = base + elf_section[elf_header->e_shstrndx].sh_offset;
-            const char* strTab = NULL;
+            unsigned strtabidx = 0, symtabidx = 0;
             for(int i = 1; i < elf_header->e_shnum; ++i) {
-                if(!strcmp(shstrTab + elf_section[i].sh_name, ".strtab")) {
-                    strTab = base + elf_section[i].sh_offset;
-                    break;
+                if(elf_section[i].sh_type == SHT_STRTAB) {
+                    strtabidx = i;
+                }
+                if(elf_section[i].sh_type == SHT_SYMTAB) {
+                    symtabidx = i;
                 }
             }
-            if(!strTab)
+            if(!strtabidx || !symtabidx)
                 return false;
-            for(int i = 1; i < elf_header->e_shnum; ++i) {
-                if(strstr(shstrTab + elf_section[i].sh_name, "sym")) {
-                    int symEntries = elf_section[i].sh_size / sizeof(Elf_Sym);
-                    const Elf_Sym* symTable = (const Elf_Sym*)(base + elf_section[i].sh_offset);
-                    for(int j = 0; j < symEntries; ++j) {
-                        if(ELF32_ST_TYPE(symTable[j].st_info) != 2 || !symTable[j].st_value)
-                            continue;
-                        const char* symClsName = strTab + symTable[j].st_name;
-                        const char* outterLib = strchr(symClsName, '@');
-                        if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
-                                                 symTable[j].st_value))
-                            return true;
-                    }
-                }
+            const char* strTab = base + elf_section[strtabidx].sh_offset;
+            const Elf_Sym* symTable = (const Elf_Sym*)(base + elf_section[symtabidx].sh_offset);
+            for(int j = 0; j < elf_section[symtabidx].sh_size / sizeof(Elf_Sym); ++j) {
+                if(ELF32_ST_TYPE(symTable[j].st_info) != STT_FUNC || !symTable[j].st_value)
+                    continue;
+                const char* symClsName = strTab + symTable[j].st_name;
+                const char* outterLib = strchr(symClsName, '@');
+                if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
+                                            symTable[j].st_value))
+                    return true;
             }
             return false;
         }
