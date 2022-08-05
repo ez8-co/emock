@@ -5,9 +5,31 @@ agent:
     type: e1-standard-2
     os_image: ubuntu2004
 blocks:
-  - name: 'Block #1'
+  - name: init
     task:
       jobs:
-        - name: 'Job #1'
+        - name: get code
           commands:
             - checkout
+  - name: setup
+    task:
+      jobs:
+        - name: compile
+          commands:
+            - cmake .
+            - make -j8
+            - sudo make install
+            - cd tests/3rdparty/testngpp
+            - cmake .
+            - make -j8
+            - sudo make install
+            - cd ../../
+            - cmake .
+            - make -j8
+after_pipeline:
+  task:
+    jobs:
+      - name: ut
+        commands:
+          - cd ut
+          - sudo sh emock-ut.sh
