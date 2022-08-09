@@ -146,7 +146,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             // first block is too far
             if(std::abs((long long)address - (long long)dst) > kMaxAllocationDelta) {
                 for (size_t i = 0; i < 10000; i++) {
-                    uint64_t begin = floor((kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
+                    uint64_t begin = floor((double)(kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
                         return allocated;
                     }
@@ -160,7 +160,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at end of last
                 if(std::abs((int64_t)dst - (int64_t)last_end) < kMaxAllocationDelta) {
                     // last_end align forward
-                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
+                    last_end = ceil((double)last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
                         return allocated;
                     }
@@ -168,7 +168,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at begin of current
                 if(std::abs((int64_t)begin - (int64_t)dst) < kMaxAllocationDelta) {
                     // begin align backward
-                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
+                    begin = floor((double)(begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
                         return allocated;
                     }
@@ -198,7 +198,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at end of last
                 if(std::abs((int64_t)dst - (int64_t)last_end) < kMaxAllocationDelta) {
                     // last_end align forward
-                    last_end = ceil(last_end / kAllocationSize) * kAllocationSize;
+                    last_end = ceil((double)last_end / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)last_end, alloc_size)) {
                         fclose(fp);
                         return allocated;
@@ -207,7 +207,7 @@ static const size_t kAlignmentSize      = 64;         // 64
                 // alloc at begin of current
                 if(std::abs((int64_t)begin - (int64_t)dst) < kMaxAllocationDelta) {
                     // begin align backward
-                    begin = floor((begin - alloc_size) / kAllocationSize) * kAllocationSize;
+                    begin = floor((double)(begin - alloc_size) / kAllocationSize) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin - alloc_size, alloc_size)) {
                         fclose(fp);
                         return allocated;
@@ -235,14 +235,14 @@ static const size_t kAlignmentSize      = 64;         // 64
         for(std::list<TrampolineInfo>::iterator it = g_trampolines.begin();
             it != g_trampolines.end();
             ++it) {
-            if(it->size - it->used > ceil(alloc_size / kAlignmentSize) * kAlignmentSize) {
+            if(it->size - it->used > ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize) {
                 trampoline = it->base + it->used;
-                it->used += ceil(alloc_size / kAlignmentSize) * kAlignmentSize;
+                it->used += ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize;
                 break;
             }
         }
         if(!trampoline) {
-            TrampolineInfo info = {NULL, kAllocationSize, ceil(alloc_size / kAlignmentSize) * kAlignmentSize};
+            TrampolineInfo info = {NULL, kAllocationSize, ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize};
             trampoline = info.base = (unsigned char*)TrampolineAllocate((const unsigned char*)src, info.size);
             g_trampolines.push_back(info);
         }
