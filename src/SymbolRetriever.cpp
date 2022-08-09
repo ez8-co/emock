@@ -434,27 +434,21 @@ EMOCK_NS_START
         {
             const Elf_Ehdr* elf_header = (const Elf_Ehdr*)base;
             const Elf_Shdr* elf_section = (const Elf_Shdr*)(base + elf_header->e_shoff);
-            unsigned strtabidx = 0, symtabidx = 0;
-            for(int i = 1; i < elf_header->e_shnum; ++i) {
-                if(elf_section[i].sh_type == SHT_STRTAB) {
-                    strtabidx = i;
-                }
-                if(elf_section[i].sh_type == SHT_SYMTAB) {
-                    symtabidx = i;
-                }
-            }
-            if(!strtabidx || !symtabidx)
-                return false;
-            const char* strTab = base + elf_section[strtabidx].sh_offset;
-            const Elf_Sym* symTable = (const Elf_Sym*)(base + elf_section[symtabidx].sh_offset);
-            for(int j = 0; j < elf_section[symtabidx].sh_size / sizeof(Elf_Sym); ++j) {
-                if(ELF32_ST_TYPE(symTable[j].st_info) != STT_FUNC || !symTable[j].st_value)
+            for(int i = 0; i < elf_header->e_shnum; ++i) {
+                if(elf_section[i].sh_type != SHT_SYMTAB) {
                     continue;
-                const char* symClsName = strTab + symTable[j].st_name;
-                const char* outterLib = strchr(symClsName, '@');
-                if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
-                                            symTable[j].st_value))
-                    return true;
+                }
+                const char* strTab = (const char*)(base + elf_section[elf_section[i].sh_link].sh_offset);
+                const Elf_Sym* symTable = (const Elf_Sym*)(base + elf_section[i].sh_offset);
+                for(unsigned int j = 0; j < elf_section[i].sh_size / elf_section[i].sh_entsize; ++j) {
+                    if(ELF32_ST_TYPE(symTable[j].st_info) != STT_FUNC || !symTable[j].st_value || symTable[j].st_shndx == SHN_UNDEF)
+                        continue;
+                    const char* symClsName = strTab + symTable[j].st_name;
+                    const char* outterLib = strchr(symClsName, '@');
+                    if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
+                                                symTable[j].st_value))
+                        return true;
+                }
             }
             return false;
         }
