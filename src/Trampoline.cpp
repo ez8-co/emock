@@ -18,6 +18,11 @@
 
     #include <windows.h>
 	#include <cassert>
+    #ifdef _WIN64 // [
+        typedef unsigned __int64  uintptr_t;
+    #else // _WIN64 ][
+        typedef _W64 unsigned int uintptr_t;
+    #endif // _WIN64 ]
 
 #else
 
@@ -31,6 +36,7 @@
         #include <mach/mach_init.h>
     #else
         #include <linux/limits.h>
+
     #endif
 
 #endif
@@ -48,11 +54,11 @@ namespace {
 
     static std::list<TrampolineInfo> g_trampolines;
 
-#define PAGE_ALIGN_BITS  12
-#define PAGE_SIZE        (1 << PAGE_ALIGN_BITS)
+#define EMOCK_PAGE_ALIGN_BITS  12
+#define EMOCK_PAGE_SIZE        (1 << EMOCK_PAGE_ALIGN_BITS)
 
 static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
-static const size_t kAllocationSize     = PAGE_SIZE;  // 4KB
+static const size_t kAllocationSize     = EMOCK_PAGE_SIZE;  // 4KB
 static const size_t kAlignmentSize      = 64;         // 64
 
 #ifdef _MSC_VER
@@ -114,7 +120,7 @@ static const size_t kAlignmentSize      = 64;         // 64
 
 #else
 
-    #define ALIGN_TO_PAGE_BOUNDARY(addr) (void*) (((uintptr_t)addr) >> PAGE_ALIGN_BITS << PAGE_ALIGN_BITS)
+    #define ALIGN_TO_PAGE_BOUNDARY(addr) (void*) (((uintptr_t)addr) >> EMOCK_PAGE_ALIGN_BITS << EMOCK_PAGE_ALIGN_BITS)
 
     void* TrampolineAllocateImpl(const unsigned char* dst, size_t alloc_size)
     {
@@ -130,7 +136,7 @@ static const size_t kAlignmentSize      = 64;         // 64
     void* TrampolineAllocate(const unsigned char* dst, size_t alloc_size)
     {
     #if __APPLE__
-        uint64_t last_end = 0;
+        uintptr_t last_end = 0;
         while(true) {
             mach_vm_address_t address = last_end;
             mach_vm_size_t size = 0;
@@ -146,7 +152,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             // first block is too far
             if(std::abs((long long)address - (long long)dst) > kMaxAllocationDelta) {
                 for (size_t i = 0; i < 10000; i++) {
-                    uint64_t begin = floor((double)(kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
+                    uintptr_t begin = floor((double)(kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
                         return allocated;
                     }
@@ -154,8 +160,8 @@ static const size_t kAlignmentSize      = 64;         // 64
                 break;
             }
 
-            uint64_t begin = address;
-            uint64_t end = address + size;
+            uintptr_t begin = address;
+            uintptr_t end = address + size;
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last
                 if(std::abs((int64_t)dst - (int64_t)last_end) < kMaxAllocationDelta) {
@@ -186,13 +192,13 @@ static const size_t kAlignmentSize      = 64;         // 64
             return NULL;
         }
 
-        uint64_t last_end = 0;
+        uintptr_t last_end = 0;
         while(!feof(fp)) {
             char buf[PATH_MAX + 100] = {0};
             if(fgets(buf, sizeof(buf), fp) == 0)
                 break;
 
-            uint64_t begin, end = 0;
+            uintptr_t begin, end = 0;
             sscanf(buf, "%lx-%lx %*[^\n]", &begin, &end);
             if(last_end && begin != last_end && begin - last_end > alloc_size) {
                 // alloc at end of last

@@ -39,7 +39,7 @@ const unsigned char jmpCodeTemplate[]  = { 0xE9, 0x00, 0x00, 0x00, 0x00 };
 
 inline void set_jmp_code(unsigned char base[], const void* from, const void* to)
 {
-  *(unsigned int*)&base[1] = (unsigned int)((unsigned long)to - (unsigned long)from - sizeof(jmpCodeTemplate));
+  *(unsigned int*)&base[1] = (unsigned int)((uintptr_t)to - (uintptr_t)from - sizeof(jmpCodeTemplate));
 }
 
 // FF 25 : JMP /4   jmp absolute indirect
@@ -58,9 +58,9 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
 EMOCK_NS_START
 
 #if BUILD_FOR_X64
-#define JMP_CODE_SIZE sizeof(jmpCodeTemplateLong)
+   #define JMP_CODE_SIZE sizeof(jmpCodeTemplateLong)
 #elif BUILD_FOR_X86
-#define JMP_CODE_SIZE sizeof(jmpCodeTemplate)
+   #define JMP_CODE_SIZE sizeof(jmpCodeTemplate)
 #endif
 
 struct JmpCodeImpl
@@ -72,7 +72,7 @@ struct JmpCodeImpl
          ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
          set_jmp_code(m_code, from, trampoline);
       }
-      else if((uint64_t)to - (uint64_t)from <= kMaxAllocationDelta) {
+      else if((uintptr_t)to - (uintptr_t)from <= kMaxAllocationDelta) {
          ::memcpy(m_code, jmpCodeTemplate, sizeof(jmpCodeTemplate));
          set_jmp_code(m_code, from, to);
       } else {

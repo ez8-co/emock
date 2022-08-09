@@ -22,6 +22,12 @@
     #include <vector>
 	#pragma comment(lib, "Dbghelp.lib")
 
+    #ifdef _WIN64 // [
+        typedef unsigned __int64  uintptr_t;
+    #else // _WIN64 ][
+        typedef _W64 unsigned int uintptr_t;
+    #endif // _WIN64 ]
+
 #else
 
 	#include <sys/mman.h>
@@ -422,6 +428,7 @@ EMOCK_NS_START
             std::map<unsigned long long, std::string>& _symMap;
         };
 
+    #if !__APPLE__
         template<typename Elf_Ehdr, typename Elf_Shdr, typename Elf_Sym>
         bool _findAddr(const char* base, ISymbolCheckor* checkor)
         {
@@ -451,6 +458,7 @@ EMOCK_NS_START
             }
             return false;
         }
+    #endif
 
         bool findAddrInElf(const char* file_name, ISymbolCheckor* checkor) {
             bool ret = false;
@@ -482,7 +490,7 @@ EMOCK_NS_START
                                             const char* symClsName = strtab + ((struct nlist*)&symtab[j])->n_un.n_strx;
                                             const char* outterLib = strchr(symClsName, '@');
                                             if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
-                                                                    (uint64_t)((struct nlist*)&symtab[j])->n_value))
+                                                                    (uintptr_t)((struct nlist*)&symtab[j])->n_value))
                                                 return true;
                                         }
                                     }
@@ -505,7 +513,7 @@ EMOCK_NS_START
                                             const char* symClsName = strtab + ((struct nlist_64*)&symtab[j])->n_un.n_strx;
                                             const char* outterLib = strchr(symClsName, '@');
                                             if(!checkor->symContinue(getDemangledName(outterLib ? std::string(symClsName, outterLib - symClsName).c_str() : symClsName).c_str(),
-                                                                    (uint64_t)((struct nlist_64*)&symtab[j])->n_value))
+                                                                    (uintptr_t)((struct nlist_64*)&symtab[j])->n_value))
                                                 return true;
                                         }
                                     }
