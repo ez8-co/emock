@@ -145,6 +145,7 @@ FIXTURE(ApiHook)
        ASSERT_EQ(20, var_func2(a, b, ret));
     }
 
+#ifndef _MSC_VER
     TEST(can mock functions with va_list)
     {
        va_list arg;
@@ -166,4 +167,5 @@ FIXTURE(ApiHook)
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func2(a, b, arg));
     }
+#endif
 };
