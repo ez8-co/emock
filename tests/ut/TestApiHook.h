@@ -67,7 +67,7 @@ int va_list_func2(int a, int b, va_list arg)
 }
 
 #ifdef _MSC_VER
-int init_va_list(va_list *arg, ...)
+void init_va_list(va_list *arg, ...)
 {
     va_start(*arg, arg);
 }
