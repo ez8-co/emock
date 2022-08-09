@@ -1,0 +1,25 @@
+version: v1.0
+name: Initial Pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu1804
+blocks:
+  - name: Job
+    task:
+      jobs:
+        - name: init
+          commands:
+            - checkout
+            - cmake .
+            - make -j8
+            - sudo make install
+            - cd tests/3rdparty/testngpp
+            - cmake .
+            - make -j8
+            - sudo make install
+            - cd ../../
+            - cmake .
+            - make -j8
+            - cd ut
+            - sudo sh emock-ut.sh
