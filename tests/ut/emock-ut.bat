@@ -8,4 +8,3 @@ for /r %%i in (Debug\emock-ut-*.dll) do (
 )
 @echo !cases!
 testngpp-runner.exe -L. -l"testngppxmllistener result.xml" -l"testngppstdoutlistener -c " -c100 !cases!
-pause
