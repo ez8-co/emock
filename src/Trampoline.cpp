@@ -23,6 +23,7 @@
     #else // _WIN64 ][
         typedef _W64 unsigned int uintptr_t;
     #endif // _WIN64 ]
+    typedef signed __int64     int64_t;
 
 #else
 
@@ -87,7 +88,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             if (mbi.State != MEM_FREE)
                 continue;
 
-            if ((unsigned long long)mbi.AllocationBase + mbi.RegionSize > _ADDRESS_MAX_VALUE)
+            if ((uintptr_t)mbi.AllocationBase + mbi.RegionSize > _ADDRESS_MAX_VALUE)
                 break;
 
             if (void* allocated = VirtualAlloc(mbi.AllocationBase, alloc_size, MEM_RESERVE | MEM_COMMIT, PAGE_EXECUTE_READWRITE))
@@ -150,7 +151,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             }
 
             // first block is too far
-            if(std::abs((long long)address - (long long)dst) > kMaxAllocationDelta) {
+            if(std::abs((int64_t)address - (int64_t)dst) > kMaxAllocationDelta) {
                 for (size_t i = 0; i < 10000; i++) {
                     uintptr_t begin = floor((double)(kMaxAllocationDelta - alloc_size) / kAllocationSize - i) * kAllocationSize;
                     if(void* allocated = TrampolineAllocateImpl((unsigned char*)begin, alloc_size)) {
