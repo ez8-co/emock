@@ -1,11 +1,11 @@
 [简体中文](./README.md)
 
-# What is EMOCK?      [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://orca-zhang.semaphoreci.com/badges/emock/branches/master.svg?style=shields&key=e50d1d29-31e5-4977-950f-3eff3da05650)](https://orca-zhang.semaphoreci.com/projects/emock)
+# What is EMOCK?      [![license](https://img.shields.io/badge/license-Apache%202-brightgreen.svg?style=flat)](https://github.com/ez8-co/emock/blob/master/LICENSE)  [![Build Status](https://orca-zhang.semaphoreci.com/badges/emock/branches/master.svg?style=shields&key=e50d1d29-31e5-4977-950f-3eff3da05650)](https://orca-zhang.semaphoreci.com/projects/emock) [![Build status](https://ci.appveyor.com/api/projects/status/7a64ewar9yoifug5?svg=true)](https://ci.appveyor.com/project/orca-zhang/emock)
 
 - EMOCK is next generation easy-to-use C++ Mock Library based on mockcpp.
   - **[Easy to Use]** only one MACRO, without extra studies.
   - **[No Dependencies]** unless STL and std C libraries.
-  - **[Cross Platform]** support popular OS (both x86 & x64).
+  - **[Cross Platform]** support popular OS (both x86 & x64, *nix/windows/macOS).
   - **[Fully Support]** support all kinds of functions.
   - **[No Intrusions]** no need to modify any source code.
 
