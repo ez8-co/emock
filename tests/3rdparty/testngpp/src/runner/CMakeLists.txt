@@ -164,6 +164,15 @@ ADD_DEFINITIONS(
 )
 ENDIF(UNIX)
 
+IF(APPLE)
+   MESSAGE("APPLE")
+  SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mmacosx-version-min=10.7")
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mmacosx-version-min=10.7")
+  ADD_DEFINITIONS(
+    -stdlib=libc++ -mmacosx-version-min=10.7
+  )
+ENDIF(APPLE)
+
 ADD_LIBRARY(testngpp-runner-lib STATIC ${TESTNGRUNNER_LIB_SRCS})
 
 TARGET_LINK_LIBRARIES(testngpp-runner-lib ${TESTNGPP_LIBRARY})
@@ -171,6 +180,7 @@ TARGET_LINK_LIBRARIES(testngpp-runner-lib ${TESTNGPP_LIBRARY})
 ADD_EXECUTABLE(testngpp-runner TestRunnerMain.cpp) 
 
 IF(MSVC)
+   SET_TARGET_PROPERTIES(testngpp-win32-testcase-runner PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" /SUBSYSTEM:WINDOWS")
    ADD_EXECUTABLE(testngpp-win32-testcase-runner win32/TestCaseSandboxRunnerMain.cpp)
    TARGET_LINK_LIBRARIES(testngpp-win32-testcase-runner ${TESTNGPP_LIBRARY} testngpp-runner-lib)
 

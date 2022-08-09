@@ -7,4 +7,4 @@ for /r %%i in (Debug\emock-ut-*.dll) do (
    set cases=!cases! %%~pni
 )
 @echo !cases!
-runas /user:administrator testngpp-runner.exe -L. -l"testngppxmllistener result.xml" -l"testngppstdoutlistener -c " -c100 !cases!
+testngpp-runner.exe -L. -l"testngppxmllistener result.xml" -l"testngppstdoutlistener -c " -c100 !cases!
