@@ -66,6 +66,13 @@ int va_list_func2(int a, int b, va_list arg)
     return 0;
 }
 
+#ifdef _MSC_VER
+int init_va_list(va_list *arg, ...)
+{
+    va_start(*arg, arg);
+}
+#endif
+
 FIXTURE(ApiHook)
 {
 	int a; //TODO: static const cause linux .so load failure.
@@ -142,7 +149,7 @@ FIXTURE(ApiHook)
     {
        va_list arg;
 #ifdef _MSC_VER
-       va_start(arg, a);
+       init_va_list(&arg, arg);
 #endif
        EMOCK(va_list_func).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
@@ -153,7 +160,7 @@ FIXTURE(ApiHook)
     {
        va_list arg;
 #ifdef _MSC_VER
-       va_start(arg, a);
+       init_va_list(&arg, arg);
 #endif
        EMOCK(va_list_func2).stubs().will(returnValue(20));
        ASSERT_EQ(ret, func(a, b));
