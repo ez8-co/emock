@@ -102,7 +102,6 @@ FIXTURE(ApiHook)
 	{
 		ASSERT_EQ(ret, func(a, b));
 	}
-#endif
 
 	TEST(should throw some exception when calling the mocked function with wrong parameter)
 	{
@@ -168,4 +167,5 @@ FIXTURE(ApiHook)
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func2(a, b, arg));
     }
+#endif
 };
