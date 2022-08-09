@@ -96,8 +96,7 @@ FIXTURE(ApiHook)
 		GlobalMockObject::verify();
 		GlobalMockObject::reset();
 	}
-	
-#ifndef _MSC_VER
+
 	TEST(can mock C function)
 	{
 		ASSERT_EQ(ret, func(a, b));
@@ -167,5 +166,4 @@ FIXTURE(ApiHook)
        ASSERT_EQ(ret, func(a, b));
        ASSERT_EQ(20, va_list_func2(a, b, arg));
     }
-#endif
 };
