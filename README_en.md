@@ -36,7 +36,7 @@
 <table style="text-align: center">
    <tr>
       <td></td>
-      <td colspan="2">Platform</td>
+      <td colspan="3">Platform</td>
       <td colspan="3">Member function</td>
       <td colspan="3">General function</td>
       <td>Misc</td>
@@ -45,6 +45,7 @@
       <td>Library</td>
       <td>Linux</td>
       <td>Windows</td>
+      <td>MacOS</td>
       <td>Virtual</td>
       <td>Normal</td>
       <td>Static</td>
@@ -64,11 +65,13 @@
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:white_check_mark:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
@@ -81,6 +84,7 @@
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
@@ -93,6 +97,7 @@
       <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
@@ -105,6 +110,7 @@
       <td><a href="https://github.com/tpounds/mockitopp">mockitopp</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
@@ -117,6 +123,7 @@
       <td><a href="https://github.com/hjagodzinski/C-Mock">C-Mock</a></td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
@@ -128,6 +135,7 @@
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
