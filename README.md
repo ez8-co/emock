@@ -41,8 +41,8 @@
    <tr>
       <td>库</td>
       <td>Linux</td>
-      <td>Windows</td>
-      <td>MacOS</td>
+      <td>Win</td>
+      <td>Mac</td>
       <td>虚函数</td>
       <td>普通</td>
       <td>静态</td>
@@ -279,17 +279,17 @@
 
    - 设计参考 [MSDN - SymEnumSymbols](https://docs.microsoft.com/zh-cn/windows/win32/api/dbghelp/nf-dbghelp-symenumsymbols?redirectedfrom=MSDN)
 
-   - 使用规范：`[[__cdecl|__stdcall|__thiscall]#]|[!] [{<return_type>}] [<namespace>::] [<class>::] <function> [@<library>]`
+   - 使用规范：`[[__cdecl|__stdcall|__thiscall]#]|[!] [{<return_type>}] [<namespace>::] [<class>::] <function> [(<argument_list>)] [@<library>]`
 
    - 支持通配符，`*` 代表任意数量个字符，`?` 代表单个字符
    
    - `@` 后面为库名，`#` 前为调用约定，其中用`!`是`__stdcall#`的缩写， `{int}`代表返回值类型为`int`
 
-   - 例如：`!{int}*::foo::bar()@x??`代表返回值为`int`类型，调用约定为`__stdcall`的方法`foo::bar`，命名空间任意匹配，库名`x??`代表`x`开头，且为三个字符
+   - 例如：`!{int}*::foo::bar(double)@x??`代表返回值为`int`类型，调用约定为`__stdcall`的方法`foo::bar`，命名空间任意匹配，库名`x??`代表`x`开头，且为三个字符
 
 ## 使用手册
 
-- [访问wiki学习如何使用EMOCK](https://github.com/ez8-co/emock/wiki)
+- [访问wiki学习如何使用EMOCK（建设中，可以参考网上mockcpp的教程）](https://github.com/ez8-co/emock/wiki)
 
 ## 衷心感谢
 
