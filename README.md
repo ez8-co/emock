@@ -17,27 +17,6 @@
   - 默认单元测试框架改用gtest
   - 缺失的caller匹配功能
 
-## 实验功能预览
-
-   ```cpp
-      // 测试时，像下面这样就可以mock
-      EMOCK("foobar")
-          .stubs()
-          .will(returnValue(1)); // 调用时返回1
-   ```
-
-   - 设计参考[MSDN - SymEnumSymbols](https://docs.microsoft.com/zh-cn/windows/win32/api/dbghelp/nf-dbghelp-symenumsymbols?redirectedfrom=MSDN)
-
-   - 支持通配符，`*` 代表任意数量个字符，`?` 代表单个字符
-
-   - `@` 后面为库名
-
-   - `#` 前为调用约定，其中用`!`代表`stdcall`
-
-   - `{int}`代表返回类型为`int`
-
-   - 例如：`!{int}*::foo::bar()@x??`代表返回值为`int`类型，调用约定为`stdcall`的方法`foo::bar`，命名空间任意匹配，库名`x`开头三个字符
-
 ## 最新支持
 
 - 统一的`EMOCK`宏（测试虚函数，不再需要用户添加控制反转支持）
@@ -54,7 +33,7 @@
 <table style="text-align: center">
    <tr>
       <td></td>
-      <td colspan="2">平台</td>
+      <td colspan="3">平台</td>
       <td colspan="3">成员函数</td>
       <td colspan="3">普通函数</td>
       <td>杂项</td>
@@ -63,6 +42,7 @@
       <td>库</td>
       <td>Linux</td>
       <td>Windows</td>
+      <td>MacOS</td>
       <td>虚函数</td>
       <td>普通</td>
       <td>静态</td>
@@ -82,11 +62,13 @@
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:white_check_mark:</td>
    </tr>
    <tr>
       <td><a href="https://github.com/cpputest/cpputest">CppUMock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
@@ -99,6 +81,7 @@
       <td><a href="https://github.com/sinojelly/mockcpp">mockcpp</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
@@ -111,6 +94,7 @@
       <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
@@ -123,6 +107,7 @@
       <td><a href="https://github.com/tpounds/mockitopp">mockitopp</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
@@ -135,6 +120,7 @@
       <td><a href="https://github.com/hjagodzinski/C-Mock">C-Mock</a></td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
+      <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
@@ -146,6 +132,7 @@
    <tr>
       <td><a href="https://github.com/gzc9047/CppFreeMock">CppFreeMock</a></td>
       <td>:white_check_mark:</td>
+      <td>:x:</td>
       <td>:x:</td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
@@ -192,7 +179,7 @@
    </tr>
 </table>
 
-- EMOCK理论上也支持UNIX, Android, MacOS和iOS等\*nix系统，但可能需要少量改动
+- EMOCK理论上也支持UNIX, Android和iOS等\*nix系统，但可能需要少量改动
 
 ## 快速概览
 
@@ -281,6 +268,24 @@
       EMOCK(static_cast<void (Foo::*)(double)>(&Foo::bar))
           .expects(never()); // 不会被调用
   ```
+
+## 实验功能（根据函数签名式mock）
+
+   ```cpp
+      EMOCK("foo::bar")
+          .stubs()
+          .will(returnValue(1));
+   ```
+
+   - 设计参考 [MSDN - SymEnumSymbols](https://docs.microsoft.com/zh-cn/windows/win32/api/dbghelp/nf-dbghelp-symenumsymbols?redirectedfrom=MSDN)
+
+   - 使用规范：`[[__cdecl|__stdcall|__thiscall]#]|[!] [{<return_type>}] [<namespace>::] [<class>::] <function> [@<library>]`
+
+   - 支持通配符，`*` 代表任意数量个字符，`?` 代表单个字符
+   
+   - `@` 后面为库名，`#` 前为调用约定，其中用`!`是`__stdcall#`的缩写， `{int}`代表返回值类型为`int`
+
+   - 例如：`!{int}*::foo::bar()@x??`代表返回值为`int`类型，调用约定为`__stdcall`的方法`foo::bar`，命名空间任意匹配，库名`x??`代表`x`开头，且为三个字符
 
 ## 使用手册
 
