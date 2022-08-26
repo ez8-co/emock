@@ -244,7 +244,7 @@ static const size_t kAlignmentSize      = 64;         // 64
             ++it) {
             if(it->size - it->used > ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize) {
                 trampoline = it->base + it->used;
-                it->used += ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize;
+                it->used += size_t(ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize);
                 break;
             }
         }
