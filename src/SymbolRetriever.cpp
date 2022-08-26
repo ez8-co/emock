@@ -119,6 +119,9 @@ EMOCK_NS_START
                         else if(*pmf_info == ')')
                             if(!--depth) {
                                 ret.append(from, pmf_info - from + 1);
+                                if(std::string(pmf_info + 1) == " const") {
+                                    ret += " const";
+                                }
                                 break;
                             }
                         ++pmf_info;
