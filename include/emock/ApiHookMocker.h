@@ -149,6 +149,40 @@ MOCKAPI_MEM_FUN_DEF(12)
 
 #undef MOCKAPI_MEM_FUN_DEF
 
+#define MOCKAPI_CONST_MEM_FUN_DEF(n)\
+template <typename R, typename CLS DECL_TEMPLATE_ARGS(n)>\
+InvocationMockBuilderGetter mockAPI(const std::string& name, R (CLS::*api)(DECL_ARGS(n)) const)\
+{\
+    union {\
+      R (CLS::*pmf)(DECL_ARGS(n)) const;\
+      R (EMOCK_API *pf)(const CLS* DECL_REST_ARGS(n));\
+      void* p;\
+    } u;\
+    u.pmf = api;\
+    u.p = SymbolRetriever::getMethodAddress(u.p, typeid(api), name);\
+    return EMOCK_NS::GlobalMockObject::instance.method\
+                 ( name\
+                 , u.p\
+                 , ApiHookHolderFactory::create<R EMOCK_API (const CLS* DECL_REST_ARGS(n))>(u.pf)\
+                 , true);\
+}
+
+MOCKAPI_CONST_MEM_FUN_DEF(0)
+MOCKAPI_CONST_MEM_FUN_DEF(1)
+MOCKAPI_CONST_MEM_FUN_DEF(2)
+MOCKAPI_CONST_MEM_FUN_DEF(3)
+MOCKAPI_CONST_MEM_FUN_DEF(4)
+MOCKAPI_CONST_MEM_FUN_DEF(5)
+MOCKAPI_CONST_MEM_FUN_DEF(6)
+MOCKAPI_CONST_MEM_FUN_DEF(7)
+MOCKAPI_CONST_MEM_FUN_DEF(8)
+MOCKAPI_CONST_MEM_FUN_DEF(9)
+MOCKAPI_CONST_MEM_FUN_DEF(10)
+MOCKAPI_CONST_MEM_FUN_DEF(11)
+MOCKAPI_CONST_MEM_FUN_DEF(12)
+
+#undef MOCKAPI_CONST_MEM_FUN_DEF
+
 EMOCK_NS_END
 
 #endif
