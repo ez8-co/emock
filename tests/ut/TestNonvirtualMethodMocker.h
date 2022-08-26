@@ -47,7 +47,7 @@ int EMOCK_API normal_method_1(CUT* , int)
     return 101;
 }
 
-int EMOCK_API normal_method_1(const CUT* , int)
+int EMOCK_API normal_method_2(const CUT* , int)
 {
     return 102;
 }
