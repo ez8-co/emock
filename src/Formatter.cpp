@@ -33,7 +33,7 @@
         typedef _W64 unsigned int uintptr_t;
     #endif // _WIN64 ]
 #else
-	#include <unistd.h>
+   #include <inttypes.h>
 #endif
 
 EMOCK_NS_START
