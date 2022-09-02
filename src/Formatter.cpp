@@ -26,6 +26,21 @@
 #include <emock/OutputStringStream.h>
 #include <emock/Formatter.h>
 
+#ifdef _MSC_VER
+    #ifdef _WIN64 // [
+        typedef unsigned __int64  uintptr_t;
+    #else // _WIN64 ][
+        typedef _W64 unsigned int uintptr_t;
+    #endif // _WIN64 ]
+
+#else
+    #if __APPLE__
+        #include <limits.h>
+    #else
+        #include <linux/limits.h>
+    #endif
+#endif
+
 EMOCK_NS_START
 
 //////////////////////////////////////////
@@ -38,7 +53,7 @@ std::string toPointerString(void* p)
    oss << "0x";
    oss.flags (std::ios::hex);
    oss.fill('0'); oss.width(8);
-   oss << reinterpret_cast<unsigned long>(p);
+   oss << reinterpret_cast<uintptr_t>(p);
 
    return oss.str();
 }
