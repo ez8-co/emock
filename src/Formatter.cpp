@@ -32,13 +32,8 @@
     #else // _WIN64 ][
         typedef _W64 unsigned int uintptr_t;
     #endif // _WIN64 ]
-
 #else
-    #if __APPLE__
-        #include <limits.h>
-    #else
-        #include <linux/limits.h>
-    #endif
+	#include <unistd.h>
 #endif
 
 EMOCK_NS_START
