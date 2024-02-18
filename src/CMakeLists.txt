@@ -180,17 +180,17 @@ ELSE()
    SET(EMOCK_SRCS ${EMOCK_SRCS} ports/failure/stdexcept_report_failure.cpp)
 ENDIF()
 
-IF(MSVC)
+IF(MSVC OR MINGW)
    SET(EMOCK_SRCS 
        ${EMOCK_SRCS} 
        WinCodeModifier.cpp
-   ) 
-ELSE(MSVC)
+   )
+ELSE()
    SET(EMOCK_SRCS 
        ${EMOCK_SRCS} 
        UnixCodeModifier.cpp
    )
-ENDIF(MSVC)
+ENDIF()
 ######################################################
 SET(EMOCK_HEADERS_PATH ${EMOCK_SRC_ROOT}/include/emock)
 
@@ -199,14 +199,18 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/src ${CMAKE_BINARY_DIR}/tests/3rdparty/test
 
 ADD_LIBRARY(emock STATIC ${EMOCK_SRCS})
 
+IF(MINGW)
+   TARGET_LINK_LIBRARIES(emock Dbghelp)
+ENDIF()
+
 INCLUDE_DIRECTORIES(BEFORE ${EMOCK_SRC_ROOT}/include)
 
 INSTALL(
    TARGETS emock
    ARCHIVE DESTINATION lib)
 
-IF(MSVC)
+IF(MSVC OR MINGW)
 INSTALL(
    FILES ${CMAKE_BINARY_DIR}/src/Debug/emock.pdb
    DESTINATION lib)
-ENDIF(MSVC)
+ENDIF()

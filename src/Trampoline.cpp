@@ -14,9 +14,9 @@
 #include <emock/ReportFailure.h>
 #include <emock/ArgumentsMacroHelpers.h>
 
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
 
-    #include <windows.h>
+    #include <Windows.h>
 	#include <cassert>
     #ifdef _WIN64 // [
         typedef unsigned __int64  uintptr_t;
@@ -62,7 +62,7 @@ static const size_t kMaxAllocationDelta = 0x80000000; // 2GB
 static const size_t kAllocationSize     = EMOCK_PAGE_SIZE;  // 4KB
 static const size_t kAlignmentSize      = 64;         // 64
 
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
 
     #if BUILD_FOR_X64
         #define _ADDRESS_MAX_VALUE 0x80000000000
@@ -105,7 +105,7 @@ static const size_t kAlignmentSize      = 64;         // 64
 
         if (allocated)
         {
-            if (std::abs((long)dst - (long)allocated) > kMaxAllocationDelta)
+            if (std::abs((int64_t)dst - (int64_t)allocated) > kMaxAllocationDelta)
             {
                 VirtualFree(allocated, 0, MEM_RELEASE);
                 return NULL;
@@ -284,7 +284,7 @@ static const size_t kAlignmentSize      = 64;         // 64
     }
 
     void* Trampoline::get4MemFunc(const void* src, void* dst) {
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
         static const unsigned char ecxToArgList[] = { 0x58, 0x51, 0x50 };
         // apply trampoline and push ecx
     #if BUILD_FOR_X64

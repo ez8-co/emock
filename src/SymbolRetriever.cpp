@@ -15,12 +15,17 @@
 #include <emock/TypeString.h>
 #include <emock/ReportFailure.h>
 
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
 
-	#include <windows.h>
-	#include <dbghelp.h>
+	#include <Windows.h>
+	#include <DbgHelp.h>
     #include <vector>
-	#pragma comment(lib, "Dbghelp.lib")
+
+    #pragma message("111111") 
+
+    #ifdef _MSC_VER
+	    #pragma comment(lib, "Dbghelp.lib")
+    #endif
 
     #ifdef _WIN64 // [
         typedef unsigned __int64  uintptr_t;
@@ -94,7 +99,7 @@ EMOCK_NS_START
             return stringify.substr(start, stringify.find_last_not_of(')') - start + 1);
         }
 
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
         static std::string extractMethodSignatureName(const char* pmf_info, std::string& symbolName, const std::string& stringify) {
 #else
         static std::string extractMethodSignatureName(const char* pmf_info, const std::string& stringify) {
@@ -107,7 +112,7 @@ EMOCK_NS_START
                     std::string ret(from, pmf_info - from - 1);
                     ret += extractMethodName(stringify);
                     // extract symbol name
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
                     symbolName = strchr(ret.c_str(), ' ') + 1;
 #endif
                     // extract arg list
@@ -134,7 +139,7 @@ EMOCK_NS_START
         }
     }
 
-#ifdef _MSC_VER
+#if (_MSC_VER) ||  (__MINGW32__)
 
     std::map<std::pair<ULONG64, std::string>, std::map<int, std::string> > g_symbolCache;
     void SymbolRetriever::reset() {
@@ -188,7 +193,16 @@ EMOCK_NS_START
                 }
                 else {
                     char filePath[MAX_PATH] = {0};
-                    if(SymGetSymbolFile(GetCurrentProcess(), NULL, moduleInfo.ImageName, sfPdb, filePath, MAX_PATH, filePath, MAX_PATH))
+                    /*
+                    typedef enum {
+                        sfImage = 0,
+                        sfDbg,
+                        sfPdb,
+                        sfMpd,
+                        sfMax
+                    } IMAGEHLP_SF_TYPE;
+                    */
+                    if(SymGetSymbolFile(GetCurrentProcess(), NULL, moduleInfo.ImageName, 2/*sfDbg*/, filePath, MAX_PATH, filePath, MAX_PATH))
                         return filePath;
                 }
             }
