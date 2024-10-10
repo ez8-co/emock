@@ -94,7 +94,7 @@
       <td><a href="https://github.com/google/googletest/tree/master/googlemock">googlemock</a></td>
       <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
-      <td>:x:</td>
+      <td>:white_check_mark:</td>
       <td>:white_check_mark:</td>
       <td>:x:</td>
       <td>:x:</td>
