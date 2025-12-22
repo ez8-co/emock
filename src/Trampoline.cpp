@@ -250,8 +250,12 @@ static const size_t kAlignmentSize      = 64;         // 64
         }
         if(!trampoline) {
             TrampolineInfo info = {NULL, kAllocationSize, (size_t)ceil((double)alloc_size / kAlignmentSize) * kAlignmentSize};
-            trampoline = info.base = (unsigned char*)TrampolineAllocate((const unsigned char*)src, info.size);
-            g_trampolines.push_back(info);
+            const auto trampoline_base = (unsigned char*)TrampolineAllocate((const unsigned char*)src, info.size);
+            if (trampoline_base)
+            {
+                trampoline = info.base = trampoline_base;
+                g_trampolines.push_back(info);
+            }
         }
         return trampoline;
     }
