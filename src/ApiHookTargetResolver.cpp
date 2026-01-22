@@ -75,8 +75,6 @@ const void* ApiHookTargetResolver::getChainTarget(const void* from, unsigned int
         depth++;
     }
 
-    // If no non-jump code is found after reaching the maximum depth,
-    // we need return to the original address.
     return from;
 }
 
