@@ -56,7 +56,7 @@ const void* ApiHookTargetResolver::getChainTarget(const void* from, unsigned int
 
     uint32_t depth = 0;
 
-    do 
+    while (depth < max_depth)
     {
         switch (analyzeInstruction(code))
         {
@@ -71,7 +71,9 @@ const void* ApiHookTargetResolver::getChainTarget(const void* from, unsigned int
         default:
             return code;
         }
-    } while ((++depth) < max_depth);
+
+        depth++;
+    }
 
     // If no non-jump code is found after reaching the maximum depth,
     // we need return to the original address.
