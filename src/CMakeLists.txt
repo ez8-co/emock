@@ -118,8 +118,8 @@ SET(EMOCK_SRCS
     GlobalMockObject.cpp
     JmpOnlyApiHook.cpp
     JmpCode.cpp
+    ApiHookTargetResolver.cpp
     ApiHook.cpp
-
 )
 
 IF(${EMOCK_XUNIT} STREQUAL "GTEST" OR ${EMOCK_XUNIT} STREQUAL "gtest")

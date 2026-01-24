@@ -28,6 +28,9 @@
 #include <emock/GlobalMockObject.h>
 #include <emock/ApiHookHolderFactory.h>
 #include <emock/SymbolRetriever.h>
+#include <emock/ApiHookTargetResolver.h>
+
+#include <limits>
 
 EMOCK_NS_START
 
@@ -35,20 +38,22 @@ template <typename MockerType>
 InvocationMockBuilderGetter mockAPI(const char* matcher)
 {
     std::string name;
-    void* api = SymbolRetriever::getAddress(name, matcher);
+    const void* api = SymbolRetriever::getAddress(name, matcher);
+    const void* target_api = ApiHookTargetResolver(api, (std::numeric_limits<unsigned int>::max)()).getTarget();
     return EMOCK_NS::GlobalMockObject::instance.method
-                 ( name
-                 , reinterpret_cast<const void*>(api)
-                 , ApiHookHolderFactory::create(reinterpret_cast<MockerType>(api)));
+                ( name
+                , target_api
+                , ApiHookHolderFactory::create(reinterpret_cast<MockerType>(target_api)));
 }
 
 template <typename API>
 InvocationMockBuilderGetter mockAPI(const std::string& name, API* api)
 {
+    const void* target_api = ApiHookTargetResolver(api, (std::numeric_limits<unsigned int>::max)()).getTarget();
     return EMOCK_NS::GlobalMockObject::instance.method
-                 ( name
-                 , reinterpret_cast<const void*>(api)
-                 , ApiHookHolderFactory::create(api));
+                ( name
+                , target_api
+                , ApiHookHolderFactory::create(reinterpret_cast<API*>(target_api)));
 }
 
 #ifdef __GNUC__
